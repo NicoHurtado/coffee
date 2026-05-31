@@ -8,7 +8,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
     <div className="min-h-screen flex">
       <DataHydrator />
       <Sidebar />
-      <main className="flex-1 min-w-0 pb-[calc(56px+env(safe-area-inset-bottom)+16px)] md:pb-0 relative">
+      <main className="flex-1 min-w-0 pt-[env(safe-area-inset-top)] pb-[calc(56px+env(safe-area-inset-bottom)+16px)] md:pt-0 md:pb-0 relative">
         {children}
       </main>
       <BottomNav />
