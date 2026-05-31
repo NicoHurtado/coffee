@@ -6,6 +6,7 @@ import { useSettingsStore } from "@/lib/store/settings";
 import { TransactionItem } from "@/components/transactions/transaction-item";
 import { TransactionEditDialog } from "@/components/transactions/transaction-edit-dialog";
 import type { Transaction } from "@/lib/types";
+import { isSyncTx } from "@/lib/finance/sync";
 
 import { Separator } from "@/components/ui/separator";
 
@@ -22,7 +23,7 @@ export function RecentActivity({
   const txs = useTransactionsStore((s) => s.transactions);
   const [editing, setEditing] = useState<Transaction | null>(null);
   const filtered = (accountId ? txs.filter((t) => t.accountId === accountId) : txs)
-    .filter((t) => t.description !== "Sincronización IBKR")
+    .filter((t) => !isSyncTx(t))
     .slice()
     .sort((a, b) => +new Date(b.occurredAt) - +new Date(a.occurredAt))
     .slice(0, limit);

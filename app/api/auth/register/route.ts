@@ -2,8 +2,15 @@ import { NextResponse } from "next/server";
 import { v4 as uuid } from "uuid";
 import { getDb } from "@/lib/db/mongodb";
 import { hashPassword, signSession, COOKIE_NAME } from "@/lib/auth";
+import { rateLimit, clientIp } from "@/lib/rate-limit";
 
 export const dynamic = "force-dynamic";
+
+// Registration is closed by default. Set ALLOW_REGISTRATION="true" to open it
+// (e.g. temporarily, to create the owner account), then unset it again.
+function registrationOpen(): boolean {
+  return process.env.ALLOW_REGISTRATION === "true";
+}
 
 interface UserDoc {
   id: string;
@@ -14,6 +21,18 @@ interface UserDoc {
 }
 
 export async function POST(req: Request) {
+  if (!registrationOpen()) {
+    return NextResponse.json({ error: "El registro está deshabilitado" }, { status: 403 });
+  }
+
+  const limit = rateLimit(`register:${clientIp(req)}`, 5, 60 * 60 * 1000);
+  if (!limit.ok) {
+    return NextResponse.json(
+      { error: "Demasiados intentos. Inténtalo más tarde." },
+      { status: 429, headers: { "Retry-After": String(limit.retryAfterSeconds) } },
+    );
+  }
+
   const body = (await req.json()) as {
     name?: string;
     username?: string;

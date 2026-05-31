@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { getDb } from "@/lib/db/mongodb";
 import { COOKIE_NAME, signSession, verifyPassword } from "@/lib/auth";
+import { rateLimit, clientIp } from "@/lib/rate-limit";
 
 export const dynamic = "force-dynamic";
 
@@ -12,6 +13,14 @@ interface UserDoc {
 }
 
 export async function POST(req: Request) {
+  const limit = rateLimit(`login:${clientIp(req)}`, 10, 5 * 60 * 1000);
+  if (!limit.ok) {
+    return NextResponse.json(
+      { error: "Demasiados intentos. Inténtalo más tarde." },
+      { status: 429, headers: { "Retry-After": String(limit.retryAfterSeconds) } },
+    );
+  }
+
   const body = (await req.json()) as { username?: string; password?: string; remember?: boolean };
   const username = body.username?.trim().toLowerCase();
   const password = body.password;

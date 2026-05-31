@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { requireUid } from "@/lib/api-auth";
 
 export const dynamic = "force-dynamic";
 
@@ -10,6 +11,9 @@ global._trmCache ??= null;
 const CACHE_MS = 60 * 60 * 1000; // 1 hour
 
 export async function GET() {
+  const auth = await requireUid();
+  if (auth instanceof NextResponse) return auth;
+
   const cache = global._trmCache;
   if (cache && Date.now() - cache.fetchedAt < CACHE_MS) {
     return NextResponse.json({ rate: cache.rate, date: cache.date, source: "cache" });

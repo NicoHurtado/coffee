@@ -124,25 +124,34 @@ export async function POST(
     const rawToken = isEncrypted(account.syncToken) ? decrypt(account.syncToken) : account.syncToken;
     const nav = await fetchIBKR(account.syncUrl, rawToken);
 
-    const today = new Date().toISOString().slice(0, 10); // YYYY-MM-DD
+    const now = new Date();
+    const today = now.toISOString().slice(0, 10); // YYYY-MM-DD
+    const dayStart = `${today}T00:00:00.000Z`;
+    const nextDay = new Date(now.getTime() + 86_400_000).toISOString().slice(0, 10);
+    const dayEnd = `${nextDay}T00:00:00.000Z`;
 
-    // Record as adjustment transaction (replaces balance)
-    const tx = {
-      id: uuidv4(),
+    // One sync adjustment per account per day: re-syncing the same day updates
+    // the existing adjustment instead of piling up duplicate rows.
+    const filter = {
       userId: uid,
       accountId: id,
       kind: "adjustment" as const,
-      amount: nav,
-      category: "Otro",
       description: "Sincronización IBKR",
-      occurredAt: new Date().toISOString(),
+      occurredAt: { $gte: dayStart, $lt: dayEnd },
     };
-    await db.collection("transactions").insertOne(tx);
+    await db.collection("transactions").updateOne(
+      filter,
+      {
+        $set: { amount: nav, occurredAt: now.toISOString() },
+        $setOnInsert: { id: uuidv4(), category: "Otro" },
+      },
+      { upsert: true },
+    );
 
-    // Mark account as synced today so we don't re-sync until tomorrow
+    // Mark account as synced today
     await db.collection("accounts").updateOne({ id, userId: uid }, { $set: { lastSyncDate: today } });
 
-    return NextResponse.json({ balance: nav, lastSyncDate: today, transaction: tx });
+    return NextResponse.json({ balance: nav, lastSyncDate: today });
   } catch (err) {
     const msg = err instanceof Error ? err.message : "Error desconocido";
     return NextResponse.json({ error: msg }, { status: 500 });

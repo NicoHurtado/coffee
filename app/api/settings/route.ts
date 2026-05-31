@@ -5,14 +5,20 @@ import { requireUid } from "@/lib/api-auth";
 
 export const dynamic = "force-dynamic";
 
-interface SettingsDoc {
-  userId: string;
+interface Preferences {
   defaultCurrency: Currency;
   lastUsedAccountId?: string;
 }
 
-const DEFAULTS = {
-  defaultCurrency: "USD" as Currency,
+interface UserDoc {
+  id: string;
+  username: string;
+  name?: string;
+  preferences?: Preferences;
+}
+
+const DEFAULTS: Preferences = {
+  defaultCurrency: "COP",
 };
 
 export async function GET() {
@@ -21,18 +27,18 @@ export async function GET() {
   const uid = auth;
 
   const db = await getDb();
-  // The display name lives on the user doc (used for the greeting and card holder).
+  // Name + preferences both live on the user doc — a single read.
   const user = await db
-    .collection<{ id: string; name?: string; username: string }>("users")
-    .findOne({ id: uid }, { projection: { _id: 0, name: 1, username: 1 } });
-  const settings = await db
-    .collection<SettingsDoc>("settings")
-    .findOne({ userId: uid }, { projection: { _id: 0, userId: 0 } });
+    .collection<UserDoc>("users")
+    .findOne(
+      { id: uid },
+      { projection: { _id: 0, name: 1, username: 1, preferences: 1 } },
+    );
 
   return NextResponse.json({
     userName: user?.name ?? user?.username ?? "",
-    defaultCurrency: settings?.defaultCurrency ?? DEFAULTS.defaultCurrency,
-    lastUsedAccountId: settings?.lastUsedAccountId,
+    defaultCurrency: user?.preferences?.defaultCurrency ?? DEFAULTS.defaultCurrency,
+    lastUsedAccountId: user?.preferences?.lastUsedAccountId,
   });
 }
 
@@ -41,17 +47,23 @@ export async function PATCH(req: Request) {
   if (auth instanceof NextResponse) return auth;
   const uid = auth;
 
-  const patch = (await req.json()) as Partial<Omit<SettingsDoc, "userId">>;
+  const patch = (await req.json()) as Partial<Preferences>;
   const db = await getDb();
-  await db
-    .collection<SettingsDoc>("settings")
-    .updateOne(
-      { userId: uid },
-      { $set: patch, $setOnInsert: { userId: uid, ...DEFAULTS } },
-      { upsert: true },
-    );
-  const doc = await db
-    .collection<SettingsDoc>("settings")
-    .findOne({ userId: uid }, { projection: { _id: 0, userId: 0 } });
-  return NextResponse.json(doc ?? DEFAULTS);
+
+  // Build a dotted $set so we only touch the keys provided, never clobber siblings.
+  const set: Record<string, unknown> = {};
+  if (patch.defaultCurrency !== undefined)
+    set["preferences.defaultCurrency"] = patch.defaultCurrency;
+  if (patch.lastUsedAccountId !== undefined)
+    set["preferences.lastUsedAccountId"] = patch.lastUsedAccountId;
+
+  if (Object.keys(set).length > 0) {
+    await db.collection<UserDoc>("users").updateOne({ id: uid }, { $set: set });
+  }
+
+  const user = await db
+    .collection<UserDoc>("users")
+    .findOne({ id: uid }, { projection: { _id: 0, preferences: 1 } });
+
+  return NextResponse.json(user?.preferences ?? DEFAULTS);
 }

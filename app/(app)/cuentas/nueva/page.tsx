@@ -20,17 +20,19 @@ import { AccountPreviewCard } from "@/components/accounts/account-preview-card";
 import { ColorPicker } from "@/components/accounts/color-picker";
 import { CardNetworkPicker } from "@/components/accounts/card-network-picker";
 import { useAccountsStore } from "@/lib/store/accounts";
+import { useSettingsStore } from "@/lib/store/settings";
 import type { AccountType, CardNetwork, Currency } from "@/lib/types";
 import type { AccountColor } from "@/lib/finance/colors";
 
 export default function NuevaCuentaPage() {
   const router = useRouter();
   const add = useAccountsStore((s) => s.add);
+  const defaultCurrency = useSettingsStore((s) => s.defaultCurrency);
 
   const [type, setType] = useState<AccountType>("debit");
   const [institution, setInstitution] = useState("");
   const [name, setName] = useState("");
-  const [currency, setCurrency] = useState<Currency>("COP");
+  const [currency, setCurrency] = useState<Currency>(defaultCurrency);
   const [initialBalance, setInitialBalance] = useState("");
   const [color, setColor] = useState<AccountColor>("blue");
   const [miniLabel, setMiniLabel] = useState("");

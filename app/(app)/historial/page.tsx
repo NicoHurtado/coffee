@@ -16,6 +16,7 @@ import { cn } from "@/lib/utils";
 import { useTransactionsStore } from "@/lib/store/transactions";
 import { useSettingsStore } from "@/lib/store/settings";
 import { formatMoney } from "@/lib/finance/format";
+import { isSyncTx } from "@/lib/finance/sync";
 
 export default function HistorialPage() {
   const txs = useTransactionsStore((s) => s.transactions);
@@ -28,6 +29,7 @@ export default function HistorialPage() {
   const filtered = useMemo(() => {
     const qLow = q.trim().toLowerCase();
     return txs.filter((t) => {
+      if (isSyncTx(t)) return false;
       const d = new Date(t.occurredAt);
       if (d < period.from || d > period.to) return false;
       if (accountId !== "all" && t.accountId !== accountId) return false;

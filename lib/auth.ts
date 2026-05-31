@@ -1,9 +1,17 @@
 import { SignJWT, jwtVerify } from "jose";
 import bcrypt from "bcryptjs";
 
-const secret = new TextEncoder().encode(
-  process.env.AUTH_SECRET ?? "dev-only-insecure-fallback",
-);
+function resolveSecret(): string {
+  const s = process.env.AUTH_SECRET;
+  if (s && s.length >= 32) return s;
+  // Never allow a weak/known secret in production — it would let anyone forge sessions.
+  if (process.env.NODE_ENV === "production") {
+    throw new Error("AUTH_SECRET env var missing or too short (min 32 chars)");
+  }
+  return s ?? "dev-only-insecure-fallback";
+}
+
+const secret = new TextEncoder().encode(resolveSecret());
 
 export const COOKIE_NAME = "fp_session";
 const SHORT_TTL_SECONDS = 60 * 60 * 24; // 1 day (no recordarme)

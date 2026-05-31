@@ -12,28 +12,35 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
 import { useTransactionsStore } from "@/lib/store/transactions";
+import { useExchangeRateStore } from "@/lib/store/exchange-rate";
 import { formatMoney } from "@/lib/finance/format";
-import type { FixedIncomeAccount } from "@/lib/types";
+import type { FixedIncomeAccount, InvestmentAccount } from "@/lib/types";
 
 interface Props {
   open: boolean;
   onOpenChange: (o: boolean) => void;
-  account: FixedIncomeAccount;
+  account: FixedIncomeAccount | InvestmentAccount;
   currentBalance: number;
   initialMode?: "ingreso" | "retiro";
 }
 
 export function FixedIncomeDepositDialog({ open, onOpenChange, account, currentBalance, initialMode = "ingreso" }: Props) {
   const addTx = useTransactionsStore((s) => s.add);
+  const usdToCop = useExchangeRateStore((s) => s.usdToCop);
   const [mode, setMode] = useState<"ingreso" | "retiro">(initialMode);
 
   useEffect(() => {
-    if (open) { setMode(initialMode); setAmount(""); }
+    if (open) { setMode(initialMode); setAmount(""); setDescription(""); }
   }, [open, initialMode]);
   const [amount, setAmount] = useState("");
+  const [description, setDescription] = useState("");
   const [loading, setLoading] = useState(false);
 
   const parsed = parseFloat(amount || "0");
+  const showCop = account.currency === "USD" && !!usdToCop;
+  const copAmount = showCop ? parsed * (usdToCop as number) : 0;
+  const fmtCop = (n: number) =>
+    Math.round(n).toLocaleString("es-CO", { style: "currency", currency: "COP", maximumFractionDigits: 0 });
   const newBalance = mode === "ingreso" ? currentBalance + parsed : currentBalance - parsed;
   const canConfirm = parsed > 0 && (mode === "ingreso" || parsed <= currentBalance);
 
@@ -41,12 +48,13 @@ export function FixedIncomeDepositDialog({ open, onOpenChange, account, currentB
     if (!canConfirm) return;
     setLoading(true);
     try {
+      const defaultDesc = mode === "ingreso" ? "Depósito" : "Retiro";
       await addTx({
         accountId: account.id,
         kind: "adjustment",
         amount: newBalance,
         category: "Transferencia",
-        description: mode === "ingreso" ? "Depósito" : "Retiro",
+        description: description.trim() || defaultDesc,
         occurredAt: new Date().toISOString(),
       });
       toast.success(
@@ -93,7 +101,9 @@ export function FixedIncomeDepositDialog({ open, onOpenChange, account, currentB
           </div>
 
           <div className="space-y-1.5">
-            <Label htmlFor="fi-amount">Monto</Label>
+            <Label htmlFor="fi-amount">
+              Monto {account.currency === "USD" ? "(USD)" : ""}
+            </Label>
             <Input
               id="fi-amount"
               type="number"
@@ -102,14 +112,40 @@ export function FixedIncomeDepositDialog({ open, onOpenChange, account, currentB
               value={amount}
               onChange={(e) => setAmount(e.target.value)}
             />
+            {showCop && (
+              <div className="flex items-center justify-between text-xs text-muted-foreground pt-0.5">
+                <span>Equivale a</span>
+                <span className="tabular-nums font-medium text-foreground">
+                  {fmtCop(copAmount)} COP
+                </span>
+              </div>
+            )}
+          </div>
+
+          <div className="space-y-1.5">
+            <Label htmlFor="fi-desc">Descripción (opcional)</Label>
+            <Input
+              id="fi-desc"
+              type="text"
+              placeholder={mode === "ingreso" ? "Depósito" : "Retiro"}
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+            />
           </div>
 
           {parsed > 0 && (
             <div className="rounded-xl bg-muted px-4 py-3 flex items-center justify-between">
               <span className="text-sm text-muted-foreground">Nuevo balance</span>
-              <span className={cn("text-base font-bold tabular-nums", newBalance < 0 && "text-red-500")}>
-                {formatMoney(Math.max(0, newBalance), account.currency)}
-              </span>
+              <div className="text-right">
+                <div className={cn("text-base font-bold tabular-nums", newBalance < 0 && "text-red-500")}>
+                  {formatMoney(Math.max(0, newBalance), account.currency)}
+                </div>
+                {showCop && (
+                  <div className="text-xs text-muted-foreground tabular-nums">
+                    {fmtCop(Math.max(0, newBalance) * (usdToCop as number))} COP
+                  </div>
+                )}
+              </div>
             </div>
           )}
         </div>

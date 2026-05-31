@@ -41,10 +41,17 @@ async function ensureIndexes(db: Db): Promise<void> {
       { userId: 1, accountId: 1, occurredAt: -1 },
       { name: "userId_accountId_occurredAt_desc" },
     ),
-    db.collection("accounts").createIndex({ userId: 1 }, { name: "userId" }),
+    // Single composite index serves both lookups by userId and by {userId,id}.
+    // A standalone {userId:1} index would be redundant (it's a prefix of this one).
     db.collection("accounts").createIndex({ userId: 1, id: 1 }, { name: "userId_id" }),
-    db.collection("settings").createIndex({ userId: 1 }, { name: "userId_unique", unique: true }),
-    db.collection("users").createIndex({ username: 1 }, { name: "username_unique", unique: true }),
+    // Preferences are embedded in the user doc (1:1) — no separate settings collection.
+    // Name left to Mongo's default ("username_1") so this matches the live unique
+    // index exactly and stays a true no-op instead of conflicting on every cold start.
+    db.collection("users").createIndex({ username: 1 }, { unique: true }),
+    // The app resolves the current user by their `id` (session uid) on every page
+    // load (settings, name, preferences). Without this index that read is a
+    // collection scan; `id` is the user's unique primary key.
+    db.collection("users").createIndex({ id: 1 }, { unique: true }),
   ];
   await Promise.allSettled(jobs);
 }

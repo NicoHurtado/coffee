@@ -16,6 +16,7 @@ import { useTransactionsStore } from "@/lib/store/transactions";
 import { useSettingsStore } from "@/lib/store/settings";
 import { useCategoriesStore } from "@/lib/store/categories";
 import { type Transaction } from "@/lib/types";
+import { isSyncTx } from "@/lib/finance/sync";
 
 import { Separator } from "@/components/ui/separator";
 
@@ -36,6 +37,7 @@ export function AccountActivity({ accountId }: { accountId: string }) {
     const qLow = q.trim().toLowerCase();
     return txs
       .filter((t) => {
+        if (isSyncTx(t)) return false;
         if (qLow) {
           const hay = `${t.description ?? ""} ${t.category}`.toLowerCase();
           if (!hay.includes(qLow)) return false;

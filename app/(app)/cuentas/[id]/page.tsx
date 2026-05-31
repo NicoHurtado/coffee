@@ -6,14 +6,6 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { Progress } from "@/components/ui/progress";
-import {
-  Dialog,
-  DialogContent,
-  DialogTitle,
-  DialogFooter,
-} from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { useAccountsStore } from "@/lib/store/accounts";
 import { useTransactionsStore } from "@/lib/store/transactions";
 import { useUIStore } from "@/lib/store/ui";
@@ -34,6 +26,7 @@ import { useExchangeRateStore } from "@/lib/store/exchange-rate";
 import { AccountCategoryPie } from "@/components/accounts/account-category-pie";
 import { AccountPeriodBars } from "@/components/accounts/account-period-bars";
 import { AccountActivity } from "@/components/accounts/account-activity";
+import { InvestmentBalanceChart } from "@/components/accounts/investment-balance-chart";
 
 function InvestmentCopCard({ balance }: { balance: number }) {
   const usdToCop = useExchangeRateStore((s) => s.usdToCop);
@@ -61,11 +54,8 @@ export default function AccountDetailPage({
   const { id } = use(params);
   const account = useAccountsStore((s) => s.getById(id));
   const txs = useTransactionsStore((s) => s.forAccount(id));
-  const addTx = useTransactionsStore((s) => s.add);
   const openQuickAdd = useUIStore((s) => s.openQuickAdd);
 
-  const [updateOpen, setUpdateOpen] = useState(false);
-  const [newBalance, setNewBalance] = useState("");
   const [chartsOpen, setChartsOpen] = useState(false);
   const [payOpen, setPayOpen] = useState(false);
   const [depositOpen, setDepositOpen] = useState(false);
@@ -116,22 +106,6 @@ export default function AccountDetailPage({
     ? Math.round(copValue).toLocaleString("es-CO", { style: "currency", currency: "COP", maximumFractionDigits: 0 })
     : formatMoney(balance, account.currency);
 
-  const handleUpdateBalance = () => {
-    const n = parseFloat(newBalance);
-    if (!isFinite(n)) return;
-    addTx({
-      accountId: account.id,
-      kind: "adjustment",
-      amount: n,
-      category: "Otro",
-      description: "Actualización de balance",
-      occurredAt: new Date().toISOString(),
-    });
-    toast.success("Balance actualizado");
-    setUpdateOpen(false);
-    setNewBalance("");
-  };
-
   const TYPE_LABEL = {
     debit: "Débito",
     credit: "Crédito",
@@ -178,20 +152,25 @@ export default function AccountDetailPage({
         );
       default:
         return (
-          <div className="flex gap-2">
+          <div className="flex flex-col gap-2">
+            <div className="flex gap-2">
+              <Button variant="outline" className="flex-1 h-12" onClick={() => { setDepositMode("retiro"); setDepositOpen(true); }}>
+                Retirar
+              </Button>
+              <Button className="flex-1 h-12" onClick={() => { setDepositMode("ingreso"); setDepositOpen(true); }}>
+                Depositar
+              </Button>
+            </div>
             {account.type === "investment" && (account as import("@/lib/types").InvestmentAccount).syncUrl && (
               <Button
                 variant="outline"
-                className="flex-1 h-12"
+                className="w-full h-10"
                 onClick={() => syncBalance()}
                 disabled={syncing}
               >
                 {syncing ? "Sincronizando…" : "↻ Sincronizar"}
               </Button>
             )}
-            <Button className="flex-1 h-12" onClick={() => setUpdateOpen(true)}>
-              Actualizar Balance
-            </Button>
           </div>
         );
     }
@@ -362,6 +341,13 @@ export default function AccountDetailPage({
                 <AccountPeriodBars accountId={account.id} />
               </div>
             )}
+          </>
+        )}
+
+        {account.type === "investment" && (
+          <>
+            <InvestmentBalanceChart account={account} />
+            {actionButton}
           </>
         )}
 
@@ -549,13 +535,14 @@ export default function AccountDetailPage({
           </div>
         )}
 
+        {/* Row 2.5: Investment balance movement chart */}
+        {account.type === "investment" && (
+          <InvestmentBalanceChart account={account} />
+        )}
+
         {/* Row 3: Activity full width */}
         <AccountActivity accountId={account.id} />
       </div>
-
-      {account.type === "investment" && (
-        <div className="md:hidden fixed bottom-20 inset-x-0 px-4">{actionButton}</div>
-      )}
 
       {account.type === "credit" && (
         <PayCreditCardDialog
@@ -566,7 +553,7 @@ export default function AccountDetailPage({
         />
       )}
 
-      {account.type === "fixed_income" && (
+      {(account.type === "fixed_income" || account.type === "investment") && (
         <FixedIncomeDepositDialog
           open={depositOpen}
           onOpenChange={setDepositOpen}
@@ -584,25 +571,6 @@ export default function AccountDetailPage({
           sourceBalance={balance}
         />
       )}
-
-      <Dialog open={updateOpen} onOpenChange={setUpdateOpen}>
-        <DialogContent>
-          <DialogTitle>Actualizar Balance</DialogTitle>
-          <div className="space-y-2 py-2">
-            <Label htmlFor="bal">Nuevo balance</Label>
-            <Input
-              id="bal"
-              type="number"
-              inputMode="decimal"
-              value={newBalance}
-              onChange={(e) => setNewBalance(e.target.value)}
-            />
-          </div>
-          <DialogFooter>
-            <Button onClick={handleUpdateBalance}>Guardar</Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
     </div>
   );
 }
