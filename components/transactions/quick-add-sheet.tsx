@@ -18,7 +18,7 @@ import { useUIStore } from "@/lib/store/ui";
 import { useAccountsStore } from "@/lib/store/accounts";
 import { useTransactionsStore } from "@/lib/store/transactions";
 import { useSettingsStore } from "@/lib/store/settings";
-import { useIsDesktop } from "@/hooks/use-media-query";
+import { useMediaQuery } from "@/hooks/use-media-query";
 import { TypeToggle } from "./type-toggle";
 import { AmountDisplay } from "./amount-display";
 import { CategoryPicker } from "./category-picker";
@@ -186,7 +186,10 @@ function QuickAddBody({
 
   // ───────── MOBILE LAYOUT (unchanged) ─────────
   return (
-    <div className="flex flex-col h-full max-h-[90vh] overflow-y-auto p-4 gap-4">
+    <div
+      className="mx-auto flex h-full w-full max-w-md flex-col gap-4 overflow-y-auto p-4"
+      style={{ paddingBottom: "max(1rem, env(safe-area-inset-bottom))" }}
+    >
       <div className="flex items-center justify-between">
         <button
           type="button"
@@ -230,7 +233,9 @@ function QuickAddBody({
 
 export function QuickAddPanel() {
   const { quickAddOpen, closeQuickAdd, prefill } = useUIStore();
-  const isDesktop = useIsDesktop();
+  // Touch devices (phones AND tablets like iPad) get the numeric keypad layout.
+  // Only true pointer/mouse devices get the compact form with a native input.
+  const isDesktop = useMediaQuery("(min-width: 768px) and (pointer: fine)");
   const bodyKey = `${quickAddOpen ? "open" : "closed"}-${prefill.accountId ?? ""}-${prefill.kind ?? ""}`;
   if (isDesktop) {
     return (
@@ -244,7 +249,7 @@ export function QuickAddPanel() {
   }
   return (
     <Sheet open={quickAddOpen} onOpenChange={(o) => !o && closeQuickAdd()}>
-      <SheetContent side="bottom" className="p-0 h-[90vh]">
+      <SheetContent side="bottom" showCloseButton={false} className="p-0 h-[90vh]">
         <SheetTitle className="sr-only">Nueva transacción</SheetTitle>
         <QuickAddBody key={bodyKey} onClose={closeQuickAdd} variant="mobile" />
       </SheetContent>

@@ -93,7 +93,7 @@ export default function QuickPage() {
   }
 
   return (
-    <div className="min-h-screen bg-background flex items-center justify-center px-4 py-[env(safe-area-inset-top,24px)]">
+    <div className="min-h-screen bg-background flex items-center justify-center px-4 pt-[env(safe-area-inset-top,24px)] pb-[max(env(safe-area-inset-bottom),24px)]">
     <div className="flex flex-col gap-3 w-full max-w-sm">
       {/* Header */}
       <div className="flex items-center justify-between py-1">
