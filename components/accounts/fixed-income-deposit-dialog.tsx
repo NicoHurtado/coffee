@@ -49,14 +49,28 @@ export function FixedIncomeDepositDialog({ open, onOpenChange, account, currentB
     setLoading(true);
     try {
       const defaultDesc = mode === "ingreso" ? "Depósito" : "Retiro";
-      await addTx({
-        accountId: account.id,
-        kind: "adjustment",
-        amount: newBalance,
-        category: "Transferencia",
-        description: description.trim() || defaultDesc,
-        occurredAt: new Date().toISOString(),
-      });
+      if (account.type === "fixed_income") {
+        // Renta fija: registrar el movimiento como flujo de capital con su fecha.
+        // El depósito crece desde hoy y el rendimiento ya ganado se conserva.
+        await addTx({
+          accountId: account.id,
+          kind: mode === "ingreso" ? "income" : "expense",
+          amount: parsed,
+          category: "Transferencia",
+          description: description.trim() || defaultDesc,
+          occurredAt: new Date().toISOString(),
+        });
+      } else {
+        // Inversión: el balance es un snapshot absoluto (no se simula crecimiento).
+        await addTx({
+          accountId: account.id,
+          kind: "adjustment",
+          amount: newBalance,
+          category: "Transferencia",
+          description: description.trim() || defaultDesc,
+          occurredAt: new Date().toISOString(),
+        });
+      }
       toast.success(
         mode === "ingreso"
           ? `Depósito de ${formatMoney(parsed, account.currency)} registrado`

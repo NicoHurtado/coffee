@@ -29,13 +29,13 @@ export function PhysicalCard({ account, balance, className }: PhysicalCardProps)
 
   return (
     <div
-      className={`relative aspect-[1.586/1] w-full min-h-[195px] rounded-2xl overflow-hidden p-4 md:p-5 flex flex-col justify-between gap-1 border ${
+      className={`relative aspect-[1.586/1] w-full min-h-[195px] rounded-2xl p-4 md:p-5 flex flex-col justify-between gap-1 border ${
         isLight ? "text-white" : "text-zinc-900"
       } ${className ?? ""}`}
       style={{ background: s.background, borderColor: s.border }}
     >
       <div
-        className="pointer-events-none absolute inset-0"
+        className="pointer-events-none absolute inset-0 rounded-2xl overflow-hidden"
         style={{
           background: isLight
             ? "linear-gradient(135deg, rgba(255,255,255,0.18) 0%, rgba(255,255,255,0) 35%, rgba(255,255,255,0) 65%, rgba(255,255,255,0.08) 100%)"

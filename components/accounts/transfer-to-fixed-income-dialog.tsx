@@ -39,7 +39,6 @@ export function TransferToFixedIncomeDialog({ open, onOpenChange, sourceAccount,
   const canConfirm = parsed > 0 && parsed <= sourceBalance && !!targetId;
 
   const targetAccount = fixedIncomeAccounts.find((a) => a.id === targetId);
-  const targetBalance = targetAccount ? computeAccountBalance(targetAccount, forAccount(targetAccount.id)) : 0;
 
   const confirm = async () => {
     if (!canConfirm || !targetAccount) return;
@@ -57,11 +56,12 @@ export function TransferToFixedIncomeDialog({ open, onOpenChange, sourceAccount,
         occurredAt: now,
         transferPairId: pairId,
       });
-      // Credit to fixed income as adjustment (new principal)
+      // Credit to fixed income as a dated capital inflow (grows from today;
+      // previously accrued yield is preserved).
       await addTx({
         accountId: targetId,
-        kind: "adjustment",
-        amount: targetBalance + parsed,
+        kind: "income",
+        amount: parsed,
         category: "Transferencia",
         description: `Traslado desde ${sourceAccount.name}`,
         occurredAt: now,
