@@ -21,9 +21,13 @@ export function NetWorth({ size = "xl" }: { size?: "xl" | "lg" }) {
     };
   }, [accounts, txs, usdToCop]);
   const up = pct >= 0;
+  const negative = total < 0;
   return (
     <div>
-      <div className={size === "xl" ? "text-4xl font-bold tabular-nums" : "text-3xl font-bold tabular-nums"}>
+      <div
+        className={`${size === "xl" ? "text-4xl" : "text-3xl"} font-bold tabular-nums ${negative ? "text-red-500" : ""}`}
+      >
+        {negative ? "-" : ""}
         {formatMoney(total, currency)}
       </div>
       <div

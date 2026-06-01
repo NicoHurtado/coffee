@@ -41,10 +41,11 @@ export function HomeKpis() {
     <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
       <KpiCard
         label="Patrimonio neto"
-        value={formatMoney(nw, currency)}
+        value={`${nw < 0 ? "-" : ""}${formatMoney(nw, currency)}`}
         delta={`${formatPct(pct)} este mes`}
         icon={Wallet}
         tone={pct >= 0 ? "up" : "down"}
+        valueTone={nw < 0 ? "down" : "neutral"}
       />
       <KpiCard
         label="Ingresos del mes"

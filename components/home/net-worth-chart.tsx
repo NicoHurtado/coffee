@@ -116,7 +116,8 @@ export function NetWorthChart() {
           <div className="text-xs text-muted-foreground uppercase tracking-wide">
             Patrimonio
           </div>
-          <div className="text-xl font-semibold tabular-nums">
+          <div className={cn("text-xl font-semibold tabular-nums", last < 0 && "text-red-500")}>
+            {last < 0 ? "-" : ""}
             {formatMoney(last, currency)}
           </div>
           <div className={cn("text-xs", up ? "text-emerald-600" : "text-red-500")}>
@@ -191,6 +192,7 @@ export function NetWorthChart() {
                       <span className="w-3 h-0.5 bg-foreground" /> Patrimonio
                     </span>
                     <span className="font-semibold tabular-nums">
+                      {d.value < 0 ? "-" : ""}
                       {formatMoney(d.value, currency)}
                     </span>
                   </div>
