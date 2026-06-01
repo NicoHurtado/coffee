@@ -2,11 +2,12 @@
 import Link from "next/link";
 import { formatMoney } from "@/lib/finance/format";
 import { utilizationPct } from "@/lib/finance/credit";
-import { computeAccountBalance } from "@/lib/finance/net-worth";
+import { computeAccountBalance, toBaseCurrency } from "@/lib/finance/net-worth";
 import { daysToMaturity } from "@/lib/finance/fixed-income";
 import { colorStyle, type AccountColor } from "@/lib/finance/colors";
 import type { Account } from "@/lib/types";
 import { useTransactionsStore } from "@/lib/store/transactions";
+import { useExchangeRateStore } from "@/lib/store/exchange-rate";
 import { PhysicalCard } from "./physical-card";
 
 const TYPE_LABEL: Record<Account["type"], string> = {
@@ -18,7 +19,9 @@ const TYPE_LABEL: Record<Account["type"], string> = {
 
 export function AccountCard({ account }: { account: Account }) {
   const txs = useTransactionsStore((s) => s.forAccount(account.id));
+  const usdToCop = useExchangeRateStore((s) => s.usdToCop);
   const balance = computeAccountBalance(account, txs);
+  const showCop = account.currency === "USD" && !!usdToCop;
 
   // For credit / debit: physical card visual
   if (account.type === "credit" || account.type === "debit") {
@@ -76,8 +79,15 @@ export function AccountCard({ account }: { account: Account }) {
               Balance
             </div>
             <div className="text-xl md:text-2xl font-bold tabular-nums">
-              {formatMoney(balance, account.currency)}
+              {showCop
+                ? formatMoney(toBaseCurrency(balance, account.currency, usdToCop), "COP")
+                : formatMoney(balance, account.currency)}
             </div>
+            {showCop && (
+              <div className="text-[11px] text-muted-foreground tabular-nums">
+                {formatMoney(balance, "USD")}
+              </div>
+            )}
           </div>
           {account.type === "fixed_income" && account.maturityDate && (
             <div className="text-[10px] text-muted-foreground text-right">

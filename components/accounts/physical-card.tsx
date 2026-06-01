@@ -57,9 +57,10 @@ export function PhysicalCard({ account, balance, className }: PhysicalCardProps)
         <CardChip className="w-10 h-7 shrink-0" />
         <div className="text-right min-w-0">
           <div className={`text-[10px] uppercase tracking-wider ${isLight ? "opacity-70" : "opacity-60"}`}>
-            Balance
+            {isCredit ? "Deuda" : "Balance"}
           </div>
           <div className="text-xl md:text-2xl font-bold tabular-nums truncate">
+            {isCredit && balance > 0 ? "-" : ""}
             {formatMoney(balance, account.currency as Currency)}
           </div>
         </div>
