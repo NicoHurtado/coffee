@@ -71,15 +71,15 @@ export default function AnalisisPage() {
   const usdToCop = useExchangeRateStore((s) => s.usdToCop);
   const [monthsBack, setMonthsBack] = useState(6);
 
-  // Distribution by account type (assets only — credit shown separately)
+  // Distribution by account type (assets only — credit is debt, excluded)
   const distribution = useMemo(() => {
     const totals: Record<string, number> = {
       debit: 0,
       fixed_income: 0,
       investment: 0,
-      credit: 0,
     };
     accounts.forEach((a) => {
+      if (a.type === "credit") return; // deuda, no es activo
       totals[a.type] += Math.max(0, toBaseCurrency(computeAccountBalance(a, txs), a.currency, usdToCop));
     });
     return Object.entries(totals)
@@ -89,7 +89,7 @@ export default function AnalisisPage() {
         name: TYPE_LABEL[key as keyof typeof TYPE_LABEL],
         value,
       }));
-  }, [accounts, txs]);
+  }, [accounts, txs, usdToCop]);
 
   const totalAssets = distribution.reduce((s, d) => s + d.value, 0);
 
