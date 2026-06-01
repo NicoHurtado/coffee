@@ -16,6 +16,15 @@ import { netWorth } from "@/lib/finance/net-worth";
 import { formatMoney } from "@/lib/finance/format";
 import { cn } from "@/lib/utils";
 
+/** Compact tick label, e.g. 8500000 -> "$8.5M", 24900 -> "$25K". */
+function compactMoney(v: number): string {
+  const a = Math.abs(v);
+  const sign = v < 0 ? "-" : "";
+  if (a >= 1_000_000) return `${sign}$${(a / 1_000_000).toFixed(1)}M`;
+  if (a >= 1_000) return `${sign}$${Math.round(a / 1_000)}K`;
+  return `${sign}$${Math.round(a)}`;
+}
+
 const RANGES = [
   { key: "1M", days: 30, label: "1M" },
   { key: "3M", days: 90, label: "3M" },
@@ -170,8 +179,31 @@ export function NetWorthChart() {
             tick={{ fontSize: 10 }}
             minTickGap={32}
           />
-          <YAxis yAxisId="patrimony" hide domain={["dataMin", "dataMax"]} />
-          <YAxis yAxisId="flow" hide domain={[0, "dataMax"]} orientation="right" />
+          {/* Dos ejes con escalas independientes y VISIBLES, para que quede claro
+              que la línea (patrimonio, millones) y las barras (flujos, miles) no
+              comparten escala. Izquierda = patrimonio; derecha = ingresos/gastos. */}
+          <YAxis
+            yAxisId="patrimony"
+            orientation="left"
+            domain={["dataMin", "dataMax"]}
+            tickFormatter={compactMoney}
+            tickLine={false}
+            axisLine={false}
+            width={46}
+            tick={{ fontSize: 9, fill: "var(--muted-foreground)" }}
+          />
+          <YAxis
+            yAxisId="flow"
+            orientation="right"
+            // 4x de cabecera: las barras quedan visibles pero solo ocupan la
+            // franja inferior (~1/4), así el patrimonio se ve muy por encima.
+            domain={[0, (max: number) => (max > 0 ? max * 4 : 1)]}
+            tickFormatter={compactMoney}
+            tickLine={false}
+            axisLine={false}
+            width={40}
+            tick={{ fontSize: 9, fill: "#ef4444" }}
+          />
           <ChartTooltip
             cursor={{ stroke: "var(--border)", strokeWidth: 1 }}
             content={(props) => {
