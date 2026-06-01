@@ -106,7 +106,7 @@ export function TransactionEditDialog({
                   (kind === "expense" ? "bg-red-500 text-white" : "text-muted-foreground")
                 }
               >
-                Expense
+                Gasto
               </button>
               <button
                 type="button"
@@ -116,7 +116,7 @@ export function TransactionEditDialog({
                   (kind === "income" ? "bg-emerald-500 text-white" : "text-muted-foreground")
                 }
               >
-                Income
+                Ingreso
               </button>
             </div>
 

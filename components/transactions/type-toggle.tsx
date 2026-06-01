@@ -20,7 +20,7 @@ export function TypeToggle({
             : "text-muted-foreground",
         )}
       >
-        Expense
+        Gasto
       </button>
       <button
         type="button"
@@ -32,7 +32,7 @@ export function TypeToggle({
             : "text-muted-foreground",
         )}
       >
-        Income
+        Ingreso
       </button>
     </div>
   );
