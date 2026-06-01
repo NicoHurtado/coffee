@@ -10,6 +10,7 @@ interface State {
   categories: CategoryDoc[];
   loaded: boolean;
   isHydrating: boolean;
+  seed: (categories: CategoryDoc[]) => void;
   hydrate: () => Promise<void>;
 }
 
@@ -17,6 +18,11 @@ export const useCategoriesStore = create<State>()((set, get) => ({
   categories: [],
   loaded: false,
   isHydrating: false,
+  seed: (categories) => {
+    // Server-prefetched data: skip if the client already loaded fresher state.
+    if (get().loaded) return;
+    set({ categories, loaded: true });
+  },
   hydrate: async () => {
     const { loaded, isHydrating } = get();
     if (loaded || isHydrating) return;

@@ -1,4 +1,5 @@
 "use client";
+import { useMemo } from "react";
 import { ArrowDown, ArrowUp } from "lucide-react";
 import { useAccountsStore } from "@/lib/store/accounts";
 import { useTransactionsStore } from "@/lib/store/transactions";
@@ -12,8 +13,13 @@ export function NetWorth({ size = "xl" }: { size?: "xl" | "lg" }) {
   const txs = useTransactionsStore((s) => s.transactions);
   const currency = useSettingsStore((s) => s.defaultCurrency);
   const usdToCop = useExchangeRateStore((s) => s.usdToCop);
-  const total = netWorth(accounts, txs, new Date(), usdToCop);
-  const pct = monthlyChangePct(accounts, txs, new Date(), usdToCop);
+  const { total, pct } = useMemo(() => {
+    const now = new Date();
+    return {
+      total: netWorth(accounts, txs, now, usdToCop),
+      pct: monthlyChangePct(accounts, txs, now, usdToCop),
+    };
+  }, [accounts, txs, usdToCop]);
   const up = pct >= 0;
   return (
     <div>

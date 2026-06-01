@@ -8,6 +8,7 @@ interface State {
   lastUsedAccountId?: string;
   loaded: boolean;
   isHydrating: boolean;
+  seed: (data: { userName: string; defaultCurrency: Currency; lastUsedAccountId?: string }) => void;
   hydrate: () => Promise<void>;
   setLastUsedAccount: (id: string) => Promise<void>;
 }
@@ -18,6 +19,16 @@ export const useSettingsStore = create<State>()((set, get) => ({
   lastUsedAccountId: undefined,
   loaded: false,
   isHydrating: false,
+  seed: (data) => {
+    // Server-prefetched data: skip if the client already loaded fresher state.
+    if (get().loaded) return;
+    set({
+      userName: data.userName || get().userName,
+      defaultCurrency: data.defaultCurrency ?? get().defaultCurrency,
+      lastUsedAccountId: data.lastUsedAccountId,
+      loaded: true,
+    });
+  },
   hydrate: async () => {
     const { loaded, isHydrating } = get();
     if (loaded || isHydrating) return;

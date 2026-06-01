@@ -1,6 +1,6 @@
 import { Greeting } from "@/components/home/greeting";
 import { NetWorth } from "@/components/home/net-worth";
-import { NetWorthChart } from "@/components/home/net-worth-chart";
+import { NetWorthChartLazy } from "@/components/home/net-worth-chart-lazy";
 import { ExpensesBreakdown } from "@/components/home/expenses-breakdown";
 import { AccountsSlider } from "@/components/accounts/accounts-slider";
 import { AccountsGrid } from "@/components/accounts/accounts-grid";
@@ -24,7 +24,7 @@ export default function HomePage() {
         </div>
         <NetWorth />
         <AccountsSlider />
-        <NetWorthChart />
+        <NetWorthChartLazy />
         <ExpensesBreakdown />
         <RecentActivity />
       </div>
@@ -40,7 +40,7 @@ export default function HomePage() {
 
         <div className="grid grid-cols-12 gap-6">
           <div className="col-span-12 xl:col-span-8 space-y-6">
-            <NetWorthChart />
+            <NetWorthChartLazy />
             <ExpensesBreakdown />
           </div>
           <div className="col-span-12 xl:col-span-4">

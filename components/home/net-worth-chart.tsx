@@ -51,32 +51,47 @@ export function NetWorthChart() {
       incomeItems: Item[];
       expenseItems: Item[];
     }[] = [];
-    const now = new Date();
+    const nowMs = Date.now();
     const stepMs = step * 24 * 60 * 60 * 1000;
+
+    // Parse each timestamp once and sort ascending, so each chart point can
+    // advance a pointer instead of re-filtering the whole list. Net worth at a
+    // point is computed from the prefix slice (all txs up to that date), which
+    // is equivalent to the old `<= d` filter since the balance helpers just sum
+    // whatever txs they receive.
+    const sorted = txs
+      .map((t) => ({ t, time: new Date(t.occurredAt).getTime() }))
+      .sort((a, b) => a.time - b.time);
+    const sortedTxs = sorted.map((x) => x.t);
+
+    let until = 0; // count of txs with time <= current point
     for (let i = days; i >= 0; i -= step) {
-      const d = new Date(now.getTime() - i * 24 * 60 * 60 * 1000);
-      const periodStart = new Date(d.getTime() - stepMs);
-      const txsUntil = txs.filter((t) => new Date(t.occurredAt) <= d);
-      const txsInPeriod = txs.filter((t) => {
-        const td = new Date(t.occurredAt);
-        return td > periodStart && td <= d;
-      });
-      const incomeTxs = txsInPeriod.filter((t) => t.kind === "income");
-      const expenseTxs = txsInPeriod.filter((t) => t.kind === "expense");
-      const income = incomeTxs.reduce((s, t) => s + t.amount, 0);
-      const expense = expenseTxs.reduce((s, t) => s + t.amount, 0);
-      const incomeItems = incomeTxs.map((t) => ({
-        label: t.description || t.category,
-        amount: t.amount,
-      }));
-      const expenseItems = expenseTxs.map((t) => ({
-        label: t.description || t.category,
-        amount: t.amount,
-      }));
+      const dTime = nowMs - i * 24 * 60 * 60 * 1000;
+      const d = new Date(dTime);
+      const periodStart = dTime - stepMs;
+      while (until < sorted.length && sorted[until].time <= dTime) until++;
+
+      // Income/expense within (periodStart, d]: walk back from the prefix edge
+      // only across this step's window. Newest-first, matching prior behaviour.
+      let income = 0;
+      let expense = 0;
+      const incomeItems: Item[] = [];
+      const expenseItems: Item[] = [];
+      for (let j = until - 1; j >= 0 && sorted[j].time > periodStart; j--) {
+        const t = sorted[j].t;
+        if (t.kind === "income") {
+          income += t.amount;
+          incomeItems.push({ label: t.description || t.category, amount: t.amount });
+        } else if (t.kind === "expense") {
+          expense += t.amount;
+          expenseItems.push({ label: t.description || t.category, amount: t.amount });
+        }
+      }
+
       out.push({
-        ts: d.getTime(),
+        ts: dTime,
         label: format(d, days > 180 ? "MMM yyyy" : "d MMM", { locale: es }),
-        value: netWorth(accounts, txsUntil, d, usdToCop),
+        value: netWorth(accounts, sortedTxs.slice(0, until), d, usdToCop),
         income,
         expense,
         incomeItems,
@@ -84,7 +99,7 @@ export function NetWorthChart() {
       });
     }
     return out;
-  }, [accounts, txs, days, step]);
+  }, [accounts, txs, days, step, usdToCop]);
 
   if (accounts.length === 0) return null;
 

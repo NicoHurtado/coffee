@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { v4 as uuid } from "uuid";
 import { getDb } from "@/lib/db/mongodb";
+import { getTransactionsForUser } from "@/lib/db/queries";
 import type { Transaction } from "@/lib/types";
 import { requireUid } from "@/lib/api-auth";
 
@@ -11,13 +12,7 @@ export async function GET() {
   if (auth instanceof NextResponse) return auth;
   const uid = auth;
 
-  const db = await getDb();
-  const docs = await db
-    .collection<Transaction>("transactions")
-    .find({ userId: uid }, { projection: { _id: 0, userId: 0 } })
-    .sort({ occurredAt: -1 })
-    .toArray();
-  return NextResponse.json(docs);
+  return NextResponse.json(await getTransactionsForUser(uid));
 }
 
 export async function POST(req: Request) {

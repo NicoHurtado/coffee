@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { getDb } from "@/lib/db/mongodb";
+import { getSettingsForUser } from "@/lib/db/queries";
 import type { Currency } from "@/lib/types";
 import { requireUid } from "@/lib/api-auth";
 
@@ -26,20 +27,7 @@ export async function GET() {
   if (auth instanceof NextResponse) return auth;
   const uid = auth;
 
-  const db = await getDb();
-  // Name + preferences both live on the user doc — a single read.
-  const user = await db
-    .collection<UserDoc>("users")
-    .findOne(
-      { id: uid },
-      { projection: { _id: 0, name: 1, username: 1, preferences: 1 } },
-    );
-
-  return NextResponse.json({
-    userName: user?.name ?? user?.username ?? "",
-    defaultCurrency: user?.preferences?.defaultCurrency ?? DEFAULTS.defaultCurrency,
-    lastUsedAccountId: user?.preferences?.lastUsedAccountId,
-  });
+  return NextResponse.json(await getSettingsForUser(uid));
 }
 
 export async function PATCH(req: Request) {

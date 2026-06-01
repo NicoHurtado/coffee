@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { v4 as uuid } from "uuid";
 import { getDb } from "@/lib/db/mongodb";
+import { getAccountsForUser } from "@/lib/db/queries";
 import type { Account } from "@/lib/types";
 import { encrypt } from "@/lib/crypto";
 import { requireUid } from "@/lib/api-auth";
@@ -12,13 +13,7 @@ export async function GET() {
   if (auth instanceof NextResponse) return auth;
   const uid = auth;
 
-  const db = await getDb();
-  // Scope to the current user; never send _id, syncToken or userId to the client.
-  const docs = await db
-    .collection<Account>("accounts")
-    .find({ userId: uid }, { projection: { _id: 0, syncToken: 0, userId: 0 } })
-    .toArray();
-  return NextResponse.json(docs);
+  return NextResponse.json(await getAccountsForUser(uid));
 }
 
 export async function POST(req: Request) {

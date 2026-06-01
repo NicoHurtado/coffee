@@ -1,4 +1,5 @@
 "use client";
+import { useMemo } from "react";
 import { Wallet, TrendingUp, ArrowDownRight, ArrowUpRight } from "lucide-react";
 import { startOfMonth } from "date-fns";
 import { useAccountsStore } from "@/lib/store/accounts";
@@ -15,17 +16,26 @@ export function HomeKpis() {
   const currency = useSettingsStore((s) => s.defaultCurrency);
   const usdToCop = useExchangeRateStore((s) => s.usdToCop);
 
-  const nw = netWorth(accounts, txs, new Date(), usdToCop);
-  const pct = monthlyChangePct(accounts, txs, new Date(), usdToCop);
-
-  const monthStart = startOfMonth(new Date());
-  const monthTxs = txs.filter((t) => new Date(t.occurredAt) >= monthStart);
-  const expensesMonth = monthTxs
-    .filter((t) => t.kind === "expense")
-    .reduce((s, t) => s + t.amount, 0);
-  const incomeMonth = monthTxs
-    .filter((t) => t.kind === "income")
-    .reduce((s, t) => s + t.amount, 0);
+  const { nw, pct, expensesMonth, incomeMonth, monthCount } = useMemo(() => {
+    const now = new Date();
+    const monthStart = startOfMonth(now);
+    let expense = 0;
+    let income = 0;
+    let count = 0;
+    for (const t of txs) {
+      if (new Date(t.occurredAt) < monthStart) continue;
+      count++;
+      if (t.kind === "expense") expense += t.amount;
+      else if (t.kind === "income") income += t.amount;
+    }
+    return {
+      nw: netWorth(accounts, txs, now, usdToCop),
+      pct: monthlyChangePct(accounts, txs, now, usdToCop),
+      expensesMonth: expense,
+      incomeMonth: income,
+      monthCount: count,
+    };
+  }, [accounts, txs, usdToCop]);
 
   return (
     <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
@@ -51,7 +61,7 @@ export function HomeKpis() {
       <KpiCard
         label="Cuentas activas"
         value={String(accounts.length)}
-        delta={`${monthTxs.length} mov. este mes`}
+        delta={`${monthCount} mov. este mes`}
         icon={TrendingUp}
       />
     </div>

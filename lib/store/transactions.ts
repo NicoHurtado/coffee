@@ -23,6 +23,7 @@ interface State {
   txsByAccountId: Map<string, Transaction[]>;
   loaded: boolean;
   isHydrating: boolean;
+  seed: (transactions: Transaction[]) => void;
   hydrate: () => Promise<void>;
   refresh: () => Promise<void>;
   add: (data: Omit<Transaction, "id">) => Promise<Transaction>;
@@ -36,6 +37,11 @@ export const useTransactionsStore = create<State>()((set, get) => ({
   txsByAccountId: new Map(),
   loaded: false,
   isHydrating: false,
+  seed: (transactions) => {
+    // Server-prefetched data: skip if the client already loaded fresher state.
+    if (get().loaded) return;
+    set({ transactions, txsByAccountId: buildIndex(transactions), loaded: true });
+  },
   hydrate: async () => {
     const { loaded, isHydrating } = get();
     if (loaded || isHydrating) return;

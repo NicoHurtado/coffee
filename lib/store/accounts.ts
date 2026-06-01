@@ -25,6 +25,7 @@ interface State {
   activeAccounts: Account[];
   loaded: boolean;
   isHydrating: boolean;
+  seed: (accounts: Account[]) => void;
   hydrate: () => Promise<void>;
   refresh: () => Promise<void>;
   add: (data: Omit<Account, "id" | "createdAt">) => Promise<Account>;
@@ -38,6 +39,12 @@ export const useAccountsStore = create<State>()((set, get) => ({
   activeAccounts: [],
   loaded: false,
   isHydrating: false,
+  seed: (all) => {
+    // Server-prefetched data: skip if the client already loaded fresher state.
+    if (get().loaded) return;
+    const accounts = sortAccounts(all);
+    set({ accounts, activeAccounts: deriveActive(accounts), loaded: true });
+  },
   hydrate: async () => {
     const { loaded, isHydrating } = get();
     if (loaded || isHydrating) return;
