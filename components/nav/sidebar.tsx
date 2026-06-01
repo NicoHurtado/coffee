@@ -1,6 +1,6 @@
 "use client";
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { Home, ListOrdered, Wallet, Target, BarChart3, LogOut } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { ThemeToggle } from "./theme-toggle";
@@ -16,14 +16,13 @@ const ITEMS = [
 
 export function Sidebar() {
   const pathname = usePathname();
-  const router = useRouter();
   const usdToCop = useExchangeRateStore((s) => s.usdToCop);
   const trmDate = useExchangeRateStore((s) => s.trmDate);
 
   async function handleLogout() {
     await fetch("/api/auth/logout", { method: "POST" });
-    router.replace("/login");
-    router.refresh();
+    // Full-page load so the next user can't inherit this user's in-memory stores.
+    window.location.assign("/login");
   }
 
   return (

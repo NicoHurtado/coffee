@@ -1,7 +1,7 @@
 "use client";
 
 import { Suspense, useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -10,7 +10,6 @@ import { Checkbox } from "@/components/ui/checkbox";
 type Mode = "login" | "register";
 
 function LoginForm() {
-  const router = useRouter();
   const searchParams = useSearchParams();
   const from = searchParams.get("from") ?? "/";
 
@@ -49,8 +48,10 @@ function LoginForm() {
         return;
       }
       // On register the server logs the user in (sets cookie) → go straight in.
-      router.replace(from === "/login" ? "/" : from);
-      router.refresh();
+      // Full-page load (not router.replace) so any in-memory Zustand stores from a
+      // previous user are discarded; the new page re-seeds with this user's data.
+      window.location.assign(from === "/login" ? "/" : from);
+      return;
     } catch {
       setError("Error de conexión");
     } finally {

@@ -1,11 +1,9 @@
 "use client";
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import { LogOut } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export function LogoutButton({ className }: { className?: string }) {
-  const router = useRouter();
   const [loading, setLoading] = useState(false);
 
   async function handleLogout() {
@@ -13,8 +11,8 @@ export function LogoutButton({ className }: { className?: string }) {
     setLoading(true);
     try {
       await fetch("/api/auth/logout", { method: "POST" });
-      router.replace("/login");
-      router.refresh();
+      // Full-page load so the next user can't inherit this user's in-memory stores.
+      window.location.assign("/login");
     } catch {
       setLoading(false);
     }
