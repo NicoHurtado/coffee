@@ -44,7 +44,7 @@ export function NetWorthChart() {
   const txs = useTransactionsStore((s) => s.transactions);
   const currency = useSettingsStore((s) => s.defaultCurrency);
   const usdToCop = useExchangeRateStore((s) => s.usdToCop);
-  const [range, setRange] = useState<RangeKey>("3M");
+  const [range, setRange] = useState<RangeKey>("1M");
 
   const days = RANGES.find((r) => r.key === range)?.days ?? 90;
   const step = Math.max(1, Math.floor(days / 30));
@@ -60,33 +60,41 @@ export function NetWorthChart() {
       incomeItems: Item[];
       expenseItems: Item[];
     }[] = [];
-    const nowMs = Date.now();
-    const stepMs = step * 24 * 60 * 60 * 1000;
+    const dayMs = 24 * 60 * 60 * 1000;
+    const stepMs = step * dayMs;
+    // Anchor buckets to calendar-day boundaries (local midnight), not the
+    // current time-of-day. Otherwise a tx from yesterday evening would land in
+    // "today" because the rolling `now - i*day` cutoff sits at the current hour.
+    const nowDate = new Date();
+    const todayStart = new Date(
+      nowDate.getFullYear(),
+      nowDate.getMonth(),
+      nowDate.getDate(),
+    ).getTime();
 
     // Parse each timestamp once and sort ascending, so each chart point can
     // advance a pointer instead of re-filtering the whole list. Net worth at a
-    // point is computed from the prefix slice (all txs up to that date), which
-    // is equivalent to the old `<= d` filter since the balance helpers just sum
-    // whatever txs they receive.
+    // point is computed from the prefix slice (all txs up to that date), since
+    // the balance helpers just sum whatever txs they receive.
     const sorted = txs
       .map((t) => ({ t, time: new Date(t.occurredAt).getTime() }))
       .sort((a, b) => a.time - b.time);
     const sortedTxs = sorted.map((x) => x.t);
 
-    let until = 0; // count of txs with time <= current point
+    let until = 0; // count of txs with time < periodEnd
     for (let i = days; i >= 0; i -= step) {
-      const dTime = nowMs - i * 24 * 60 * 60 * 1000;
-      const d = new Date(dTime);
-      const periodStart = dTime - stepMs;
-      while (until < sorted.length && sorted[until].time <= dTime) until++;
+      // Each bucket spans the calendar window [periodStart, periodEnd).
+      const periodStart = todayStart - i * dayMs;
+      const periodEnd = periodStart + stepMs;
+      while (until < sorted.length && sorted[until].time < periodEnd) until++;
 
-      // Income/expense within (periodStart, d]: walk back from the prefix edge
-      // only across this step's window. Newest-first, matching prior behaviour.
+      // Income/expense within [periodStart, periodEnd): walk back from the
+      // prefix edge only across this step's window. Newest-first.
       let income = 0;
       let expense = 0;
       const incomeItems: Item[] = [];
       const expenseItems: Item[] = [];
-      for (let j = until - 1; j >= 0 && sorted[j].time > periodStart; j--) {
+      for (let j = until - 1; j >= 0 && sorted[j].time >= periodStart; j--) {
         const t = sorted[j].t;
         if (t.kind === "income") {
           income += t.amount;
@@ -98,9 +106,16 @@ export function NetWorthChart() {
       }
 
       out.push({
-        ts: dTime,
-        label: format(d, days > 180 ? "MMM yyyy" : "d MMM", { locale: es }),
-        value: netWorth(accounts, sortedTxs.slice(0, until), d, usdToCop),
+        ts: periodStart,
+        label: format(new Date(periodStart), days > 180 ? "MMM yyyy" : "d MMM", {
+          locale: es,
+        }),
+        value: netWorth(
+          accounts,
+          sortedTxs.slice(0, until),
+          new Date(periodEnd - 1),
+          usdToCop,
+        ),
         income,
         expense,
         incomeItems,
