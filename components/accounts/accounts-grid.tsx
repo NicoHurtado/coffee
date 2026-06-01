@@ -16,7 +16,7 @@ export function AccountsGrid() {
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-4">
       {accounts.map((a) => (
-        <div key={a.id} className="[&>a]:min-w-0 [&>a]:max-w-none [&>a]:w-full">
+        <div key={a.id} className="h-full [&>a]:min-w-0 [&>a]:max-w-none [&>a]:w-full">
           <AccountCard account={a} />
         </div>
       ))}

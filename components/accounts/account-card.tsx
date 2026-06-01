@@ -28,9 +28,9 @@ export function AccountCard({ account }: { account: Account }) {
     return (
       <Link
         href={`/cuentas/${account.id}`}
-        className="block min-w-64 max-w-[20rem] w-full shrink-0 transition-transform hover:-translate-y-0.5"
+        className="flex flex-col h-full min-w-64 max-w-[20rem] w-full shrink-0 transition-transform hover:-translate-y-0.5"
       >
-        <PhysicalCard account={account} balance={balance} />
+        <PhysicalCard account={account} balance={balance} className="flex-1" />
         {account.type === "credit" && (
           <div className="mt-2 text-xs text-muted-foreground flex justify-between">
             <span>{account.name}</span>
@@ -49,9 +49,9 @@ export function AccountCard({ account }: { account: Account }) {
   return (
     <Link
       href={`/cuentas/${account.id}`}
-      className="block min-w-64 max-w-[20rem] w-full shrink-0 transition-transform hover:-translate-y-0.5"
+      className="flex flex-col h-full min-w-64 max-w-[20rem] w-full shrink-0 transition-transform hover:-translate-y-0.5"
     >
-      <div className="w-full min-h-[200px] rounded-2xl border bg-card p-4 md:p-5 flex flex-col justify-between gap-1.5 hover:bg-accent/40 transition-colors">
+      <div className="flex-1 w-full min-h-[200px] rounded-2xl border bg-card p-4 md:p-5 flex flex-col justify-between gap-1.5 hover:bg-accent/40 transition-colors">
         <div className="flex items-start justify-between gap-2">
           <span
             className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-medium uppercase tracking-wide"
