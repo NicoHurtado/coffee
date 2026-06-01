@@ -51,7 +51,7 @@ export function AccountCard({ account }: { account: Account }) {
       href={`/cuentas/${account.id}`}
       className="block min-w-64 max-w-[20rem] w-full shrink-0 transition-transform hover:-translate-y-0.5"
     >
-      <div className="aspect-[1.586/1] w-full rounded-2xl border bg-card p-4 md:p-5 flex flex-col justify-between hover:bg-accent/40 transition-colors">
+      <div className="w-full min-h-[200px] rounded-2xl border bg-card p-4 md:p-5 flex flex-col justify-between gap-1.5 hover:bg-accent/40 transition-colors">
         <div className="flex items-start justify-between gap-2">
           <span
             className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-medium uppercase tracking-wide"

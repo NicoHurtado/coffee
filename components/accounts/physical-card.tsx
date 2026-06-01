@@ -29,7 +29,7 @@ export function PhysicalCard({ account, balance, className }: PhysicalCardProps)
 
   return (
     <div
-      className={`relative aspect-[1.586/1] w-full min-h-[195px] rounded-2xl p-4 md:p-5 flex flex-col justify-between gap-1 border ${
+      className={`relative w-full min-h-[200px] rounded-2xl p-4 md:p-5 flex flex-col justify-between gap-1.5 border ${
         isLight ? "text-white" : "text-zinc-900"
       } ${className ?? ""}`}
       style={{ background: s.background, borderColor: s.border }}
