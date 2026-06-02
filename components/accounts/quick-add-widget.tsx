@@ -7,8 +7,10 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { TypeToggle } from "@/components/transactions/type-toggle";
 import { CategoryPicker } from "@/components/transactions/category-picker";
+import { AccountPicker } from "@/components/transactions/account-picker";
 import { PayCreditCardDialog } from "@/components/accounts/pay-credit-card-dialog";
 import { useTransactionsStore } from "@/lib/store/transactions";
+import { useAccountsStore } from "@/lib/store/accounts";
 import { useSettingsStore } from "@/lib/store/settings";
 import { computeAccountBalance } from "@/lib/finance/net-worth";
 import type { Account, CreditAccount, TransactionKind } from "@/lib/types";
@@ -16,6 +18,7 @@ import type { Account, CreditAccount, TransactionKind } from "@/lib/types";
 export function QuickAddWidget({ account }: { account: Account }) {
   const addTx = useTransactionsStore((s) => s.add);
   const txs = useTransactionsStore((s) => s.forAccount(account.id));
+  const accounts = useAccountsStore((s) => s.activeAccounts);
   const setLastUsed = useSettingsStore((s) => s.setLastUsedAccount);
   const isCredit = account.type === "credit";
 
@@ -24,21 +27,60 @@ export function QuickAddWidget({ account }: { account: Account }) {
   const [kind, setKind] = useState<TransactionKind>("expense");
   const [amount, setAmount] = useState("");
   const [category, setCategory] = useState<string | undefined>();
+  const [destinationId, setDestinationId] = useState<string | undefined>();
   const [description, setDescription] = useState("");
   const [payOpen, setPayOpen] = useState(false);
 
+  const isTransfer = kind === "transfer";
   const amountNum = parseFloat(amount || "0");
-  const canSubmit = amountNum > 0 && !!category;
+  const canSubmit = isTransfer
+    ? amountNum > 0 && !!destinationId && destinationId !== account.id
+    : amountNum > 0 && !!category;
 
   const submit = async () => {
-    if (!canSubmit || !category) return;
+    if (!canSubmit) return;
+    const now = new Date().toISOString();
+
+    if (isTransfer) {
+      if (!destinationId || destinationId === account.id) return;
+      const dst = accounts.find((a) => a.id === destinationId);
+      const pairId = `pair-${Date.now()}`;
+      await addTx({
+        accountId: account.id,
+        kind: "transfer",
+        direction: "out",
+        amount: amountNum,
+        category: "Traslado",
+        description: description || (dst ? `Traslado a ${dst.name}` : undefined),
+        occurredAt: now,
+        transferPairId: pairId,
+      });
+      await addTx({
+        accountId: destinationId,
+        kind: "transfer",
+        direction: "in",
+        amount: amountNum,
+        category: "Traslado",
+        description: description || `Traslado desde ${account.name}`,
+        occurredAt: now,
+        transferPairId: pairId,
+      });
+      await setLastUsed(account.id);
+      toast.success("Traslado registrado");
+      setAmount("");
+      setDescription("");
+      setDestinationId(undefined);
+      return;
+    }
+
+    if (!category) return;
     await addTx({
       accountId: account.id,
       kind,
       amount: amountNum,
       category,
       description: description || undefined,
-      occurredAt: new Date().toISOString(),
+      occurredAt: now,
     });
     await setLastUsed(account.id);
     toast.success(kind === "income" ? "Ingreso registrado" : "Gasto registrado");
@@ -84,7 +126,7 @@ export function QuickAddWidget({ account }: { account: Account }) {
           </button>
         </div>
       ) : (
-        <TypeToggle value={kind === "income" ? "income" : "expense"} onChange={setKind} />
+        <TypeToggle value={kind === "income" || kind === "transfer" ? kind : "expense"} onChange={setKind} />
       )}
 
       {/* Only show form when in expense/income mode (not pay mode for credit) */}
@@ -103,7 +145,17 @@ export function QuickAddWidget({ account }: { account: Account }) {
             />
           </div>
 
-          <CategoryPicker value={category} onChange={setCategory} />
+          {isTransfer ? (
+            <div className="space-y-1.5">
+              <Label>Cuenta destino</Label>
+              <AccountPicker value={destinationId} onChange={setDestinationId} />
+              {destinationId === account.id && (
+                <p className="text-xs text-red-500">Elige una cuenta distinta a la actual.</p>
+              )}
+            </div>
+          ) : (
+            <CategoryPicker value={category} onChange={setCategory} />
+          )}
 
           <div className="space-y-1.5">
             <Label htmlFor="qa-desc">Descripción</Label>
@@ -120,7 +172,9 @@ export function QuickAddWidget({ account }: { account: Account }) {
             onClick={submit}
             className="w-full h-11"
           >
-            Registrar {isCredit ? "gasto" : kind === "income" ? "ingreso" : "gasto"}
+            {isTransfer
+              ? "Registrar traslado"
+              : `Registrar ${isCredit ? "gasto" : kind === "income" ? "ingreso" : "gasto"}`}
           </Button>
         </>
       )}
