@@ -73,20 +73,60 @@ export const useTransactionsStore = create<State>()((set, get) => ({
     return tx;
   },
   update: async (id, patch) => {
-    const transactions = get().transactions.map((t) =>
-      t.id === id ? { ...t, ...patch } : t,
-    );
+    const current = get().transactions;
+    const target = current.find((t) => t.id === id);
+    // Si es un traslado, el monto y la fecha deben permanecer iguales en ambas
+    // patas para que origen y destino sigan cuadrando. La dirección de cada
+    // pata NO se toca.
+    const sibling =
+      target?.kind === "transfer" && target.transferPairId
+        ? current.find(
+            (t) => t.transferPairId === target.transferPairId && t.id !== id,
+          )
+        : undefined;
+    const siblingPatch: Partial<Transaction> = {};
+    if (sibling) {
+      if (patch.amount !== undefined) siblingPatch.amount = patch.amount;
+      if (patch.occurredAt !== undefined) siblingPatch.occurredAt = patch.occurredAt;
+    }
+    const applySibling = sibling && Object.keys(siblingPatch).length > 0;
+
+    const transactions = current.map((t) => {
+      if (t.id === id) return { ...t, ...patch };
+      if (applySibling && t.id === sibling!.id) return { ...t, ...siblingPatch };
+      return t;
+    });
     set({ transactions, txsByAccountId: buildIndex(transactions) });
     void fetch(`/api/transactions/${id}`, {
       method: "PATCH",
       headers: { "content-type": "application/json" },
       body: JSON.stringify(patch),
     });
+    if (applySibling) {
+      void fetch(`/api/transactions/${sibling!.id}`, {
+        method: "PATCH",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify(siblingPatch),
+      });
+    }
   },
   remove: async (id) => {
-    const transactions = get().transactions.filter((t) => t.id !== id);
+    const current = get().transactions;
+    const target = current.find((t) => t.id === id);
+    // Un traslado son dos patas (out + in) ligadas por transferPairId.
+    // Borrar una sola dejaría el movimiento cojo y "perdería" plata, así que
+    // se borran ambas juntas.
+    const idsToRemove =
+      target?.kind === "transfer" && target.transferPairId
+        ? current
+            .filter((t) => t.transferPairId === target.transferPairId)
+            .map((t) => t.id)
+        : [id];
+    const transactions = current.filter((t) => !idsToRemove.includes(t.id));
     set({ transactions, txsByAccountId: buildIndex(transactions) });
-    void fetch(`/api/transactions/${id}`, { method: "DELETE" });
+    for (const rid of idsToRemove) {
+      void fetch(`/api/transactions/${rid}`, { method: "DELETE" });
+    }
   },
   forAccount: (accountId) => get().txsByAccountId.get(accountId) ?? EMPTY_TXS,
 }));
