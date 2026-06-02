@@ -1,6 +1,7 @@
 "use client";
 import { create } from "zustand";
 import { v4 as uuid } from "uuid";
+import { toast } from "sonner";
 import type { Transaction } from "@/lib/types";
 
 const EMPTY_TXS: Transaction[] = [];
@@ -62,14 +63,24 @@ export const useTransactionsStore = create<State>()((set, get) => ({
   },
   add: async (data) => {
     // Optimistic: generate id client-side, update UI immediately, persist in background.
+    const prev = get().transactions;
     const tx: Transaction = { ...data, id: uuid() } as Transaction;
-    const transactions = [tx, ...get().transactions];
+    const transactions = [tx, ...prev];
     set({ transactions, txsByAccountId: buildIndex(transactions) });
-    void fetch("/api/transactions", {
-      method: "POST",
-      headers: { "content-type": "application/json" },
-      body: JSON.stringify(tx),
-    });
+    try {
+      const res = await fetch("/api/transactions", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify(tx),
+      });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    } catch {
+      // El guardado falló: revertir la inserción optimista. Si no, quedaría una
+      // transacción "fantasma" visible en la sesión que desaparecería al
+      // recargar (p. ej. al día siguiente) porque nunca llegó a la base de datos.
+      set({ transactions: prev, txsByAccountId: buildIndex(prev) });
+      toast.error("No se pudo guardar el movimiento. Revisa tu conexión e inténtalo de nuevo.");
+    }
     return tx;
   },
   update: async (id, patch) => {
@@ -97,17 +108,25 @@ export const useTransactionsStore = create<State>()((set, get) => ({
       return t;
     });
     set({ transactions, txsByAccountId: buildIndex(transactions) });
-    void fetch(`/api/transactions/${id}`, {
-      method: "PATCH",
-      headers: { "content-type": "application/json" },
-      body: JSON.stringify(patch),
-    });
-    if (applySibling) {
-      void fetch(`/api/transactions/${sibling!.id}`, {
+
+    const patchReq = (txId: string, body: Partial<Transaction>) =>
+      fetch(`/api/transactions/${txId}`, {
         method: "PATCH",
         headers: { "content-type": "application/json" },
-        body: JSON.stringify(siblingPatch),
+        body: JSON.stringify(body),
+      }).then((res) => {
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
       });
+
+    try {
+      const reqs = [patchReq(id, patch)];
+      if (applySibling) reqs.push(patchReq(sibling!.id, siblingPatch));
+      await Promise.all(reqs);
+    } catch {
+      // Alguna escritura falló: revertir al estado previo para no mostrar un
+      // cambio que no se persistió y que desaparecería al recargar.
+      set({ transactions: current, txsByAccountId: buildIndex(current) });
+      toast.error("No se pudo actualizar el movimiento. Revisa tu conexión e inténtalo de nuevo.");
     }
   },
   remove: async (id) => {
@@ -124,8 +143,19 @@ export const useTransactionsStore = create<State>()((set, get) => ({
         : [id];
     const transactions = current.filter((t) => !idsToRemove.includes(t.id));
     set({ transactions, txsByAccountId: buildIndex(transactions) });
-    for (const rid of idsToRemove) {
-      void fetch(`/api/transactions/${rid}`, { method: "DELETE" });
+    try {
+      await Promise.all(
+        idsToRemove.map((rid) =>
+          fetch(`/api/transactions/${rid}`, { method: "DELETE" }).then((res) => {
+            if (!res.ok) throw new Error(`HTTP ${res.status}`);
+          }),
+        ),
+      );
+    } catch {
+      // El borrado falló en el servidor: restaurar para no ocultar un
+      // movimiento que en realidad sigue existiendo en la base de datos.
+      set({ transactions: current, txsByAccountId: buildIndex(current) });
+      toast.error("No se pudo eliminar el movimiento. Revisa tu conexión e inténtalo de nuevo.");
     }
   },
   forAccount: (accountId) => get().txsByAccountId.get(accountId) ?? EMPTY_TXS,
