@@ -63,6 +63,7 @@ function QuickAddBody({
   const [accountId, setAccountId] = useState<string | undefined>(
     prefill.accountId ?? lastUsedAccountId ?? accounts[0]?.id,
   );
+  const [destinationId, setDestinationId] = useState<string | undefined>();
   const [description, setDescription] = useState("");
 
   const amountInputRef = useRef<HTMLInputElement>(null);
@@ -74,18 +75,57 @@ function QuickAddBody({
     }
   }, [variant]);
 
+  const isTransfer = kind === "transfer";
   const amountNum = parseFloat(amount || "0");
-  const canConfirm = amountNum > 0 && !!accountId && !!category;
+  const canConfirm = isTransfer
+    ? amountNum > 0 && !!accountId && !!destinationId && accountId !== destinationId
+    : amountNum > 0 && !!accountId && !!category;
 
   const submit = () => {
-    if (!canConfirm || !accountId || !category) return;
+    if (!canConfirm || !accountId) return;
+    const now = new Date().toISOString();
+
+    if (isTransfer) {
+      if (!destinationId || accountId === destinationId) return;
+      const src = accounts.find((a) => a.id === accountId);
+      const dst = accounts.find((a) => a.id === destinationId);
+      const pairId = `pair-${Date.now()}`;
+      // Salida del origen
+      addTx({
+        accountId,
+        kind: "transfer",
+        direction: "out",
+        amount: amountNum,
+        category: "Traslado",
+        description: description || (dst ? `Traslado a ${dst.name}` : undefined),
+        occurredAt: now,
+        transferPairId: pairId,
+      });
+      // Entrada al destino (no cuenta como ingreso)
+      addTx({
+        accountId: destinationId,
+        kind: "transfer",
+        direction: "in",
+        amount: amountNum,
+        category: "Traslado",
+        description: description || (src ? `Traslado desde ${src.name}` : undefined),
+        occurredAt: now,
+        transferPairId: pairId,
+      });
+      setLastUsedAccount(accountId);
+      toast.success("Traslado registrado");
+      onClose();
+      return;
+    }
+
+    if (!category) return;
     addTx({
       accountId,
       kind,
       amount: amountNum,
       category,
       description: description || undefined,
-      occurredAt: new Date().toISOString(),
+      occurredAt: now,
     });
     setLastUsedAccount(accountId);
     toast.success(kind === "income" ? "Ingreso registrado" : "Gasto registrado");
@@ -105,7 +145,7 @@ function QuickAddBody({
       <div className="flex flex-col p-6 gap-4 w-full" onKeyDown={onKeyDownGlobal}>
         <h2 className="text-lg font-semibold">Nueva transacción</h2>
 
-        <TypeToggle value={kind === "income" ? "income" : "expense"} onChange={setKind} />
+        <TypeToggle value={kind === "income" || kind === "transfer" ? kind : "expense"} onChange={setKind} />
 
         <div className="space-y-1.5">
           <Label htmlFor="qa-amount-desktop">Monto</Label>
@@ -120,11 +160,27 @@ function QuickAddBody({
             placeholder="0.00"
             className={cn(
               "text-xl font-bold h-11 tabular-nums w-full",
-              kind === "income" ? "text-emerald-600" : "text-red-500",
+              isTransfer ? "text-foreground" : kind === "income" ? "text-emerald-600" : "text-red-500",
             )}
           />
         </div>
 
+        {isTransfer ? (
+          <>
+            <div className="space-y-1.5">
+              <Label>Origen</Label>
+              <AccountPicker value={accountId} onChange={setAccountId} />
+            </div>
+            <div className="space-y-1.5">
+              <Label>Destino</Label>
+              <AccountPicker value={destinationId} onChange={setDestinationId} />
+              {accountId && destinationId && accountId === destinationId && (
+                <p className="text-xs text-red-500">El origen y el destino deben ser distintos.</p>
+              )}
+            </div>
+          </>
+        ) : (
+        <>
         <div className="space-y-1.5">
           <Label>Cuenta</Label>
           <AccountPicker value={accountId} onChange={setAccountId} />
@@ -155,6 +211,8 @@ function QuickAddBody({
             })}
           </div>
         </div>
+        </>
+        )}
 
         <div className="space-y-1.5">
           <Label htmlFor="qa-desc-desktop">Descripción</Label>
@@ -201,20 +259,38 @@ function QuickAddBody({
         </button>
       </div>
 
-      <TypeToggle value={kind === "income" ? "income" : "expense"} onChange={setKind} />
+      <TypeToggle value={kind === "income" || kind === "transfer" ? kind : "expense"} onChange={setKind} />
 
       <AmountDisplay
         value={amount}
         currency={defaultCurrency}
-        tone={kind === "income" ? "income" : "expense"}
+        tone={isTransfer ? "income" : kind === "income" ? "income" : "expense"}
       />
 
-      <CategoryPicker value={category} onChange={setCategory} />
+      {isTransfer ? (
+        <>
+          <div className="space-y-2">
+            <div className="text-xs text-muted-foreground">Origen</div>
+            <AccountPicker value={accountId} onChange={setAccountId} />
+          </div>
+          <div className="space-y-2">
+            <div className="text-xs text-muted-foreground">Destino</div>
+            <AccountPicker value={destinationId} onChange={setDestinationId} />
+            {accountId && destinationId && accountId === destinationId && (
+              <p className="text-xs text-red-500">El origen y el destino deben ser distintos.</p>
+            )}
+          </div>
+        </>
+      ) : (
+        <>
+          <CategoryPicker value={category} onChange={setCategory} />
 
-      <div className="space-y-2">
-        <div className="text-xs text-muted-foreground">Cuenta</div>
-        <AccountPicker value={accountId} onChange={setAccountId} />
-      </div>
+          <div className="space-y-2">
+            <div className="text-xs text-muted-foreground">Cuenta</div>
+            <AccountPicker value={accountId} onChange={setAccountId} />
+          </div>
+        </>
+      )}
 
       <Input
         placeholder="Descripción (opcional)"

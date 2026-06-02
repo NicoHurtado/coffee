@@ -50,19 +50,22 @@ export function TransferToFixedIncomeDialog({ open, onOpenChange, sourceAccount,
       await addTx({
         accountId: sourceAccount.id,
         kind: "transfer",
+        direction: "out",
         amount: parsed,
-        category: "Transferencia",
+        category: "Traslado",
         description: `Traslado a ${targetAccount.name}`,
         occurredAt: now,
         transferPairId: pairId,
       });
       // Credit to fixed income as a dated capital inflow (grows from today;
-      // previously accrued yield is preserved).
+      // previously accrued yield is preserved). It's a transfer "in", so it
+      // does NOT count as income in monthly stats.
       await addTx({
         accountId: targetId,
-        kind: "income",
+        kind: "transfer",
+        direction: "in",
         amount: parsed,
-        category: "Transferencia",
+        category: "Traslado",
         description: `Traslado desde ${sourceAccount.name}`,
         occurredAt: now,
         transferPairId: pairId,

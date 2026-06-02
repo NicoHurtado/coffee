@@ -5,6 +5,7 @@ export type CardNetwork = "visa" | "mastercard" | "amex" | "other";
 export type Category = string;
 
 export type TransactionKind = "expense" | "income" | "adjustment" | "transfer";
+export type TransferDirection = "in" | "out";
 
 export interface BaseAccount {
   id: string;
@@ -64,4 +65,7 @@ export interface Transaction {
   description?: string;
   occurredAt: string;
   transferPairId?: string;
+  /** Solo cuando kind === "transfer": "out" sale de la cuenta, "in" entra.
+   *  Registros viejos sin este campo se tratan como "out" (compat). */
+  direction?: TransferDirection;
 }

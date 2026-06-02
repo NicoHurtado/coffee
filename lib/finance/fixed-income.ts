@@ -15,7 +15,8 @@ interface Contribution {
 /**
  * Flujos de capital de la cuenta, igual que una cajita de Nu:
  * - El balance inicial es un aporte en `startDate`.
- * - Depósitos (income) suman; retiros (expense/transfer) restan, en su fecha.
+ * - Depósitos (income, o transfer "in") suman; retiros (expense, o transfer
+ *   "out") restan, en su fecha. Un transfer viejo sin direction es retiro.
  *
  * Cada aporte capitaliza de forma independiente desde su propia fecha: la plata
  * nueva crece desde el día que entra y el interés ya ganado sobre el capital
@@ -32,8 +33,9 @@ function contributions(
     if (t.accountId !== account.id) continue;
     const date = new Date(t.occurredAt);
     if (t.kind === "income") list.push({ date, amount: t.amount });
-    else if (t.kind === "expense" || t.kind === "transfer")
-      list.push({ date, amount: -t.amount });
+    else if (t.kind === "transfer")
+      list.push({ date, amount: t.direction === "in" ? t.amount : -t.amount });
+    else if (t.kind === "expense") list.push({ date, amount: -t.amount });
     // Los "adjustment" antiguos (snapshots absolutos) se ignoran: quedaron
     // reemplazados por flujos con signo.
   }

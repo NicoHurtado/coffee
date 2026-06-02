@@ -1,15 +1,17 @@
 "use client";
 import { cn } from "@/lib/utils";
 
+type ToggleValue = "expense" | "income" | "transfer";
+
 export function TypeToggle({
   value,
   onChange,
 }: {
-  value: "expense" | "income";
-  onChange: (v: "expense" | "income") => void;
+  value: ToggleValue;
+  onChange: (v: ToggleValue) => void;
 }) {
   return (
-    <div className="grid grid-cols-2 gap-2 p-1 rounded-lg bg-muted">
+    <div className="grid grid-cols-3 gap-2 p-1 rounded-lg bg-muted">
       <button
         type="button"
         onClick={() => onChange("expense")}
@@ -33,6 +35,18 @@ export function TypeToggle({
         )}
       >
         Ingreso
+      </button>
+      <button
+        type="button"
+        onClick={() => onChange("transfer")}
+        className={cn(
+          "py-2 rounded-md text-sm font-medium transition",
+          value === "transfer"
+            ? "bg-foreground text-background"
+            : "text-muted-foreground",
+        )}
+      >
+        Traslado
       </button>
     </div>
   );

@@ -55,22 +55,24 @@ export function PayCreditCardDialog({ open, onOpenChange, creditAccount, current
     try {
       const now = new Date().toISOString();
       const pairId = `pair-${Date.now()}`;
-      // 1. Reduce debt on credit card (transfer reduces balance)
+      // 1. Reduce debt on credit card (transfer "out" baja deuda)
       await addTx({
         accountId: creditAccount.id,
         kind: "transfer",
+        direction: "out",
         amount: payAmount,
-        category: "Transferencia",
+        category: "Traslado",
         description: `Pago tarjeta`,
         occurredAt: now,
         transferPairId: pairId,
       });
-      // 2. Debit from source account
+      // 2. Debit from source account (transfer "out" resta del origen)
       await addTx({
         accountId: sourceId,
         kind: "transfer",
+        direction: "out",
         amount: payAmount,
-        category: "Transferencia",
+        category: "Traslado",
         description: `Pago ${creditAccount.name}`,
         occurredAt: now,
         transferPairId: pairId,

@@ -23,7 +23,11 @@ export function accountBalance(account: Account, txs: Transaction[]): number {
   if (account.type === "credit") {
     return own.reduce((acc, t) => {
       if (t.kind === "expense") return acc + t.amount;
-      if (t.kind === "income" || t.kind === "transfer") return acc - t.amount;
+      if (t.kind === "income") return acc - t.amount;
+      // transfer: "in" sube deuda (raro, p.ej. cargo), "out" la baja (pago).
+      // Registros viejos sin direction → "out" (pago), comportamiento previo.
+      if (t.kind === "transfer")
+        return t.direction === "in" ? acc + t.amount : acc - t.amount;
       return acc;
     }, account.initialBalance);
   }
@@ -31,7 +35,10 @@ export function accountBalance(account: Account, txs: Transaction[]): number {
   // debit
   return own.reduce((acc, t) => {
     if (t.kind === "income") return acc + t.amount;
-    if (t.kind === "expense" || t.kind === "transfer") return acc - t.amount;
+    if (t.kind === "expense") return acc - t.amount;
+    // transfer: "in" suma, "out" resta. Viejos sin direction → "out".
+    if (t.kind === "transfer")
+      return t.direction === "in" ? acc + t.amount : acc - t.amount;
     if (t.kind === "adjustment") return t.amount;
     return acc;
   }, account.initialBalance);
