@@ -1,6 +1,7 @@
 "use client";
 import { use, useState, useCallback, useEffect } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { ArrowLeft, Pencil, ChevronDown } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
@@ -52,6 +53,7 @@ export default function AccountDetailPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = use(params);
+  const router = useRouter();
   const account = useAccountsStore((s) => s.getById(id));
   const txs = useTransactionsStore((s) => s.forAccount(id));
   const openQuickAdd = useUIStore((s) => s.openQuickAdd);
@@ -92,6 +94,18 @@ export default function AccountDetailPage({
   }, [account?.type, (account as import("@/lib/types").InvestmentAccount)?.lastSyncDate]);
 
   const usdToCopRate = useExchangeRateStore((s) => s.usdToCop);
+
+  // Volver con el historial del navegador es instantáneo: restaura la página
+  // anterior ya renderizada (router cache) en vez de disparar una navegación
+  // nueva que vuelve a pedir el RSC de /cuentas al servidor. Si se entró por
+  // enlace directo (sin historial), se cae al push normal.
+  const goBack = useCallback(() => {
+    if (typeof window !== "undefined" && window.history.length > 1) {
+      router.back();
+    } else {
+      router.push("/cuentas");
+    }
+  }, [router]);
 
   if (!account) {
     return (
@@ -179,9 +193,14 @@ export default function AccountDetailPage({
   return (
     <div className="p-4 md:p-8 pb-32 md:pb-8 space-y-5">
       <div className="flex items-center justify-between">
-        <Link href="/cuentas" className="size-9 rounded-md hover:bg-accent flex items-center justify-center">
+        <button
+          type="button"
+          onClick={goBack}
+          aria-label="Volver"
+          className="size-9 rounded-md hover:bg-accent flex items-center justify-center"
+        >
           <ArrowLeft className="size-5" />
-        </Link>
+        </button>
         <h1 className="text-base font-medium md:text-lg md:font-semibold">Detalle de Cuenta</h1>
         <Link
           href={`/cuentas/${account.id}/editar`}
