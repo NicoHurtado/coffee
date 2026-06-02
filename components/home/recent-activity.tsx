@@ -7,6 +7,7 @@ import { TransactionItem } from "@/components/transactions/transaction-item";
 import { TransactionEditDialog } from "@/components/transactions/transaction-edit-dialog";
 import type { Transaction } from "@/lib/types";
 import { isSyncTx } from "@/lib/finance/sync";
+import { collapseTransferPairs } from "@/lib/finance/transfers";
 
 import { Separator } from "@/components/ui/separator";
 
@@ -22,11 +23,12 @@ export function RecentActivity({
   const currency = useSettingsStore((s) => s.defaultCurrency);
   const txs = useTransactionsStore((s) => s.transactions);
   const [editing, setEditing] = useState<Transaction | null>(null);
-  const filtered = (accountId ? txs.filter((t) => t.accountId === accountId) : txs)
+  const sorted = (accountId ? txs.filter((t) => t.accountId === accountId) : txs)
     .filter((t) => !isSyncTx(t))
     .slice()
-    .sort((a, b) => +new Date(b.occurredAt) - +new Date(a.occurredAt))
-    .slice(0, limit);
+    .sort((a, b) => +new Date(b.occurredAt) - +new Date(a.occurredAt));
+  // En la vista global, un traslado son dos patas: mostrar solo una fila.
+  const filtered = (accountId ? sorted : collapseTransferPairs(sorted)).slice(0, limit);
 
   // Group transactions by calendar day (yyyy-mm-dd key)
   const grouped = filtered.reduce((acc, t) => {

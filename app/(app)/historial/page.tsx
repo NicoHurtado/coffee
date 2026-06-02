@@ -17,6 +17,7 @@ import { useTransactionsStore } from "@/lib/store/transactions";
 import { useSettingsStore } from "@/lib/store/settings";
 import { formatMoney } from "@/lib/finance/format";
 import { isSyncTx } from "@/lib/finance/sync";
+import { collapseTransferPairs } from "@/lib/finance/transfers";
 
 export default function HistorialPage() {
   const txs = useTransactionsStore((s) => s.transactions);
@@ -28,7 +29,7 @@ export default function HistorialPage() {
 
   const filtered = useMemo(() => {
     const qLow = q.trim().toLowerCase();
-    return txs.filter((t) => {
+    const base = txs.filter((t) => {
       if (isSyncTx(t)) return false;
       const d = new Date(t.occurredAt);
       if (d < period.from || d > period.to) return false;
@@ -39,6 +40,9 @@ export default function HistorialPage() {
       }
       return true;
     });
+    // En "Todas" un traslado son dos patas: colapsar a una sola fila.
+    // Por cuenta no se colapsa (cada cuenta solo tiene su propia pata).
+    return accountId === "all" ? collapseTransferPairs(base) : base;
   }, [txs, q, accountId, period]);
 
   const totals = useMemo(() => {
