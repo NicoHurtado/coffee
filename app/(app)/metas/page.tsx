@@ -1,6 +1,6 @@
 "use client";
 import Link from "next/link";
-import { Target } from "lucide-react";
+import { PageHeader } from "@/components/nav/page-header";
 import { Progress } from "@/components/ui/progress";
 import { useAccountsStore } from "@/lib/store/accounts";
 import { useTransactionsStore } from "@/lib/store/transactions";
@@ -19,13 +19,10 @@ export default function MetasPage() {
 
   return (
     <div className="p-4 md:p-8 space-y-5">
-      <div className="flex items-center gap-2">
-        <Target className="size-6" />
-        <h1 className="text-2xl font-semibold">Metas</h1>
-      </div>
+      <PageHeader eyebrow="Objetivos de ahorro" title="Metas" />
 
       {goals.length === 0 ? (
-        <div className="rounded-xl border border-dashed p-8 text-center text-sm text-muted-foreground">
+        <div className="rounded-lg border border-dashed p-8 text-center text-sm text-muted-foreground">
           Aún no tienes metas de ahorro. Crea una cuenta de Renta Fija y márcala
           como meta para verla aquí.
         </div>
@@ -42,12 +39,12 @@ export default function MetasPage() {
               <Link
                 key={a.id}
                 href={`/cuentas/${a.id}`}
-                className="block rounded-2xl border bg-card p-5 space-y-3 hover:bg-accent/40 transition-colors"
+                className="block rounded-lg border bg-card p-5 space-y-3 hover:bg-accent/40 transition-colors"
               >
                 <div className="flex items-start justify-between gap-3">
                   <div className="min-w-0">
                     <span
-                      className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-medium uppercase tracking-wide"
+                      className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-sm text-[10px] font-semibold uppercase tracking-[0.12em]"
                       style={{ background: s.background, color: s.color }}
                     >
                       <span className="size-1.5 rounded-full" style={{ background: s.muted }} />

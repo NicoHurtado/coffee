@@ -271,14 +271,14 @@ export default function AccountDetailPage({
             <div className="grid grid-cols-2 gap-3">
               <div className="rounded-lg border p-3">
                 <div className="text-[10px] text-muted-foreground uppercase tracking-wide">Límite utilizado</div>
-                <div className="text-lg font-semibold text-red-500 tabular-nums">
+                <div className="text-lg font-semibold text-destructive tabular-nums">
                   {utilizationPct(account, txs).toFixed(0)}%
                 </div>
                 <Progress className="mt-2" value={Math.min(100, utilizationPct(account, txs))} />
               </div>
               <div className="rounded-lg border p-3">
                 <div className="text-[10px] text-muted-foreground uppercase tracking-wide">Crédito disponible</div>
-                <div className="text-lg font-semibold text-emerald-600 tabular-nums">
+                <div className="text-lg font-semibold text-primary tabular-nums">
                   {formatMoney(availableCredit(account, txs), account.currency)}
                 </div>
                 <Progress
@@ -306,7 +306,7 @@ export default function AccountDetailPage({
             <div className="grid grid-cols-2 gap-3">
               <div className="rounded-lg border p-3">
                 <div className="text-[10px] text-muted-foreground uppercase tracking-wide">Rendimiento</div>
-                <div className="text-base font-semibold text-emerald-600 tabular-nums">
+                <div className="text-base font-semibold text-primary tabular-nums">
                   {formatMoney(accruedYield(account, txs), account.currency)}
                 </div>
               </div>
@@ -428,7 +428,7 @@ export default function AccountDetailPage({
                 <div className="rounded-2xl border bg-card p-4 flex flex-col justify-between">
                   <div className="text-[10px] text-muted-foreground uppercase tracking-wide">Límite utilizado</div>
                   <div>
-                    <div className="text-xl font-bold text-red-500 tabular-nums">
+                    <div className="text-xl font-bold text-destructive tabular-nums">
                       {utilizationPct(account, txs).toFixed(0)}%
                     </div>
                     <Progress className="mt-2" value={Math.min(100, utilizationPct(account, txs))} />
@@ -437,7 +437,7 @@ export default function AccountDetailPage({
                 <div className="rounded-2xl border bg-card p-4 flex flex-col justify-between">
                   <div className="text-[10px] text-muted-foreground uppercase tracking-wide">Crédito disponible</div>
                   <div>
-                    <div className="text-xl font-bold text-emerald-600 tabular-nums">
+                    <div className="text-xl font-bold text-primary tabular-nums">
                       {formatMoney(availableCredit(account, txs), account.currency)}
                     </div>
                     <Progress
@@ -479,7 +479,7 @@ export default function AccountDetailPage({
                 <div className="grid grid-cols-2 gap-4">
                   <div className="rounded-2xl border bg-card p-4">
                     <div className="text-[10px] text-muted-foreground uppercase tracking-wide">Rendimiento</div>
-                    <div className="text-lg font-bold text-emerald-600 tabular-nums mt-1">
+                    <div className="text-lg font-bold text-primary tabular-nums mt-1">
                       {formatMoney(accruedYield(account, txs), account.currency)}
                     </div>
                   </div>

@@ -15,9 +15,9 @@ export function AmountDisplay({
   const display = value === "" ? "0" : value;
   const color =
     tone === "expense"
-      ? "text-red-500"
+      ? "text-destructive"
       : tone === "income"
-        ? "text-emerald-500"
+        ? "text-primary"
         : "text-foreground";
   return (
     <div className={`text-center text-5xl font-semibold tabular-nums ${color}`}>

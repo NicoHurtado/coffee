@@ -25,13 +25,13 @@ export function NetWorth({ size = "xl" }: { size?: "xl" | "lg" }) {
   return (
     <div>
       <div
-        className={`${size === "xl" ? "text-4xl" : "text-3xl"} font-bold tabular-nums ${negative ? "text-red-500" : ""}`}
+        className={`${size === "xl" ? "text-4xl" : "text-3xl"} font-bold tabular-nums ${negative ? "text-destructive" : ""}`}
       >
         {negative ? "-" : ""}
         {formatMoney(total, currency)}
       </div>
       <div
-        className={`mt-1 text-sm flex items-center gap-1 ${up ? "text-emerald-500" : "text-red-500"}`}
+        className={`mt-1 text-sm flex items-center gap-1 ${up ? "text-primary" : "text-destructive"}`}
       >
         {up ? <ArrowUp className="size-4" /> : <ArrowDown className="size-4" />}
         {formatPct(pct)} este mes

@@ -62,7 +62,7 @@ export function BottomNav() {
             type="button"
             aria-label="Añadir transacción"
             onClick={() => openQuickAdd()}
-            className="absolute -top-5 left-1/2 -translate-x-1/2 size-12 rounded-full bg-black text-white shadow-lg flex items-center justify-center active:scale-95 transition"
+            className="absolute -top-5 left-1/2 -translate-x-1/2 size-12 rounded-full bg-primary text-primary-foreground shadow-lg flex items-center justify-center active:scale-95 transition"
           >
             <Plus className="size-6" />
           </button>

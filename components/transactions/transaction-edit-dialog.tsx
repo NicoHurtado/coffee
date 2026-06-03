@@ -103,7 +103,7 @@ export function TransactionEditDialog({
                 onClick={() => setKind("expense")}
                 className={
                   "py-1.5 rounded-md text-sm font-medium transition " +
-                  (kind === "expense" ? "bg-red-500 text-white" : "text-muted-foreground")
+                  (kind === "expense" ? "bg-destructive text-white" : "text-muted-foreground")
                 }
               >
                 Gasto
@@ -113,7 +113,7 @@ export function TransactionEditDialog({
                 onClick={() => setKind("income")}
                 className={
                   "py-1.5 rounded-md text-sm font-medium transition " +
-                  (kind === "income" ? "bg-emerald-500 text-white" : "text-muted-foreground")
+                  (kind === "income" ? "bg-primary text-white" : "text-muted-foreground")
                 }
               >
                 Ingreso
@@ -180,7 +180,7 @@ export function TransactionEditDialog({
           <DialogFooter className="flex-row justify-between sm:justify-between gap-2 sm:gap-2">
             <Button
               variant="ghost"
-              className="text-red-500 hover:text-red-600 hover:bg-red-50"
+              className="text-destructive hover:text-destructive hover:bg-red-50"
               onClick={() => setConfirmDelete(true)}
             >
               <Trash2 className="size-4 mr-1" /> Eliminar

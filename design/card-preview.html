@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&family=Geist+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{--bg:#08090b;--card:#101317;--border:#1b1f25;--fg:#e9ebee;--muted:#8a909a;--down:#ea3943}
+  *{box-sizing:border-box;margin:0}
+  body{background:#08090b;font-family:"Hanken Grotesk",sans-serif;color:var(--fg);padding:40px;display:grid;grid-template-columns:repeat(2,300px);gap:20px;justify-content:center}
+  .mono{font-family:"Geist Mono",monospace;font-variant-numeric:tabular-nums}
+  .card{position:relative;overflow:hidden;min-height:200px;border:1px solid var(--border);background:var(--card);border-radius:6px;padding:18px;display:flex;flex-direction:column;justify-content:space-between;gap:6px}
+  .glow{position:absolute;inset:0;pointer-events:none}
+  .row{position:relative;display:flex;align-items:flex-start;justify-content:space-between;gap:8px}
+  .rowe{align-items:flex-end}
+  .type{display:flex;align-items:center;gap:6px;font-size:10px;text-transform:uppercase;letter-spacing:.14em;color:var(--muted);font-weight:700;font-family:"Geist Mono"}
+  .dot{width:6px;height:6px;border-radius:50%}
+  .inst{font-size:14px;font-weight:600;margin-top:2px}
+  .cl{font-size:18px}
+  .chip{width:38px;height:27px;border-radius:5px;background:linear-gradient(135deg,#3a3f47,#23282f);opacity:.7}
+  .lab{font-size:10px;text-transform:uppercase;letter-spacing:.14em;color:var(--muted);font-weight:700;font-family:"Geist Mono";text-align:right}
+  .bal{font-size:23px;font-weight:600;letter-spacing:-.02em}
+  .num{position:relative;font-family:"Geist Mono";letter-spacing:.18em;font-size:15px;color:var(--muted)}
+  .titlab{font-size:9px;text-transform:uppercase;letter-spacing:.14em;color:var(--muted);font-weight:700;font-family:"Geist Mono"}
+  .titv{font-size:13px;font-weight:500;text-transform:uppercase;letter-spacing:.04em}
+  .brand{font-weight:800;font-style:italic;font-size:20px}
+</style></head>
+<body>
+  <!-- VISA credit (gold accent) -->
+  <div class="card" style="border-left:2px solid #d4a017">
+    <div class="glow" style="background:radial-gradient(420px 200px at 100% 0%,#d4a01726,transparent 60%)"></div>
+    <div class="row"><div><div class="type"><span class="dot" style="background:#d4a017"></span>Crédito</div><div class="inst">Bancolombia VISA</div></div><div class="cl" style="color:#d4a017">))</div></div>
+    <div class="row rowe"><div class="chip"></div><div><div class="lab">Deuda</div><div class="bal mono down">-$174.800</div></div></div>
+    <div class="num">•••• &nbsp; •••• &nbsp; •••• &nbsp; 0000</div>
+    <div class="row rowe"><div><div class="titlab">Titular</div><div class="titv">Nicolás</div><div class="lab" style="text-align:left;margin-top:2px">Válida hasta 12/99</div></div><div class="brand" style="color:#d4a017">VISA</div></div>
+  </div>
+
+  <!-- Nu credit (purple accent) -->
+  <div class="card" style="border-left:2px solid #7c3aed">
+    <div class="glow" style="background:radial-gradient(420px 200px at 100% 0%,#7c3aed26,transparent 60%)"></div>
+    <div class="row"><div><div class="type"><span class="dot" style="background:#7c3aed"></span>Crédito</div><div class="inst">Nu</div></div><div class="cl" style="color:#7c3aed">))</div></div>
+    <div class="row rowe"><div class="chip"></div><div><div class="lab">Deuda</div><div class="bal mono">$0</div></div></div>
+    <div class="num">•••• &nbsp; •••• &nbsp; •••• &nbsp; 0000</div>
+    <div class="row rowe"><div><div class="titlab">Titular</div><div class="titv">Nicolás</div></div><div class="brand" style="color:#7c3aed">●●</div></div>
+  </div>
+
+  <!-- Nu debit -->
+  <div class="card" style="border-left:2px solid #7c3aed">
+    <div class="glow" style="background:radial-gradient(420px 200px at 100% 0%,#7c3aed26,transparent 60%)"></div>
+    <div class="row"><div><div class="type"><span class="dot" style="background:#7c3aed"></span>Débito</div><div class="inst">Nu</div></div><div class="cl" style="color:#7c3aed">))</div></div>
+    <div class="row rowe"><div class="chip"></div><div><div class="lab">Balance</div><div class="bal mono">$0</div></div></div>
+    <div class="num">•••• &nbsp; •••• &nbsp; •••• &nbsp; 0000</div>
+    <div class="row rowe"><div><div class="titlab">Titular</div><div class="titv">Nicolás</div></div><div class="brand" style="color:#7c3aed">●●</div></div>
+  </div>
+
+  <!-- Bancolombia debit (gold) -->
+  <div class="card" style="border-left:2px solid #d4a017">
+    <div class="glow" style="background:radial-gradient(420px 200px at 100% 0%,#d4a01726,transparent 60%)"></div>
+    <div class="row"><div><div class="type"><span class="dot" style="background:#d4a017"></span>Débito</div><div class="inst">Bancolombia</div></div><div class="cl" style="color:#d4a017">))</div></div>
+    <div class="row rowe"><div class="chip"></div><div><div class="lab">Balance</div><div class="bal mono">$0</div></div></div>
+    <div class="num">•••• &nbsp; •••• &nbsp; •••• &nbsp; 0000</div>
+    <div class="row rowe"><div><div class="titlab">Titular</div><div class="titv">Nicolás</div></div><div class="brand" style="color:#d4a017">●●</div></div>
+  </div>
+</body></html>

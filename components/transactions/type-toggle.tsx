@@ -18,7 +18,7 @@ export function TypeToggle({
         className={cn(
           "py-2 rounded-md text-sm font-medium transition",
           value === "expense"
-            ? "bg-red-500 text-white"
+            ? "bg-destructive text-white"
             : "text-muted-foreground",
         )}
       >
@@ -30,7 +30,7 @@ export function TypeToggle({
         className={cn(
           "py-2 rounded-md text-sm font-medium transition",
           value === "income"
-            ? "bg-emerald-500 text-white"
+            ? "bg-primary text-white"
             : "text-muted-foreground",
         )}
       >

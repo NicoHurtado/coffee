@@ -78,7 +78,7 @@ export function InvestmentBalanceChart({
           <div className="text-xl font-semibold tabular-nums">
             {formatMoney(last, account.currency)}
           </div>
-          <div className={cn("text-xs", up ? "text-emerald-600" : "text-red-500")}>
+          <div className={cn("text-xs", up ? "text-primary" : "text-destructive")}>
             {up ? "+" : "-"}
             {formatMoney(Math.abs(delta), account.currency)} (
             {deltaPct >= 0 ? "+" : ""}

@@ -160,7 +160,7 @@ function QuickAddBody({
             placeholder="0.00"
             className={cn(
               "text-xl font-bold h-11 tabular-nums w-full",
-              isTransfer ? "text-foreground" : kind === "income" ? "text-emerald-600" : "text-red-500",
+              isTransfer ? "text-foreground" : kind === "income" ? "text-primary" : "text-destructive",
             )}
           />
         </div>
@@ -175,7 +175,7 @@ function QuickAddBody({
               <Label>Destino</Label>
               <AccountPicker value={destinationId} onChange={setDestinationId} />
               {accountId && destinationId && accountId === destinationId && (
-                <p className="text-xs text-red-500">El origen y el destino deben ser distintos.</p>
+                <p className="text-xs text-destructive">El origen y el destino deben ser distintos.</p>
               )}
             </div>
           </>
@@ -277,7 +277,7 @@ function QuickAddBody({
             <div className="text-xs text-muted-foreground">Destino</div>
             <AccountPicker value={destinationId} onChange={setDestinationId} />
             {accountId && destinationId && accountId === destinationId && (
-              <p className="text-xs text-red-500">El origen y el destino deben ser distintos.</p>
+              <p className="text-xs text-destructive">El origen y el destino deben ser distintos.</p>
             )}
           </div>
         </>

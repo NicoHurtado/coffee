@@ -23,10 +23,10 @@ import { formatMoney } from "@/lib/finance/format";
 import { cn } from "@/lib/utils";
 
 const TYPE_COLORS = {
-  debit: "#3b82f6",
-  fixed_income: "#8b5cf6",
-  investment: "#14b8a6",
-  credit: "#ef4444",
+  debit: "#16c784", // emerald (liquidez)
+  fixed_income: "#4f9bb0", // steel blue (renta fija)
+  investment: "#c79a4b", // muted amber (inversión)
+  credit: "#ea3943", // strong red (deuda)
 } as const;
 
 const config = {
@@ -102,7 +102,7 @@ export function NetWorthComposition() {
               <>
                 {" · "}
                 Deuda:{" "}
-                <span className="font-semibold text-red-500 tabular-nums">
+                <span className="font-semibold text-destructive tabular-nums">
                   {formatMoney(liabilities, currency)}
                 </span>
               </>
@@ -130,12 +130,12 @@ export function NetWorthComposition() {
 
       <ChartContainer config={config} className="h-72 w-full">
         <AreaChart data={data} margin={{ top: 10, right: 8, left: 0, bottom: 0 }}>
-          <CartesianGrid vertical={false} strokeDasharray="3 3" />
+          <CartesianGrid vertical={false} stroke="var(--border)" strokeDasharray="3 3" />
           <XAxis
             dataKey="label"
             tickLine={false}
             axisLine={false}
-            tick={{ fontSize: 10 }}
+            tick={{ fontSize: 10, fill: "var(--muted-foreground)" }}
             minTickGap={20}
           />
           <YAxis hide />

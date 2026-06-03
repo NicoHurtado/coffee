@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&family=Geist+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{--bg:#08090b;--card:#101317;--border:#1b1f25;--muted-bg:#13161b;--fg:#e9ebee;--muted:#8a909a;--primary:#16c784;--down:#ea3943}
+  *{box-sizing:border-box;margin:0}
+  body{background:#08090b;font-family:"Hanken Grotesk",sans-serif;color:var(--fg);padding:40px;
+    background-image:radial-gradient(900px 480px at 100% -8%,rgba(22,199,132,.05),transparent 60%),linear-gradient(to right,rgba(255,255,255,.018) 1px,transparent 1px),linear-gradient(to bottom,rgba(255,255,255,.018) 1px,transparent 1px);background-size:100% 100%,40px 40px,40px 40px}
+  .mono{font-family:"Geist Mono",monospace;font-variant-numeric:tabular-nums}
+  .wrap{max-width:880px;margin:0 auto;display:flex;flex-direction:column;gap:24px}
+  .eyebrow{font-size:10px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);font-family:"Geist Mono"}
+  h1{font-size:24px;font-weight:700;letter-spacing:-.03em;margin-top:4px}
+  .head{display:flex;align-items:flex-end;justify-content:space-between;border-bottom:1px solid var(--border);padding-bottom:16px}
+  .btn{background:var(--primary);color:#06140a;border:0;border-radius:4px;padding:9px 15px;font:inherit;font-weight:800;font-size:11px;text-transform:uppercase;letter-spacing:.08em;font-family:"Hanken Grotesk"}
+  /* strip */
+  .strip{display:grid;grid-template-columns:1.2fr 1fr 1fr;gap:1px;background:var(--border);border:1px solid var(--border);border-radius:6px;overflow:hidden}
+  .cell{background:var(--card);padding:18px 20px}
+  .lab{font-size:10px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);font-family:"Geist Mono"}
+  .big{font-size:30px;font-weight:700;letter-spacing:-.02em;margin-top:6px}
+  .chg{font-size:12px;color:var(--primary);font-weight:600;margin-top:4px}
+  .mid{font-size:20px;font-weight:600;margin-top:5px}
+  /* section */
+  .sec-h{display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border);padding-bottom:9px;margin-bottom:10px}
+  .sec-t{font-size:11px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);font-family:"Geist Mono"}
+  .list{border:1px solid var(--border);border-radius:6px;overflow:hidden;background:var(--card)}
+  .row{display:flex;align-items:center;gap:16px;padding:14px 16px;border-bottom:1px solid var(--border);cursor:pointer}
+  .row:last-child{border-bottom:0}
+  .row:hover{background:#171b21}
+  .tile{height:36px;width:48px;flex-shrink:0;border:1px solid var(--border);border-radius:6px;background:var(--muted-bg);display:flex;align-items:flex-end;justify-content:flex-end;padding:4px;position:relative}
+  .tile .chip{position:absolute;left:6px;top:6px;width:8px;height:6px;border-radius:1px}
+  .tile .brand{font-size:8px;font-weight:800;font-style:italic}
+  .tile.mono-tile{align-items:center;justify-content:center;font-family:"Geist Mono";font-weight:700;font-size:10px}
+  .nm{flex:1;min-width:0}
+  .nm b{font-size:14px;font-weight:600;display:block}
+  .nm small{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}
+  .bal{font-size:14px;font-weight:600;text-align:right}
+  .sub{font-size:11px;color:var(--muted)}
+</style></head>
+<body>
+<div class="wrap">
+  <div class="head">
+    <div><div class="eyebrow">Portafolio</div><h1>Cuentas</h1></div>
+    <button class="btn">+ Nueva cuenta</button>
+  </div>
+
+  <div class="strip">
+    <div class="cell"><div class="lab">Patrimonio neto</div><div class="big mono">$8.144.308</div><div class="chg">↑ +235,4% este mes</div></div>
+    <div class="cell"><div class="lab">Activos</div><div class="mid mono" style="color:var(--primary)">$8.319.108</div></div>
+    <div class="cell"><div class="lab">Deuda</div><div class="mid mono" style="color:var(--down)">-$174.800</div></div>
+  </div>
+
+  <div>
+    <div class="sec-h"><div class="sec-t">Débito · 3</div><div class="mono" style="font-size:14px;font-weight:600">$0</div></div>
+    <div class="list">
+      <div class="row"><div class="tile" style="border-left:2px solid #7c3aed"><span class="chip" style="background:#7c3aed"></span><span class="brand" style="color:#7c3aed">●●</span></div><div class="nm"><b>Nu Debito</b><small>Nu</small></div><div class="bal mono">$0</div></div>
+      <div class="row"><div class="tile" style="border-left:2px solid #d4a017"><span class="chip" style="background:#d4a017"></span><span class="brand" style="color:#d4a017">●●</span></div><div class="nm"><b>Bancolombia</b><small>Bancolombia</small></div><div class="bal mono">$0</div></div>
+      <div class="row"><div class="tile mono-tile" style="border-left:2px solid #16c784;color:#16c784">ARQ</div><div class="nm"><b>Arq USD</b><small>ARQ</small></div><div class="bal"><div class="mono">$0</div><div class="sub mono">$0.00</div></div></div>
+    </div>
+  </div>
+
+  <div>
+    <div class="sec-h"><div class="sec-t">Tarjetas de Crédito · 2</div><div class="mono" style="font-size:14px;font-weight:600;color:var(--down)">-$174.800</div></div>
+    <div class="list">
+      <div class="row"><div class="tile" style="border-left:2px solid #a1a1aa"><span class="chip" style="background:#a1a1aa"></span><span class="brand" style="color:#a1a1aa">VISA</span></div><div class="nm"><b>Visa Bancolombia Platino</b><small>Bancolombia VISA</small></div><div class="bal mono" style="color:var(--down)">-$174.800</div></div>
+      <div class="row"><div class="tile" style="border-left:2px solid #7c3aed"><span class="chip" style="background:#7c3aed"></span><span class="brand" style="color:#7c3aed">●●</span></div><div class="nm"><b>Nu Credit Card</b><small>Nu</small></div><div class="bal mono" style="color:var(--down)">$0</div></div>
+    </div>
+  </div>
+
+  <div>
+    <div class="sec-h"><div class="sec-t">Renta Fija · 2</div><div class="mono" style="font-size:14px;font-weight:600">$3.368.142</div></div>
+    <div class="list">
+      <div class="row"><div class="tile mono-tile" style="border-left:2px solid #7c3aed;color:#7c3aed">MAC</div><div class="nm"><b>Macbook - Nu cajita</b><small>Nu · 9.25% anual</small></div><div class="bal mono">$2.101.979</div></div>
+      <div class="row"><div class="tile mono-tile" style="border-left:2px solid #7c3aed;color:#7c3aed">STUFF</div><div class="nm"><b>Cajita Stuff</b><small>Cajita · 9.25% anual</small></div><div class="bal mono">$1.266.163</div></div>
+    </div>
+  </div>
+</div>
+</body></html>

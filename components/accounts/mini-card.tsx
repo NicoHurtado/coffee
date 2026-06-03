@@ -1,10 +1,14 @@
 "use client";
-import { cardStyle, type AccountColor } from "@/lib/finance/colors";
+import { getColorDef, type AccountColor } from "@/lib/finance/colors";
 import { CardBrandLogo } from "./card-brand";
 import type { Account, CardNetwork } from "@/lib/types";
 import { cn } from "@/lib/utils";
 
-/** Small visual identifier for an account — mimics the look of its card/badge. */
+/**
+ * Small high-contrast account identifier. Dark tile that matches the app
+ * surface, with the account's color shown only as a left accent bar + tinted
+ * mark — consistent with the redesigned physical cards.
+ */
 export function MiniCard({
   account,
   className,
@@ -12,49 +16,38 @@ export function MiniCard({
   account: Account;
   className?: string;
 }) {
-  const color = account.color as AccountColor | undefined;
+  const accent = getColorDef(account.color as AccountColor | undefined).base;
 
   if (account.type === "debit" || account.type === "credit") {
-    const s = cardStyle(color);
-    const isLight = s.textTone === "light";
-    const network = (account.type === "credit"
-      ? account.network
-      : account.network) as CardNetwork | undefined;
+    const network = account.network as CardNetwork | undefined;
     return (
       <div
         className={cn(
-          "relative w-12 h-8 rounded-md overflow-hidden border shrink-0 flex items-end justify-end p-1",
+          "relative h-9 w-12 shrink-0 overflow-hidden rounded-md border bg-muted flex items-end justify-end p-1",
           className,
         )}
-        style={{ background: s.background, borderColor: s.border }}
+        style={{ borderLeft: `2px solid ${accent}` }}
       >
-        {/* chip dot */}
-        <div className="absolute top-1 left-1 size-1.5 rounded-[1px] bg-amber-300/80" />
-        <span
-          style={{ color: s.brandColor }}
-          className={cn("inline-flex", isLight ? "opacity-95" : "opacity-90")}
-        >
-          <CardBrandLogo network={network} className="h-2 w-auto" />
+        <div className="absolute left-1.5 top-1.5 h-1.5 w-2 rounded-[1px]" style={{ background: accent }} />
+        <span style={{ color: accent }} className="inline-flex">
+          <CardBrandLogo network={network} className="h-2.5 w-auto" />
         </span>
       </div>
     );
   }
 
-  // renta fija / inversión: small tile with full saturated card gradient
-  const s = cardStyle(color);
-  const isLight = s.textTone === "light";
+  // renta fija / inversión: dark tile with accent monogram
   const fallback =
     account.type === "fixed_income" ? "RF" : account.type === "investment" ? "IN" : "·";
   const label = (account.miniLabel ?? fallback).slice(0, 5).toUpperCase();
   return (
     <div
       className={cn(
-        "w-12 h-8 rounded-md border shrink-0 flex items-center justify-center font-bold tracking-wider px-0.5",
+        "flex h-9 w-12 shrink-0 items-center justify-center rounded-md border bg-muted px-0.5 font-mono font-semibold tracking-wider",
         label.length <= 2 ? "text-[10px]" : label.length <= 3 ? "text-[9px]" : "text-[8px]",
-        isLight ? "text-white" : "text-zinc-900",
         className,
       )}
-      style={{ background: s.background, borderColor: s.border }}
+      style={{ borderLeft: `2px solid ${accent}`, color: accent }}
     >
       {label}
     </div>

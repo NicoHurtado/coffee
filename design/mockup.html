@@ -1,0 +1,213 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Coffee — Rediseño dashboard (mockup)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=Geist+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  /* ---------- TOKENS ---------- */
+  :root{
+    --bg:#fbfbfa; --fg:#171717; --muted:#71717a; --card:#ffffff; --border:#e8e8e6;
+    --primary:#0f9d6b; --primary-fg:#ffffff; --accent:#e9f7f0; --accent-fg:#0f7a55;
+    --up:#0f9d6b; --down:#e5484d; --ring:#0f9d6b;
+    --c1:#0f9d6b; --c2:#2dd4a7; --c3:#34d399; --c4:#a7f3d0; --c5:#cbd5cf;
+    --panel-shadow:0 1px 2px rgba(16,24,40,.04),0 1px 3px rgba(16,24,40,.06);
+    --radius:14px;
+  }
+  .dark{
+    --bg:#08080a; --fg:#ededee; --muted:#7d7d83; --card:#0f0f12; --card-solid:#0f0f12;
+    --border:#ffffff0f; --primary:#4cc38a; --primary-fg:#04130c; --accent:#16181a; --accent-fg:#cfd0d2;
+    --up:#4cc38a; --down:#f0656b; --ring:#4cc38a;
+    --c1:#4cc38a; --c2:#e5b95e; --c3:#6aa6f0; --c4:#a98bf0; --c5:#e08a6a;
+    --panel-shadow:none;
+    --radius:11px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:"DM Sans",system-ui,sans-serif;background:#26302c;color:var(--fg);-webkit-font-smoothing:antialiased;padding:28px;display:flex;flex-direction:column;gap:28px}
+  .mono{font-family:"Geist Mono",monospace;font-variant-numeric:tabular-nums}
+  .tag{font-size:13px;font-weight:600;color:#cfe9dd;letter-spacing:.04em;text-transform:uppercase}
+
+  /* ---------- APP SHELL ---------- */
+  .app{background:var(--bg);color:var(--fg);border-radius:14px;overflow:hidden;display:grid;grid-template-columns:248px 1fr;min-height:760px;box-shadow:0 24px 60px rgba(0,0,0,.35)}
+  .dark .app{background:var(--bg);border:1px solid #ffffff0d}
+
+  /* sidebar */
+  .side{border-right:1px solid var(--border);background:var(--card);backdrop-filter:blur(8px);padding:18px 14px;display:flex;flex-direction:column;gap:6px}
+  .dark .side{background:var(--card-solid)}
+  .brand{display:flex;align-items:center;gap:10px;padding:8px 10px 18px}
+  .logo{width:34px;height:34px;border-radius:10px;background:linear-gradient(135deg,var(--primary),var(--c2));display:grid;place-items:center;color:#fff;font-weight:700}
+  .brand b{font-size:18px;font-weight:700}
+  .nav{display:flex;flex-direction:column;gap:3px;margin-top:4px;flex:1}
+  .nav a{display:flex;align-items:center;gap:11px;padding:9px 11px;border-radius:10px;color:var(--muted);text-decoration:none;font-size:14px;font-weight:500}
+  .nav a .ic{width:17px;height:17px;opacity:.85}
+  .nav a:hover{background:var(--accent);color:var(--accent-fg)}
+  .nav a.active{background:var(--primary);color:var(--primary-fg);box-shadow:0 6px 16px -6px var(--primary)}
+  .dark .nav a.active{background:var(--accent);color:var(--fg);box-shadow:none;border:1px solid #ffffff12}
+  .dark .nav a:hover{background:#121315;color:var(--fg)}
+  .dark .logo{background:#1c1d20;color:#ededee;box-shadow:none;font-weight:600;border:1px solid #ffffff12}
+  .trm{margin-top:auto;padding:10px 11px;border-top:1px solid var(--border);font-size:11px;color:var(--muted);display:flex;justify-content:space-between;align-items:center}
+
+  /* main */
+  .main{padding:24px 28px;display:flex;flex-direction:column;gap:20px;overflow:hidden}
+  .top{display:flex;align-items:flex-end;justify-content:space-between;gap:16px}
+  .top h1{font-size:22px;font-weight:700}
+  .top p{color:var(--muted);font-size:13px;margin-top:3px}
+  .btn{background:var(--primary);color:var(--primary-fg);border:none;border-radius:9px;padding:10px 16px;font-weight:600;font-size:14px;font-family:inherit;cursor:pointer;display:flex;gap:7px;align-items:center;box-shadow:0 8px 20px -8px var(--primary)}
+  .dark .btn{background:#ededee;color:#0a0a0b;box-shadow:none}
+  .dark .btn.ghost{background:transparent;color:var(--fg);border:1px solid #ffffff14;box-shadow:none}
+  .dark .pill{background:#16181a;color:#9a9aa0;border:1px solid #ffffff0f}
+  .btn.ghost{background:transparent;color:var(--fg);border:1px solid var(--border);box-shadow:none}
+
+  .card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--panel-shadow);padding:18px}
+  .dark .card{background:var(--card-solid);border:1px solid #ffffff0f;box-shadow:none}
+  .dark .card h3{color:#7d7d83}
+  .card h3{font-size:13px;font-weight:600;color:var(--muted);text-transform:none;letter-spacing:0}
+  .label{font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+
+  /* metric header row */
+  .hero{display:grid;grid-template-columns:1.3fr 1fr 1fr 1fr;gap:14px}
+  .kpi{display:flex;flex-direction:column;gap:9px}
+  .kpi .iconchip{width:30px;height:30px;border-radius:9px;background:var(--accent);color:var(--accent-fg);display:grid;place-items:center;font-size:14px}
+  .kpi .row{display:flex;justify-content:space-between;align-items:center}
+  .kpi .big{font-size:24px;font-weight:700}
+  .kpi .net{font-size:30px;font-weight:700;letter-spacing:-.5px}
+  .delta{font-size:12px;font-weight:600;display:inline-flex;gap:3px;align-items:center}
+  .delta.up{color:var(--up)} .delta.down{color:var(--down)}
+  .hero .feature{background:linear-gradient(150deg,var(--primary),#0b6b49);color:#fff;border:none}
+  .dark .hero .feature{background:#0f0f12;border:1px solid #ffffff0f}
+  .hero .feature .label,.hero .feature h3{color:#9a9aa0}
+  .hero .feature .net{color:#fff}
+  .dark .hero .feature .net{color:#ededee}
+
+  /* content grid */
+  .grid{display:grid;grid-template-columns:2fr 1fr;gap:16px}
+  .chart-wrap{height:230px;margin-top:14px;position:relative}
+  .legend{display:flex;gap:16px;font-size:12px;color:var(--muted);margin-top:6px}
+  .dot{width:8px;height:8px;border-radius:50%;display:inline-block;margin-right:6px;vertical-align:middle}
+
+  .seg{display:inline-flex;background:var(--accent);border-radius:9px;padding:3px;gap:2px}
+  .seg span{font-size:12px;padding:5px 11px;border-radius:7px;color:var(--muted);font-weight:500}
+  .seg span.on{background:var(--card);color:var(--fg);box-shadow:var(--panel-shadow)}
+  .dark .seg span.on{background:#222a26}
+
+  /* breakdown bars */
+  .brk{display:flex;flex-direction:column;gap:13px;margin-top:14px}
+  .brk .item .l{display:flex;justify-content:space-between;font-size:13px;margin-bottom:6px}
+  .bar{height:7px;border-radius:99px;background:var(--accent)}
+  .bar i{display:block;height:100%;border-radius:99px}
+
+  /* activity */
+  .act{display:flex;flex-direction:column;gap:2px;margin-top:8px}
+  .act .it{display:flex;align-items:center;gap:11px;padding:9px 6px;border-radius:10px}
+  .act .it:hover{background:var(--accent)}
+  .act .av{width:32px;height:32px;border-radius:9px;background:var(--accent);color:var(--accent-fg);display:grid;place-items:center;font-size:13px;font-weight:600}
+  .act .nm{font-size:13px;font-weight:600}
+  .act .ds{font-size:11px;color:var(--muted)}
+  .act .amt{margin-left:auto;font-weight:600;font-size:13px}
+
+  /* accounts */
+  .accts{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+  .acct{display:flex;flex-direction:column;gap:10px}
+  .acct .top2{display:flex;justify-content:space-between;align-items:center}
+  .acct .ico{width:34px;height:34px;border-radius:9px;background:var(--accent);color:var(--accent-fg);display:grid;place-items:center;font-weight:700}
+  .acct .nm{font-size:13px;color:var(--muted)}
+  .acct .bal{font-size:18px;font-weight:700}
+  .pill{font-size:11px;font-weight:600;padding:3px 8px;border-radius:99px;background:var(--accent);color:var(--accent-fg)}
+  h2.sec{font-size:15px;font-weight:600;margin-top:2px}
+</style>
+</head>
+<body>
+  <div class="tag">↓ Tema claro</div>
+  <div class="app" id="light"></div>
+  <div class="tag">↓ Tema oscuro</div>
+  <div class="app dark" id="dark"></div>
+
+<script>
+const svgArea = (stroke,fill,id) => `
+<svg viewBox="0 0 600 230" width="100%" height="100%" preserveAspectRatio="none">
+  <defs><linearGradient id="g${id}" x1="0" x2="0" y1="0" y2="1">
+    <stop offset="0%" stop-color="${stroke}" stop-opacity="0.28"/>
+    <stop offset="100%" stop-color="${stroke}" stop-opacity="0"/>
+  </linearGradient></defs>
+  ${[40,90,140,190].map(y=>`<line x1="0" x2="600" y1="${y}" y2="${y}" stroke="currentColor" stroke-opacity=".07"/>`).join("")}
+  <path d="M0,170 C60,160 90,120 150,128 C210,136 240,80 300,72 C360,64 390,100 450,70 C510,45 540,30 600,22 L600,230 L0,230 Z" fill="url(#g${id})"/>
+  <path d="M0,170 C60,160 90,120 150,128 C210,136 240,80 300,72 C360,64 390,100 450,70 C510,45 540,30 600,22" fill="none" stroke="${stroke}" stroke-width="2"/>
+  <circle cx="450" cy="70" r="3.5" fill="${stroke}"/>
+</svg>`;
+
+const tpl = (id)=>`
+  <aside class="side">
+    <div class="brand"><div class="logo">C</div><b>Coffee</b></div>
+    <nav class="nav">
+      <a class="active">▦&nbsp; Home</a>
+      <a>↕&nbsp; Historial</a>
+      <a>▢&nbsp; Cuentas</a>
+      <a>◎&nbsp; Metas</a>
+      <a>◔&nbsp; Análisis</a>
+    </nav>
+    <div class="trm"><span>TRM</span><b class="mono">$3.985</b></div>
+  </aside>
+  <main class="main">
+    <div class="top">
+      <div><h1>Buenas tardes, Nicolás</h1><p>Resumen financiero · martes, 2 jun 2026</p></div>
+      <div style="display:flex;gap:10px"><button class="btn ghost">Exportar</button><button class="btn">+ Transacción</button></div>
+    </div>
+
+    <!-- HERO: net worth dominante + 3 KPIs -->
+    <div class="hero">
+      <div class="card feature">
+        <div class="label">Patrimonio neto</div>
+        <div class="net mono">$385.430.000</div>
+        <div class="delta" style="color:#aef0d4">▲ 2,8% este mes</div>
+        <div style="height:54px;margin-top:8px;opacity:.9">${svgArea('#bdf3dd','',9)}</div>
+      </div>
+      <div class="card kpi"><div class="row"><span class="label">Ingresos</span><div class="iconchip">↑</div></div><div class="big mono">$8.039.000</div><div class="delta up">▲ 12,7%</div></div>
+      <div class="card kpi"><div class="row"><span class="label">Gastos</span><div class="iconchip">↓</div></div><div class="big mono">$5.210.400</div><div class="delta down">▼ 4,1%</div></div>
+      <div class="card kpi"><div class="row"><span class="label">Ahorro</span><div class="iconchip">◆</div></div><div class="big mono">$2.828.600</div><div class="delta up">▲ 9,3%</div></div>
+    </div>
+
+    <!-- gráfico dominante + panel lateral cohesionado -->
+    <div class="grid">
+      <div class="card">
+        <div class="row" style="display:flex;justify-content:space-between;align-items:center">
+          <div><h3>Evolución del patrimonio</h3><div class="net mono" style="font-size:22px;margin-top:4px">$385.430.000</div></div>
+          <div class="seg"><span>Mensual</span><span class="on">Anual</span></div>
+        </div>
+        <div class="chart-wrap" style="color:var(--fg)">${svgArea('var(--primary)','',1)}</div>
+        <div class="legend"><span><i class="dot" style="background:var(--c1)"></i>Activos</span><span><i class="dot" style="background:var(--c2)"></i>Inversiones</span><span><i class="dot" style="background:var(--c4)"></i>Efectivo</span></div>
+      </div>
+      <div class="card">
+        <h3>Distribución de gastos</h3>
+        <div class="brk">
+          ${[['Vivienda',38,'#4cc38a'],['Comida',24,'#e5b95e'],['Transporte',16,'#6aa6f0'],['Ocio',12,'#a98bf0'],['Otros',10,'#e08a6a']].map(([n,p,c])=>`
+          <div class="item"><div class="l"><span>${n}</span><b class="mono">${p}%</b></div><div class="bar"><i style="width:${p}%;background:${c}"></i></div></div>`).join("")}
+        </div>
+      </div>
+    </div>
+
+    <!-- actividad + cuentas -->
+    <div class="grid">
+      <div class="card">
+        <div style="display:flex;justify-content:space-between;align-items:center"><h3>Mis cuentas</h3><span class="pill">6 activas</span></div>
+        <div class="accts" style="margin-top:14px">
+          ${[['Bancolombia','Ahorros','$42.300.000','BC','#e5b95e'],['Nu','Crédito','-$1.250.000','NU','#a98bf0'],['Trii','Inversión','$128.900.000','TR','#6aa6f0'],['Efectivo','Caja','$3.100.000','$','#4cc38a']].map(([nm,t,b,ic,c])=>`
+          <div class="acct" style="border-left:3px solid ${c};padding-left:13px"><div class="top2"><div class="ico" style="background:${c}22;color:${c};box-shadow:inset 0 0 0 1px ${c}55">${ic}</div><span class="pill">${t}</span></div><div class="nm">${nm}</div><div class="bal mono">${b}</div></div>`).join("")}
+        </div>
+      </div>
+      <div class="card">
+        <h3>Actividad reciente</h3>
+        <div class="act">
+          ${[['Supermercado Éxito','Comida · hoy','-$184.500','EX','#e5b95e'],['Nómina','Ingreso · ayer','+$4.020.000','NÓ','#4cc38a'],['Netflix','Ocio · 31 may','-$44.900','NF','#a98bf0'],['Transferencia Trii','Inversión · 30 may','-$2.000.000','TR','#6aa6f0']].map(([nm,ds,amt,av,c])=>`
+          <div class="it"><div class="av" style="background:${c}22;color:${c};box-shadow:inset 0 0 0 1px ${c}55">${av}</div><div><div class="nm">${nm}</div><div class="ds">${ds}</div></div><div class="amt mono" style="color:${amt.startsWith('+')?'var(--up)':'var(--fg)'}">${amt}</div></div>`).join("")}
+        </div>
+      </div>
+    </div>
+  </main>`;
+document.getElementById('light').innerHTML = tpl('l');
+document.getElementById('dark').innerHTML = tpl('d');
+</script>
+</body>
+</html>

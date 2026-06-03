@@ -26,7 +26,7 @@ export default function HomePage() {
         <AccountsSlider />
         <NetWorthChartLazy />
         <ExpensesBreakdown />
-        <RecentActivity />
+        <RecentActivity card />
       </div>
 
       {/* DESKTOP DASHBOARD */}
@@ -39,20 +39,22 @@ export default function HomePage() {
         <HomeKpis />
 
         <div className="grid grid-cols-12 gap-6">
-          <div className="col-span-12 xl:col-span-8 space-y-6">
+          <div className="col-span-12 xl:col-span-8 flex flex-col gap-6">
             <NetWorthChartLazy />
             <ExpensesBreakdown />
           </div>
           <div className="col-span-12 xl:col-span-4">
-            <div className="rounded-2xl border bg-card p-5 h-full">
+            <div className="rounded-lg border bg-card p-5 h-full">
               <RecentActivity limit={7} />
             </div>
           </div>
         </div>
 
         <section className="space-y-3">
-          <div className="flex items-center justify-between">
-            <h2 className="text-base font-semibold">Mis cuentas</h2>
+          <div className="flex items-center justify-between border-b pb-2">
+            <h2 className="text-[11px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">
+              Mis cuentas
+            </h2>
           </div>
           <AccountsGrid />
         </section>

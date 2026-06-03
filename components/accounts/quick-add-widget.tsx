@@ -106,7 +106,7 @@ export function QuickAddWidget({ account }: { account: Account }) {
             className={cn(
               "py-1.5 rounded-md text-sm font-medium transition",
               creditMode === "expense"
-                ? "bg-red-500 text-white shadow-sm"
+                ? "bg-destructive text-white shadow-sm"
                 : "text-muted-foreground hover:text-foreground",
             )}
           >
@@ -118,7 +118,7 @@ export function QuickAddWidget({ account }: { account: Account }) {
             className={cn(
               "py-1.5 rounded-md text-sm font-medium transition",
               creditMode === "pay"
-                ? "bg-emerald-500 text-white shadow-sm"
+                ? "bg-primary text-white shadow-sm"
                 : "text-muted-foreground hover:text-foreground",
             )}
           >
@@ -150,7 +150,7 @@ export function QuickAddWidget({ account }: { account: Account }) {
               <Label>Cuenta destino</Label>
               <AccountPicker value={destinationId} onChange={setDestinationId} />
               {destinationId === account.id && (
-                <p className="text-xs text-red-500">Elige una cuenta distinta a la actual.</p>
+                <p className="text-xs text-destructive">Elige una cuenta distinta a la actual.</p>
               )}
             </div>
           ) : (

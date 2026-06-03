@@ -27,18 +27,20 @@ const CATEGORY_ICON: Record<string, LucideIcon> = {
   Otro: Tag,
 };
 
+// Professional, desaturated data-viz palette. Leans on the app's emerald accent
+// and cools/neutrals around it — no neon pinks/indigos. Reads as "finance terminal".
 export const CATEGORY_COLOR: Record<string, string> = {
-  Comida: "#f59e0b",
-  Facturas: "#6366f1",
-  Shopping: "#ec4899",
-  Tecnologia: "#4FB7C2",
-  Transporte: "#3b82f6",
-  Salud: "#10b981",
-  Hogar: "#14b8a6",
-  Viajes: "#0ea5e9",
-  Educacion: "#f97316",
-  Trabajo: "#64748b",
-  Otro: "#94a3b8",
+  Salud: "#16c784", // emerald (primary accent)
+  Hogar: "#3aa88a", // deep teal-green
+  Facturas: "#4f9bb0", // muted steel blue
+  Transporte: "#6f8fb3", // slate blue
+  Tecnologia: "#5bb8a8", // muted teal
+  Comida: "#c79a4b", // muted amber
+  Educacion: "#b07f53", // clay
+  Shopping: "#9a8fc0", // muted violet
+  Viajes: "#7aa6c2", // muted sky
+  Trabajo: "#8a929c", // slate gray
+  Otro: "#5f656e", // neutral gray
 };
 
 export function getCategoryIcon(name: string): LucideIcon {

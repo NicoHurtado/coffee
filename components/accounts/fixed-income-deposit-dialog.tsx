@@ -151,7 +151,7 @@ export function FixedIncomeDepositDialog({ open, onOpenChange, account, currentB
             <div className="rounded-xl bg-muted px-4 py-3 flex items-center justify-between">
               <span className="text-sm text-muted-foreground">Nuevo balance</span>
               <div className="text-right">
-                <div className={cn("text-base font-bold tabular-nums", newBalance < 0 && "text-red-500")}>
+                <div className={cn("text-base font-bold tabular-nums", newBalance < 0 && "text-destructive")}>
                   {formatMoney(Math.max(0, newBalance), account.currency)}
                 </div>
                 {showCop && (

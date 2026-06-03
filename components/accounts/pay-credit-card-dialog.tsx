@@ -96,7 +96,7 @@ export function PayCreditCardDialog({ open, onOpenChange, creditAccount, current
           {/* Deuda actual */}
           <div className="rounded-xl bg-muted px-4 py-3 flex items-center justify-between">
             <span className="text-sm text-muted-foreground">Deuda actual</span>
-            <span className="text-lg font-bold tabular-nums text-red-500">
+            <span className="text-lg font-bold tabular-nums text-destructive">
               {formatMoney(Math.max(0, currentDebt), currency)}
             </span>
           </div>

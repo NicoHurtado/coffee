@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Geist_Mono, DM_Sans } from "next/font/google"
+import { Geist_Mono, Hanken_Grotesk } from "next/font/google"
 
 import "./globals.css"
 import { ThemeProvider } from "@/components/theme-provider"
@@ -29,7 +29,7 @@ export const viewport: Viewport = {
   viewportFit: "cover",
 };
 
-const dmSans = DM_Sans({ subsets: ["latin"], variable: "--font-sans" });
+const dmSans = Hanken_Grotesk({ subsets: ["latin"], variable: "--font-sans" });
 
 const fontMono = Geist_Mono({
   subsets: ["latin"],

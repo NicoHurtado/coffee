@@ -15,10 +15,13 @@ export function RecentActivity({
   accountId,
   limit = 8,
   hrefAll = "/historial",
+  card = false,
 }: {
   accountId?: string;
   limit?: number;
   hrefAll?: string;
+  /** Wrap each day group in its own solid card surface (for use outside a panel, e.g. mobile home). */
+  card?: boolean;
 }) {
   const currency = useSettingsStore((s) => s.defaultCurrency);
   const txs = useTransactionsStore((s) => s.transactions);
@@ -69,9 +72,14 @@ export function RecentActivity({
 
   return (
     <section className="space-y-2">
-      <div className="flex items-center justify-between">
-        <h2 className="text-base font-semibold">Actividad Reciente</h2>
-        <Link href={hrefAll} className="text-sm text-muted-foreground hover:underline">
+      <div className="flex items-center justify-between border-b pb-2">
+        <h2 className="text-[11px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">
+          Actividad reciente
+        </h2>
+        <Link
+          href={hrefAll}
+          className="text-[10px] font-semibold uppercase tracking-[0.12em] text-muted-foreground hover:text-foreground"
+        >
           Ver todo
         </Link>
       </div>
@@ -82,11 +90,17 @@ export function RecentActivity({
       ) : (
         <div className="flex flex-col gap-6">
           {groupedArray.map((group) => (
-            <div key={group.label} className="space-y-2">
-              <div className="px-1 text-sm font-medium text-muted-foreground">
+            <div key={group.label} className={card ? "space-y-1.5" : "space-y-2"}>
+              <div className="px-1 text-[10px] font-semibold uppercase tracking-[0.12em] text-muted-foreground tabular-nums">
                 {group.label}
               </div>
-              <div className="flex flex-col">
+              <div
+                className={
+                  card
+                    ? "divide-y rounded-lg border bg-card overflow-hidden px-2"
+                    : "flex flex-col"
+                }
+              >
                 {group.txs.map((t, idx) => (
                   <div key={t.id}>
                     <TransactionItem
@@ -95,7 +109,7 @@ export function RecentActivity({
                       showTime
                       onClick={() => setEditing(t)}
                     />
-                    {idx < group.txs.length - 1 && <Separator className="my-1" />}
+                    {!card && idx < group.txs.length - 1 && <Separator className="my-1" />}
                   </div>
                 ))}
               </div>

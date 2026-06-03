@@ -54,7 +54,7 @@ export function AccountCard({ account }: { account: Account }) {
       <div className="flex-1 w-full min-h-[200px] rounded-2xl border bg-card p-4 md:p-5 flex flex-col justify-between gap-1.5 hover:bg-accent/40 transition-colors">
         <div className="flex items-start justify-between gap-2">
           <span
-            className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-medium uppercase tracking-wide"
+            className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-sm text-[10px] font-semibold uppercase tracking-[0.12em]"
             style={{ background: s.background, color: s.color }}
           >
             <span className="size-1.5 rounded-full" style={{ background: s.muted }} />

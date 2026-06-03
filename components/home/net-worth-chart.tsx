@@ -35,8 +35,8 @@ type RangeKey = (typeof RANGES)[number]["key"];
 
 const chartConfig = {
   value: { label: "Patrimonio", color: "var(--primary)" },
-  income: { label: "Ingresos", color: "#10b981" },
-  expense: { label: "Gastos", color: "#ef4444" },
+  income: { label: "Ingresos", color: "var(--primary)" },
+  expense: { label: "Gastos", color: "var(--destructive)" },
 } satisfies ChartConfig;
 
 export function NetWorthChart() {
@@ -140,11 +140,11 @@ export function NetWorthChart() {
           <div className="text-xs text-muted-foreground uppercase tracking-wide">
             Patrimonio
           </div>
-          <div className={cn("text-xl font-semibold tabular-nums", last < 0 && "text-red-500")}>
+          <div className={cn("text-xl font-semibold tabular-nums", last < 0 && "text-destructive")}>
             {last < 0 ? "-" : ""}
             {formatMoney(last, currency)}
           </div>
-          <div className={cn("text-xs", up ? "text-emerald-600" : "text-red-500")}>
+          <div className={cn("text-xs", up ? "text-primary" : "text-destructive")}>
             {up ? "+" : "-"}
             {formatMoney(Math.abs(delta), currency)} ({deltaPct >= 0 ? "+" : ""}
             {deltaPct.toFixed(1)}%)
@@ -175,11 +175,11 @@ export function NetWorthChart() {
           <span className="text-muted-foreground">Patrimonio</span>
         </span>
         <span className="inline-flex items-center gap-1.5">
-          <span className="size-2.5 rounded-sm" style={{ background: "#10b981" }} />
+          <span className="size-2.5 rounded-sm" style={{ background: "var(--primary)" }} />
           <span className="text-muted-foreground">Ingresos</span>
         </span>
         <span className="inline-flex items-center gap-1.5">
-          <span className="size-2.5 rounded-sm" style={{ background: "#ef4444" }} />
+          <span className="size-2.5 rounded-sm" style={{ background: "var(--destructive)" }} />
           <span className="text-muted-foreground">Gastos</span>
         </span>
       </div>
@@ -217,7 +217,7 @@ export function NetWorthChart() {
             tickLine={false}
             axisLine={false}
             width={40}
-            tick={{ fontSize: 9, fill: "#ef4444" }}
+            tick={{ fontSize: 9, fill: "var(--muted-foreground)" }}
           />
           <ChartTooltip
             cursor={{ stroke: "var(--border)", strokeWidth: 1 }}
@@ -249,16 +249,16 @@ export function NetWorthChart() {
                       <span className="inline-flex items-center gap-1.5 text-muted-foreground">
                         <span
                           className="size-2 rounded-sm"
-                          style={{ background: "#10b981" }}
+                          style={{ background: "var(--primary)" }}
                         />
                         Ingresos
                       </span>
-                      <span className="font-semibold tabular-nums text-emerald-600">
+                      <span className="font-semibold tabular-nums text-primary">
                         +{formatMoney(d.income, currency)}
                       </span>
                     </div>
                     {d.incomeItems.length > 0 && (
-                      <ul className="pl-4 space-y-0.5 text-emerald-600">
+                      <ul className="pl-4 space-y-0.5 text-primary">
                         {d.incomeItems.slice(0, 6).map((it, idx) => (
                           <li
                             key={idx}
@@ -284,16 +284,16 @@ export function NetWorthChart() {
                       <span className="inline-flex items-center gap-1.5 text-muted-foreground">
                         <span
                           className="size-2 rounded-sm"
-                          style={{ background: "#ef4444" }}
+                          style={{ background: "var(--destructive)" }}
                         />
                         Gastos
                       </span>
-                      <span className="font-semibold tabular-nums text-red-500">
+                      <span className="font-semibold tabular-nums text-destructive">
                         -{formatMoney(d.expense, currency)}
                       </span>
                     </div>
                     {d.expenseItems.length > 0 && (
-                      <ul className="pl-4 space-y-0.5 text-red-500">
+                      <ul className="pl-4 space-y-0.5 text-destructive">
                         {d.expenseItems.slice(0, 6).map((it, idx) => (
                           <li
                             key={idx}
@@ -321,7 +321,7 @@ export function NetWorthChart() {
             yAxisId="flow"
             dataKey="income"
             name="Ingresos"
-            fill="#10b981"
+            fill="var(--primary)"
             radius={[3, 3, 0, 0]}
             barSize={6}
           />
@@ -329,7 +329,7 @@ export function NetWorthChart() {
             yAxisId="flow"
             dataKey="expense"
             name="Gastos"
-            fill="#ef4444"
+            fill="var(--destructive)"
             radius={[3, 3, 0, 0]}
             barSize={6}
           />

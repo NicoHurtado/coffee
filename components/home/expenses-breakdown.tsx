@@ -58,7 +58,7 @@ export function ExpensesBreakdown() {
   const total = totals.reduce((s, c) => s + c.amount, 0);
 
   return (
-    <section className="rounded-2xl border bg-card p-4 md:p-5 space-y-3">
+    <section className="rounded-2xl border bg-card p-4 md:p-5 space-y-3 xl:flex-1">
       <div className="flex items-start justify-between gap-2 flex-wrap">
         <div>
           <div className="text-xs text-muted-foreground uppercase tracking-wide">
@@ -94,7 +94,7 @@ export function ExpensesBreakdown() {
       ) : (
         <>
           <TooltipProvider delayDuration={80}>
-            <div className="flex h-4 w-full rounded-full overflow-hidden bg-muted">
+            <div className="flex h-3.5 w-full rounded-sm overflow-hidden bg-muted">
               {totals.map((c) => {
                 const pct = (c.amount / total) * 100;
                 const Icon = getCategoryIcon(c.category);
@@ -140,7 +140,7 @@ export function ExpensesBreakdown() {
                       style={{ background: getCategoryColor(c.category) }}
                     />
                     <Icon className="size-3.5 text-muted-foreground shrink-0" />
-                    <span className="truncate">{c.category}</span>
+                    <span className="truncate text-[11px] uppercase tracking-wider">{c.category}</span>
                   </div>
                   <div className="text-xs tabular-nums shrink-0">
                     <span className="font-semibold">{formatMoney(c.amount, currency)}</span>

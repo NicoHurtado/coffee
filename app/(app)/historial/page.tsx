@@ -12,6 +12,7 @@ import { TransactionList } from "@/components/transactions/transaction-list";
 import { TransactionsTable } from "@/components/transactions/transactions-table";
 import { AddTransactionButton } from "@/components/nav/add-transaction-button";
 import { LayoutList, Table as TableIcon } from "lucide-react";
+import { PageHeader } from "@/components/nav/page-header";
 import { cn } from "@/lib/utils";
 import { useTransactionsStore } from "@/lib/store/transactions";
 import { useSettingsStore } from "@/lib/store/settings";
@@ -53,16 +54,15 @@ export default function HistorialPage() {
 
   return (
     <div className="p-4 md:p-8 space-y-4">
-      <div className="flex items-center justify-between gap-3 flex-wrap">
-        <h1 className="text-2xl font-semibold">Historial</h1>
-        <div className="hidden md:flex items-center gap-3">
-          <div className="flex items-center gap-1 bg-muted p-1 rounded-lg">
+      <PageHeader eyebrow="Movimientos" title="Historial">
+        <div className="hidden md:flex items-center gap-2">
+          <div className="flex items-center gap-1 border bg-card p-0.5 rounded-md">
             <button
               type="button"
               onClick={() => setView("list")}
               className={cn(
-                "flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-medium transition",
-                view === "list" ? "bg-background shadow-sm" : "text-muted-foreground",
+                "flex items-center gap-1.5 px-2.5 py-1 rounded-sm text-[10px] font-semibold uppercase tracking-[0.1em] transition",
+                view === "list" ? "bg-accent text-foreground" : "text-muted-foreground",
               )}
             >
               <LayoutList className="size-3.5" />
@@ -72,8 +72,8 @@ export default function HistorialPage() {
               type="button"
               onClick={() => setView("table")}
               className={cn(
-                "flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-medium transition",
-                view === "table" ? "bg-background shadow-sm" : "text-muted-foreground",
+                "flex items-center gap-1.5 px-2.5 py-1 rounded-sm text-[10px] font-semibold uppercase tracking-[0.1em] transition",
+                view === "table" ? "bg-accent text-foreground" : "text-muted-foreground",
               )}
             >
               <TableIcon className="size-3.5" />
@@ -82,7 +82,7 @@ export default function HistorialPage() {
           </div>
           <AddTransactionButton />
         </div>
-      </div>
+      </PageHeader>
 
       {/* MOBILE filters bar */}
       <div className="md:hidden sticky top-0 z-10 bg-background pt-2 pb-3 space-y-3">
@@ -104,42 +104,42 @@ export default function HistorialPage() {
       {/* DESKTOP layout */}
       <div className="hidden md:grid md:grid-cols-12 gap-6">
         <aside className="col-span-3 space-y-4">
-          <div className="rounded-2xl border bg-card p-4 space-y-4">
+          <div className="rounded-lg border bg-card p-4 space-y-4">
             <div>
-              <div className="text-xs text-muted-foreground uppercase tracking-wide mb-1.5">Buscar</div>
+              <div className="text-[10px] font-semibold text-muted-foreground uppercase tracking-[0.14em] mb-2">Buscar</div>
               <div className="relative">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
                 <Input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Texto o categoría" className="pl-9" />
               </div>
             </div>
             <div>
-              <div className="text-xs text-muted-foreground uppercase tracking-wide mb-1.5">Período</div>
+              <div className="text-[10px] font-semibold text-muted-foreground uppercase tracking-[0.14em] mb-2">Período</div>
               <PeriodPicker value={period} onChange={setPeriod} />
             </div>
             <div>
-              <div className="text-xs text-muted-foreground uppercase tracking-wide mb-1.5">Cuenta</div>
+              <div className="text-[10px] font-semibold text-muted-foreground uppercase tracking-[0.14em] mb-2">Cuenta</div>
               <AccountPills value={accountId} onChange={setAccountId} variant="wrap" />
             </div>
           </div>
 
-          <div className="rounded-2xl border bg-card p-4 space-y-3">
-            <div className="text-xs text-muted-foreground uppercase tracking-wide">Resumen del filtro</div>
+          <div className="rounded-lg border bg-card p-4 space-y-3">
+            <div className="text-[10px] font-semibold text-muted-foreground uppercase tracking-[0.14em]">Resumen del filtro</div>
             <div className="flex justify-between text-sm">
               <span className="text-muted-foreground">Ingresos</span>
-              <span className="font-semibold text-emerald-600 tabular-nums">
+              <span className="font-semibold text-primary tabular-nums">
                 +{formatMoney(totals.income, currency)}
               </span>
             </div>
             <div className="flex justify-between text-sm">
               <span className="text-muted-foreground">Gastos</span>
-              <span className="font-semibold text-red-500 tabular-nums">
+              <span className="font-semibold text-destructive tabular-nums">
                 -{formatMoney(totals.expense, currency)}
               </span>
             </div>
             <div className="border-t pt-2 flex justify-between text-sm">
               <span>Neto</span>
               <span
-                className={`font-bold tabular-nums ${totals.net >= 0 ? "text-emerald-600" : "text-red-500"}`}
+                className={`font-bold tabular-nums ${totals.net >= 0 ? "text-primary" : "text-destructive"}`}
               >
                 {totals.net >= 0 ? "+" : "-"}
                 {formatMoney(Math.abs(totals.net), currency)}
@@ -151,7 +151,7 @@ export default function HistorialPage() {
           </div>
         </aside>
 
-        <div className="col-span-9 rounded-2xl border bg-card p-4">
+        <div className="col-span-9 rounded-lg border bg-card p-4">
           {view === "table" ? (
             <TransactionsTable txs={filtered} currency={currency} />
           ) : (

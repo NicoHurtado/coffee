@@ -205,7 +205,7 @@ export default function EditarCuentaPage({
         <Button
           variant="ghost"
           size="sm"
-          className="text-red-500 hover:text-red-600 hover:bg-red-50"
+          className="text-destructive hover:text-destructive hover:bg-red-50"
           onClick={() => setConfirmDelete(true)}
         >
           <Trash2 className="size-4 mr-1" /> Eliminar

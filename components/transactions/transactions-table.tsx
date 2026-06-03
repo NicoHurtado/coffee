@@ -112,8 +112,8 @@ export function TransactionsTable({
                   <TableCell
                     className={cn(
                       "text-right text-sm font-semibold tabular-nums",
-                      isExpense && "text-red-500",
-                      isIncome && "text-emerald-600",
+                      isExpense && "text-destructive",
+                      isIncome && "text-primary",
                     )}
                   >
                     {signedAmount(t.kind, t.amount, currency)}

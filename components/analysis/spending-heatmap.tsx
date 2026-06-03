@@ -198,7 +198,7 @@ export function SpendingHeatmap() {
                           </div>
                           <div className="text-xs tabular-nums">
                             {day.amount > 0 ? (
-                              <span className="text-red-500">
+                              <span className="text-destructive">
                                 -{formatMoney(day.amount, currency)}
                               </span>
                             ) : (

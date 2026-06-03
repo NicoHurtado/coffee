@@ -1,5 +1,5 @@
 "use client";
-import { cardStyle, type AccountColor } from "@/lib/finance/colors";
+import { getColorDef, type AccountColor } from "@/lib/finance/colors";
 import { formatMoney } from "@/lib/finance/format";
 import { useSettingsStore } from "@/lib/store/settings";
 import type { Account, CardNetwork, Currency } from "@/lib/types";
@@ -13,7 +13,7 @@ export interface PhysicalCardProps {
 
 export function PhysicalCard({ account, balance, className }: PhysicalCardProps) {
   const userName = useSettingsStore((s) => s.userName);
-  const s = cardStyle(account.color as AccountColor | undefined);
+  const accent = getColorDef(account.color as AccountColor | undefined).base;
 
   const isCredit = account.type === "credit";
   const isDebit = account.type === "debit";
@@ -25,66 +25,67 @@ export function PhysicalCard({ account, balance, className }: PhysicalCardProps)
       ? account.network
       : undefined) as CardNetwork | undefined;
   const expDate = isCredit ? account.expDate : "";
-  const isLight = s.textTone === "light";
 
   return (
     <div
-      className={`relative w-full min-h-[200px] rounded-2xl p-4 md:p-5 flex flex-col justify-between gap-1.5 border ${
-        isLight ? "text-white" : "text-zinc-900"
-      } ${className ?? ""}`}
-      style={{ background: s.background, borderColor: s.border }}
+      className={`relative w-full min-h-[200px] overflow-hidden rounded-lg border bg-card p-4 md:p-5 flex flex-col justify-between gap-1.5 ${className ?? ""}`}
+      style={{ borderLeft: `2px solid ${accent}` }}
     >
+      {/* faint accent glow tied to the account color — identity without the gloss */}
       <div
-        className="pointer-events-none absolute inset-0 rounded-2xl overflow-hidden"
+        className="pointer-events-none absolute inset-0"
         style={{
-          background: isLight
-            ? "linear-gradient(135deg, rgba(255,255,255,0.18) 0%, rgba(255,255,255,0) 35%, rgba(255,255,255,0) 65%, rgba(255,255,255,0.08) 100%)"
-            : "linear-gradient(135deg, rgba(255,255,255,0.5) 0%, rgba(255,255,255,0) 35%, rgba(0,0,0,0) 65%, rgba(0,0,0,0.05) 100%)",
+          background: `radial-gradient(420px 200px at 100% 0%, ${accent}1f, transparent 60%)`,
         }}
       />
 
       <div className="relative flex items-start justify-between gap-2">
         <div className="min-w-0">
-          <div className={`text-[10px] uppercase tracking-wider ${isLight ? "opacity-70" : "opacity-60"}`}>
+          <div className="flex items-center gap-1.5 text-[10px] uppercase tracking-[0.14em] text-muted-foreground font-semibold">
+            <span className="size-1.5 rounded-full" style={{ background: accent }} />
             {isCredit ? "Crédito" : "Débito"}
           </div>
-          <div className="text-sm font-semibold truncate">{account.institution}</div>
+          <div className="text-sm font-semibold truncate mt-0.5">{account.institution}</div>
         </div>
-        <ContactlessIcon className="size-5" style={{ color: s.brandColor, opacity: 0.9 }} />
+        <ContactlessIcon className="size-5" style={{ color: accent, opacity: 0.9 }} />
       </div>
 
       <div className="relative flex items-end justify-between gap-3">
-        <CardChip className="w-10 h-7 shrink-0" />
+        <CardChip className="w-10 h-7 shrink-0 opacity-70" />
         <div className="text-right min-w-0">
-          <div className={`text-[10px] uppercase tracking-wider ${isLight ? "opacity-70" : "opacity-60"}`}>
+          <div className="text-[10px] uppercase tracking-[0.14em] text-muted-foreground font-semibold">
             {isCredit ? "Deuda" : "Balance"}
           </div>
-          <div className="text-xl md:text-2xl font-bold tabular-nums truncate">
+          <div
+            className={`text-xl md:text-2xl font-semibold tabular-nums truncate ${
+              isCredit && balance > 0 ? "text-destructive" : "text-foreground"
+            }`}
+          >
             {isCredit && balance > 0 ? "-" : ""}
             {formatMoney(balance, account.currency as Currency)}
           </div>
         </div>
       </div>
 
-      <div className="relative font-mono tracking-[0.18em] text-sm md:text-base">
+      <div className="relative font-mono tracking-[0.18em] text-sm md:text-base text-muted-foreground">
         •••• &nbsp; •••• &nbsp; •••• &nbsp; {last4}
       </div>
 
       <div className="relative flex items-end justify-between gap-2">
         <div className="min-w-0">
-          <div className={`text-[9px] uppercase tracking-wider ${isLight ? "opacity-60" : "opacity-50"}`}>
+          <div className="text-[9px] uppercase tracking-[0.14em] text-muted-foreground font-semibold">
             Titular
           </div>
           <div className="text-xs md:text-sm font-medium uppercase truncate tracking-wide">
             {userName || "Titular"}
           </div>
           {isCredit && expDate && (
-            <div className={`text-[10px] mt-0.5 ${isLight ? "opacity-70" : "opacity-60"}`}>
+            <div className="text-[10px] mt-0.5 text-muted-foreground tabular-nums">
               VÁLIDA HASTA {expDate}
             </div>
           )}
         </div>
-        <span style={{ color: s.brandColor }} className="inline-flex">
+        <span style={{ color: accent }} className="inline-flex">
           <CardBrandLogo network={network} className="h-7 md:h-8 w-auto" />
         </span>
       </div>
