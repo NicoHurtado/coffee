@@ -16,6 +16,7 @@ import {
 } from "@/components/ui/select";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Checkbox } from "@/components/ui/checkbox";
+import { PageHeader, SectionHeading } from "@/components/nav/page-header";
 import { AccountPreviewCard } from "@/components/accounts/account-preview-card";
 import { ColorPicker } from "@/components/accounts/color-picker";
 import { CardNetworkPicker } from "@/components/accounts/card-network-picker";
@@ -123,21 +124,26 @@ export default function NuevaCuentaPage() {
   };
 
   return (
-    <div className="p-4 md:p-8 space-y-4">
-      <div className="flex items-center gap-2">
-        <Link href="/cuentas" className="size-9 rounded-md hover:bg-accent flex items-center justify-center">
-          <ArrowLeft className="size-5" />
+    <div className="p-4 md:p-8 space-y-6">
+      <div className="space-y-3">
+        <Link
+          href="/cuentas"
+          className="inline-flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-[0.16em] text-muted-foreground transition-colors hover:text-foreground"
+        >
+          <ArrowLeft className="size-3.5" /> Volver a cuentas
         </Link>
-        <h1 className="text-2xl font-semibold">Nueva Cuenta</h1>
+        <PageHeader
+          eyebrow="Portafolio"
+          title="Nueva Cuenta"
+          subtitle="Configura los detalles y la apariencia de tu cuenta."
+        />
       </div>
 
-      <div className="md:grid md:grid-cols-12 md:gap-6 space-y-4 md:space-y-0">
+      <div className="md:grid md:grid-cols-12 md:gap-6 space-y-6 md:space-y-0">
         {/* Left column: Preview card + color (sticky on desktop) */}
         <div className="md:col-span-5 md:sticky md:top-6 md:self-start space-y-4">
-          <div className="rounded-2xl border bg-card p-4 md:p-6 space-y-3">
-            <div className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
-              Vista previa
-            </div>
+          <div className="rounded-lg border bg-card p-5 space-y-4">
+            <SectionHeading>Vista previa</SectionHeading>
             <AccountPreviewCard
               type={type}
               name={name}
@@ -151,224 +157,242 @@ export default function NuevaCuentaPage() {
             />
           </div>
 
-          <div className="rounded-2xl border bg-card p-4 md:p-6 space-y-2">
-            <Label>Color de la tarjeta</Label>
+          <div className="rounded-lg border bg-card p-5 space-y-4">
+            <SectionHeading>Color de la tarjeta</SectionHeading>
             <ColorPicker value={color} onChange={setColor} />
           </div>
         </div>
 
         {/* Right column: form */}
         <div className="md:col-span-7 space-y-4">
-
-      {(type === "fixed_income" || type === "investment") && (
-        <div className="space-y-1.5">
-          <Label htmlFor="mini-label">Etiqueta corta (opcional)</Label>
-          <Input
-            id="mini-label"
-            maxLength={5}
-            value={miniLabel}
-            onChange={(e) => setMiniLabel(e.target.value.toUpperCase())}
-            placeholder={type === "fixed_income" ? "Ej: NUB, CDT" : "Ej: IBKR, BTC"}
-          />
-          <p className="text-xs text-muted-foreground">
-            Aparece dentro del mini-cuadro de color (máx. 5 caracteres).
-          </p>
-        </div>
-      )}
-
-      {type === "debit" && (
-        <div className="space-y-3">
-          <div className="space-y-2">
-            <Label>Marca (opcional)</Label>
-            <CardNetworkPicker value={network} onChange={setNetwork} />
+          {/* Account type selector */}
+          <div className="rounded-lg border bg-card p-5 space-y-3">
+            <SectionHeading>Tipo de cuenta</SectionHeading>
+            <Tabs value={type} onValueChange={(v) => setType(v as AccountType)}>
+              <TabsList className="grid grid-cols-4 w-full">
+                <TabsTrigger value="debit">Débito</TabsTrigger>
+                <TabsTrigger value="credit">Crédito</TabsTrigger>
+                <TabsTrigger value="fixed_income">Renta Fija</TabsTrigger>
+                <TabsTrigger value="investment">Inversión</TabsTrigger>
+              </TabsList>
+            </Tabs>
           </div>
-          <div className="space-y-1.5">
-            <Label htmlFor="debit-last4">Últimos 4 dígitos (opcional)</Label>
-            <Input
-              id="debit-last4"
-              maxLength={4}
-              value={debitLast4}
-              onChange={(e) => setDebitLast4(e.target.value.replace(/\D/g, ""))}
-            />
-          </div>
-        </div>
-      )}
 
-      <Tabs value={type} onValueChange={(v) => setType(v as AccountType)}>
-        <TabsList className="grid grid-cols-4 w-full">
-          <TabsTrigger value="debit">Débito</TabsTrigger>
-          <TabsTrigger value="credit">Crédito</TabsTrigger>
-          <TabsTrigger value="fixed_income">Renta Fija</TabsTrigger>
-          <TabsTrigger value="investment">Inversión</TabsTrigger>
-        </TabsList>
-      </Tabs>
-
-      <div className="space-y-3">
-        <div className="space-y-1.5">
-          <Label htmlFor="institution">Institución</Label>
-          <Input id="institution" value={institution} onChange={(e) => setInstitution(e.target.value)} />
-        </div>
-        <div className="space-y-1.5">
-          <Label htmlFor="name">Nombre de la cuenta</Label>
-          <Input id="name" value={name} onChange={(e) => setName(e.target.value)} />
-        </div>
-        <div className="grid grid-cols-2 gap-3">
-          <div className="space-y-1.5">
-            <Label>Moneda</Label>
-            <Select value={currency} onValueChange={(v) => setCurrency(v as Currency)}>
-              <SelectTrigger><SelectValue /></SelectTrigger>
-              <SelectContent>
-                <SelectItem value="USD">USD</SelectItem>
-                <SelectItem value="COP">COP</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-          <div className="space-y-1.5">
-            <Label htmlFor="initial">Balance inicial</Label>
-            <Input
-              id="initial"
-              type="number"
-              inputMode="decimal"
-              value={initialBalance}
-              onChange={(e) => setInitialBalance(e.target.value)}
-            />
-          </div>
-        </div>
-
-        {type === "credit" && (
-          <div className="space-y-3 pt-2 border-t">
-            <div className="space-y-1.5">
-              <Label htmlFor="limit">Límite de crédito</Label>
-              <Input id="limit" type="number" inputMode="decimal" value={creditLimit} onChange={(e) => setCreditLimit(e.target.value)} />
-            </div>
-            <div className="grid grid-cols-2 gap-3">
+          {/* Base details */}
+          <div className="rounded-lg border bg-card p-5 space-y-4">
+            <SectionHeading>Detalles de la cuenta</SectionHeading>
+            <div className="space-y-3">
               <div className="space-y-1.5">
-                <Label htmlFor="last4">Últimos 4 dígitos</Label>
-                <Input id="last4" maxLength={4} value={last4} onChange={(e) => setLast4(e.target.value.replace(/\D/g, ""))} />
+                <Label htmlFor="institution">Institución</Label>
+                <Input id="institution" value={institution} onChange={(e) => setInstitution(e.target.value)} />
               </div>
               <div className="space-y-1.5">
-                <Label htmlFor="exp">Fecha de expiración</Label>
-                <Input id="exp" placeholder="MM/AA" value={expDate} onChange={(e) => setExpDate(e.target.value)} />
+                <Label htmlFor="name">Nombre de la cuenta</Label>
+                <Input id="name" value={name} onChange={(e) => setName(e.target.value)} />
               </div>
-            </div>
-            <div className="space-y-1.5">
-              <Label>Red</Label>
-              <Select value={network} onValueChange={(v) => setNetwork(v as CardNetwork)}>
-                <SelectTrigger><SelectValue /></SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="visa">Visa</SelectItem>
-                  <SelectItem value="mastercard">Mastercard</SelectItem>
-                  <SelectItem value="amex">Amex</SelectItem>
-                  <SelectItem value="other">Otra</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
-        )}
-
-        {type === "fixed_income" && (
-          <div className="space-y-3 pt-2 border-t">
-            <div className="space-y-1.5">
-              <Label htmlFor="rate">Tasa de interés anual (%)</Label>
-              <Input id="rate" type="number" inputMode="decimal" value={annualRate} onChange={(e) => setAnnualRate(e.target.value)} />
-            </div>
-            <div className="grid grid-cols-2 gap-3">
-              <div className="space-y-1.5">
-                <Label htmlFor="start">Fecha de inicio</Label>
-                <Input id="start" type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)} />
-              </div>
-              <div className="space-y-1.5">
-                <Label htmlFor="mat">Vencimiento (opcional)</Label>
-                <Input id="mat" type="date" value={maturityDate} onChange={(e) => setMaturityDate(e.target.value)} />
-              </div>
-            </div>
-            <div className="flex items-center gap-2 pt-1">
-              <Checkbox
-                id="goal"
-                checked={isGoal}
-                onCheckedChange={(v) => setIsGoal(v === true)}
-              />
-              <Label htmlFor="goal" className="text-sm font-normal cursor-pointer">
-                Esta cuenta es una meta de ahorro
-              </Label>
-            </div>
-            {isGoal && (
-              <div className="space-y-3">
+              <div className="grid grid-cols-2 gap-3">
                 <div className="space-y-1.5">
-                  <Label htmlFor="goal-name">Nombre de la meta</Label>
-                  <Input
-                    id="goal-name"
-                    value={goalName}
-                    onChange={(e) => setGoalName(e.target.value)}
-                    placeholder="Ej: Viaje a Europa, Casa propia"
-                  />
+                  <Label>Moneda</Label>
+                  <Select value={currency} onValueChange={(v) => setCurrency(v as Currency)}>
+                    <SelectTrigger><SelectValue /></SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="USD">USD</SelectItem>
+                      <SelectItem value="COP">COP</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </div>
                 <div className="space-y-1.5">
-                  <Label htmlFor="goal-target">Monto de la meta</Label>
+                  <Label htmlFor="initial">Balance inicial</Label>
                   <Input
-                    id="goal-target"
+                    id="initial"
                     type="number"
                     inputMode="decimal"
-                    value={goalTarget}
-                    onChange={(e) => setGoalTarget(e.target.value)}
-                    placeholder="Ej: 10000000"
+                    value={initialBalance}
+                    onChange={(e) => setInitialBalance(e.target.value)}
                   />
                 </div>
               </div>
-            )}
-          </div>
-        )}
-      </div>
 
-        {type === "investment" && (
-          <div className="space-y-3 pt-2 border-t">
-            <div className="flex items-center gap-2">
-              <Checkbox
-                id="sync-enabled"
-                checked={syncEnabled}
-                onCheckedChange={(v) => setSyncEnabled(v === true)}
-              />
-              <Label htmlFor="sync-enabled" className="text-sm font-normal cursor-pointer">
-                Sincronizar balance automáticamente (IBKR Flex Query)
-              </Label>
+              {(type === "fixed_income" || type === "investment") && (
+                <div className="space-y-1.5">
+                  <Label htmlFor="mini-label">Etiqueta corta (opcional)</Label>
+                  <Input
+                    id="mini-label"
+                    maxLength={5}
+                    value={miniLabel}
+                    onChange={(e) => setMiniLabel(e.target.value.toUpperCase())}
+                    placeholder={type === "fixed_income" ? "Ej: NUB, CDT" : "Ej: IBKR, BTC"}
+                  />
+                  <p className="text-xs text-muted-foreground">
+                    Aparece dentro del mini-cuadro de color (máx. 5 caracteres).
+                  </p>
+                </div>
+              )}
             </div>
-            {syncEnabled && (
+          </div>
+
+          {/* Type-specific details */}
+          {type === "debit" && (
+            <div className="rounded-lg border bg-card p-5 space-y-4">
+              <SectionHeading>Tarjeta física (opcional)</SectionHeading>
+              <div className="space-y-3">
+                <div className="space-y-2">
+                  <Label>Marca</Label>
+                  <CardNetworkPicker value={network} onChange={setNetwork} />
+                </div>
+                <div className="space-y-1.5">
+                  <Label htmlFor="debit-last4">Últimos 4 dígitos</Label>
+                  <Input
+                    id="debit-last4"
+                    maxLength={4}
+                    value={debitLast4}
+                    onChange={(e) => setDebitLast4(e.target.value.replace(/\D/g, ""))}
+                  />
+                </div>
+              </div>
+            </div>
+          )}
+
+          {type === "credit" && (
+            <div className="rounded-lg border bg-card p-5 space-y-4">
+              <SectionHeading>Detalles de crédito</SectionHeading>
               <div className="space-y-3">
                 <div className="space-y-1.5">
-                  <Label htmlFor="sync-url">URL Flex Query (SendRequest)</Label>
-                  <Input
-                    id="sync-url"
-                    value={syncUrl}
-                    onChange={(e) => setSyncUrl(e.target.value)}
-                    placeholder="https://ndcdyn.interactivebrokers.com/AccountManagement/FlexWebService/SendRequest?q=QUERY_ID&v=3"
-                  />
-                  <p className="text-xs text-muted-foreground">
-                    En IBKR: Reports → Flex Queries → copia la URL del SendRequest sin el token.
-                  </p>
+                  <Label htmlFor="limit">Límite de crédito</Label>
+                  <Input id="limit" type="number" inputMode="decimal" value={creditLimit} onChange={(e) => setCreditLimit(e.target.value)} />
+                </div>
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="space-y-1.5">
+                    <Label htmlFor="last4">Últimos 4 dígitos</Label>
+                    <Input id="last4" maxLength={4} value={last4} onChange={(e) => setLast4(e.target.value.replace(/\D/g, ""))} />
+                  </div>
+                  <div className="space-y-1.5">
+                    <Label htmlFor="exp">Fecha de expiración</Label>
+                    <Input id="exp" placeholder="MM/AA" value={expDate} onChange={(e) => setExpDate(e.target.value)} />
+                  </div>
                 </div>
                 <div className="space-y-1.5">
-                  <Label htmlFor="sync-token">Flex Token</Label>
-                  <Input
-                    id="sync-token"
-                    type="password"
-                    value={syncToken}
-                    onChange={(e) => setSyncToken(e.target.value)}
-                    placeholder="Token de IBKR Flex Web Service"
-                  />
-                  <p className="text-xs text-muted-foreground">
-                    En IBKR: Settings → Account Settings → Flex Web Service → Generate Token.
-                  </p>
+                  <Label>Red</Label>
+                  <Select value={network} onValueChange={(v) => setNetwork(v as CardNetwork)}>
+                    <SelectTrigger><SelectValue /></SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="visa">Visa</SelectItem>
+                      <SelectItem value="mastercard">Mastercard</SelectItem>
+                      <SelectItem value="amex">Amex</SelectItem>
+                      <SelectItem value="other">Otra</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </div>
               </div>
-            )}
-          </div>
-        )}
+            </div>
+          )}
 
-          <div className="pt-2">
-            <Button disabled={!valid} onClick={submit} className="w-full h-12 text-base">
-              Crear Cuenta
-            </Button>
-          </div>
+          {type === "fixed_income" && (
+            <div className="rounded-lg border bg-card p-5 space-y-4">
+              <SectionHeading>Detalles de renta fija</SectionHeading>
+              <div className="space-y-3">
+                <div className="space-y-1.5">
+                  <Label htmlFor="rate">Tasa de interés anual (%)</Label>
+                  <Input id="rate" type="number" inputMode="decimal" value={annualRate} onChange={(e) => setAnnualRate(e.target.value)} />
+                </div>
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="space-y-1.5">
+                    <Label htmlFor="start">Fecha de inicio</Label>
+                    <Input id="start" type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)} />
+                  </div>
+                  <div className="space-y-1.5">
+                    <Label htmlFor="mat">Vencimiento (opcional)</Label>
+                    <Input id="mat" type="date" value={maturityDate} onChange={(e) => setMaturityDate(e.target.value)} />
+                  </div>
+                </div>
+                <div className="flex items-center gap-2 pt-1">
+                  <Checkbox
+                    id="goal"
+                    checked={isGoal}
+                    onCheckedChange={(v) => setIsGoal(v === true)}
+                  />
+                  <Label htmlFor="goal" className="text-sm font-normal cursor-pointer">
+                    Esta cuenta es una meta de ahorro
+                  </Label>
+                </div>
+                {isGoal && (
+                  <div className="space-y-3">
+                    <div className="space-y-1.5">
+                      <Label htmlFor="goal-name">Nombre de la meta</Label>
+                      <Input
+                        id="goal-name"
+                        value={goalName}
+                        onChange={(e) => setGoalName(e.target.value)}
+                        placeholder="Ej: Viaje a Europa, Casa propia"
+                      />
+                    </div>
+                    <div className="space-y-1.5">
+                      <Label htmlFor="goal-target">Monto de la meta</Label>
+                      <Input
+                        id="goal-target"
+                        type="number"
+                        inputMode="decimal"
+                        value={goalTarget}
+                        onChange={(e) => setGoalTarget(e.target.value)}
+                        placeholder="Ej: 10000000"
+                      />
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+
+          {type === "investment" && (
+            <div className="rounded-lg border bg-card p-5 space-y-4">
+              <SectionHeading>Sincronización (opcional)</SectionHeading>
+              <div className="space-y-3">
+                <div className="flex items-center gap-2">
+                  <Checkbox
+                    id="sync-enabled"
+                    checked={syncEnabled}
+                    onCheckedChange={(v) => setSyncEnabled(v === true)}
+                  />
+                  <Label htmlFor="sync-enabled" className="text-sm font-normal cursor-pointer">
+                    Sincronizar balance automáticamente (IBKR Flex Query)
+                  </Label>
+                </div>
+                {syncEnabled && (
+                  <div className="space-y-3">
+                    <div className="space-y-1.5">
+                      <Label htmlFor="sync-url">URL Flex Query (SendRequest)</Label>
+                      <Input
+                        id="sync-url"
+                        value={syncUrl}
+                        onChange={(e) => setSyncUrl(e.target.value)}
+                        placeholder="https://ndcdyn.interactivebrokers.com/AccountManagement/FlexWebService/SendRequest?q=QUERY_ID&v=3"
+                      />
+                      <p className="text-xs text-muted-foreground">
+                        En IBKR: Reports → Flex Queries → copia la URL del SendRequest sin el token.
+                      </p>
+                    </div>
+                    <div className="space-y-1.5">
+                      <Label htmlFor="sync-token">Flex Token</Label>
+                      <Input
+                        id="sync-token"
+                        type="password"
+                        value={syncToken}
+                        onChange={(e) => setSyncToken(e.target.value)}
+                        placeholder="Token de IBKR Flex Web Service"
+                      />
+                      <p className="text-xs text-muted-foreground">
+                        En IBKR: Settings → Account Settings → Flex Web Service → Generate Token.
+                      </p>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+
+          <Button disabled={!valid} onClick={submit} className="w-full h-12 text-base">
+            Crear Cuenta
+          </Button>
         </div>
       </div>
     </div>

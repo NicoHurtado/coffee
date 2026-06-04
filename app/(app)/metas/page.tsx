@@ -62,13 +62,13 @@ export default function MetasPage() {
 
                 <Progress
                   value={pct}
-                  className="h-2"
+                  className="h-2.5 bg-foreground/[0.08] ring-foreground/10"
                   style={{ ["--progress-color" as string]: s.muted }}
                 />
 
                 <div className="flex items-center justify-between text-sm tabular-nums">
                   <span>
-                    <strong>{formatMoney(balance, a.currency)}</strong>
+                    <strong style={{ color: s.muted }}>{formatMoney(balance, a.currency)}</strong>
                     <span className="text-muted-foreground"> / {formatMoney(a.goalTarget, a.currency)}</span>
                   </span>
                   <span className="text-muted-foreground">
