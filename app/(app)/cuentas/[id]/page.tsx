@@ -1,5 +1,6 @@
 "use client";
-import { use, useState, useCallback, useEffect } from "react";
+import { use, useState, useCallback, useEffect, useMemo } from "react";
+import { startOfMonth } from "date-fns";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { ArrowLeft, Pencil, ChevronDown } from "lucide-react";
@@ -33,7 +34,7 @@ function InvestmentCopCard({ balance }: { balance: number }) {
   const usdToCop = useExchangeRateStore((s) => s.usdToCop);
   const cop = usdToCop ? balance * usdToCop : null;
   return (
-    <div className="rounded-2xl border bg-card p-4 flex-1 flex flex-col justify-center gap-1">
+    <div className="rounded-lg border bg-card p-4 flex-1 flex flex-col justify-center gap-1">
       <div className="text-[10px] text-muted-foreground uppercase tracking-wide">Valor en USD</div>
       <div className="text-3xl font-bold tabular-nums">
         ${balance.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
@@ -114,6 +115,22 @@ export default function AccountDetailPage({
   }
 
   const balance = computeAccountBalance(account, txs);
+
+  // Month-to-date flow summary for the account (used to fill the debit detail).
+  const monthStats = useMemo(() => {
+    const ms = startOfMonth(new Date());
+    let income = 0;
+    let expense = 0;
+    let count = 0;
+    for (const t of txs) {
+      if (new Date(t.occurredAt) < ms) continue;
+      count++;
+      if (t.kind === "income") income += t.amount;
+      else if (t.kind === "expense") expense += t.amount;
+    }
+    return { income, expense, net: income - expense, count };
+  }, [txs]);
+
   const isInvestmentUsd = account.type === "investment" && account.currency === "USD";
   const copValue = isInvestmentUsd && usdToCopRate ? balance * usdToCopRate : null;
   const displayBalanceStr = copValue !== null
@@ -221,7 +238,7 @@ export default function AccountDetailPage({
           (() => {
             const s = colorStyle(account.color as AccountColor | undefined);
             return (
-              <div className="rounded-2xl p-5 space-y-2 border bg-card">
+              <div className="rounded-lg p-5 space-y-2 border bg-card">
                 <div className="flex items-center justify-between gap-2">
                   <span
                     className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-medium uppercase tracking-wide"
@@ -387,7 +404,7 @@ export default function AccountDetailPage({
               (() => {
                 const s = colorStyle(account.color as AccountColor | undefined);
                 return (
-                  <div className="w-full rounded-2xl p-6 space-y-2 border bg-card flex-1 flex flex-col justify-between">
+                  <div className="w-full rounded-lg p-6 space-y-2 border bg-card flex-1 flex flex-col justify-between">
                     <div className="flex items-center justify-between gap-2">
                       <span
                         className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-medium uppercase tracking-wide"
@@ -422,10 +439,59 @@ export default function AccountDetailPage({
               })()
             )}
 
+            {/* Debit summary under card — fills the column height */}
+            {account.type === "debit" && (
+              <div className="rounded-lg border bg-card p-5 flex-1 flex flex-col">
+                <div className="text-[10px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">
+                  Resumen del mes
+                </div>
+                <div className="mt-4 grid grid-cols-2 gap-4">
+                  <div>
+                    <div className="text-[10px] font-semibold uppercase tracking-[0.12em] text-muted-foreground">
+                      Ingresos
+                    </div>
+                    <div className="text-xl font-semibold tabular-nums text-primary mt-1">
+                      +{formatMoney(monthStats.income, account.currency)}
+                    </div>
+                  </div>
+                  <div>
+                    <div className="text-[10px] font-semibold uppercase tracking-[0.12em] text-muted-foreground">
+                      Gastos
+                    </div>
+                    <div className="text-xl font-semibold tabular-nums text-destructive mt-1">
+                      -{formatMoney(monthStats.expense, account.currency)}
+                    </div>
+                  </div>
+                </div>
+                <div className="mt-auto pt-4 border-t flex items-end justify-between gap-3">
+                  <div>
+                    <div className="text-[10px] font-semibold uppercase tracking-[0.12em] text-muted-foreground">
+                      Flujo neto
+                    </div>
+                    <div
+                      className={cn(
+                        "text-2xl font-bold tabular-nums mt-1",
+                        monthStats.net >= 0 ? "text-primary" : "text-destructive",
+                      )}
+                    >
+                      {monthStats.net >= 0 ? "+" : "-"}
+                      {formatMoney(Math.abs(monthStats.net), account.currency)}
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <div className="text-[10px] font-semibold uppercase tracking-[0.12em] text-muted-foreground">
+                      Movimientos
+                    </div>
+                    <div className="text-2xl font-bold tabular-nums mt-1">{monthStats.count}</div>
+                  </div>
+                </div>
+              </div>
+            )}
+
             {/* Credit metrics under card */}
             {account.type === "credit" && (
               <div className="grid grid-cols-2 gap-4 flex-1">
-                <div className="rounded-2xl border bg-card p-4 flex flex-col justify-between">
+                <div className="rounded-lg border bg-card p-4 flex flex-col justify-between">
                   <div className="text-[10px] text-muted-foreground uppercase tracking-wide">Límite utilizado</div>
                   <div>
                     <div className="text-xl font-bold text-destructive tabular-nums">
@@ -434,7 +500,7 @@ export default function AccountDetailPage({
                     <Progress className="mt-2" value={Math.min(100, utilizationPct(account, txs))} />
                   </div>
                 </div>
-                <div className="rounded-2xl border bg-card p-4 flex flex-col justify-between">
+                <div className="rounded-lg border bg-card p-4 flex flex-col justify-between">
                   <div className="text-[10px] text-muted-foreground uppercase tracking-wide">Crédito disponible</div>
                   <div>
                     <div className="text-xl font-bold text-primary tabular-nums">
@@ -470,36 +536,36 @@ export default function AccountDetailPage({
             ) : account.type === "fixed_income" ? (
               /* Fixed income: action buttons at top + metrics grid filling the rest */
               <div className="flex flex-col gap-4">
-                <div className="rounded-2xl border bg-card p-4 space-y-3">
+                <div className="rounded-lg border bg-card p-4 space-y-3">
                   <div className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
                     Acción rápida
                   </div>
                   {actionButton}
                 </div>
                 <div className="grid grid-cols-2 gap-4">
-                  <div className="rounded-2xl border bg-card p-4">
+                  <div className="rounded-lg border bg-card p-4">
                     <div className="text-[10px] text-muted-foreground uppercase tracking-wide">Rendimiento</div>
                     <div className="text-lg font-bold text-primary tabular-nums mt-1">
                       {formatMoney(accruedYield(account, txs), account.currency)}
                     </div>
                   </div>
-                  <div className="rounded-2xl border bg-card p-4">
+                  <div className="rounded-lg border bg-card p-4">
                     <div className="text-[10px] text-muted-foreground uppercase tracking-wide">Tasa anual</div>
                     <div className="text-lg font-bold tabular-nums mt-1">{account.annualRate}%</div>
                   </div>
-                  <div className="rounded-2xl border bg-card p-4">
+                  <div className="rounded-lg border bg-card p-4">
                     <div className="text-[10px] text-muted-foreground uppercase tracking-wide">Balance inicial</div>
                     <div className="text-lg font-bold tabular-nums mt-1">
                       {formatMoney(account.initialBalance, account.currency)}
                     </div>
                   </div>
                   {account.maturityDate ? (
-                    <div className="rounded-2xl border bg-card p-4">
+                    <div className="rounded-lg border bg-card p-4">
                       <div className="text-[10px] text-muted-foreground uppercase tracking-wide">Días restantes</div>
                       <div className="text-lg font-bold tabular-nums mt-1">{daysToMaturity(account)}</div>
                     </div>
                   ) : (
-                    <div className="rounded-2xl border bg-card p-4">
+                    <div className="rounded-lg border bg-card p-4">
                       <div className="text-[10px] text-muted-foreground uppercase tracking-wide">Vencimiento</div>
                       <div className="text-lg font-bold tabular-nums mt-1 text-muted-foreground">Sin fecha</div>
                     </div>
@@ -509,7 +575,7 @@ export default function AccountDetailPage({
             ) : (
               /* Investment: action buttons + COP card filling the rest */
               <div className="flex flex-col gap-4">
-                <div className="rounded-2xl border bg-card p-4 space-y-3">
+                <div className="rounded-lg border bg-card p-4 space-y-3">
                   <div className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
                     Acción rápida
                   </div>
@@ -529,7 +595,7 @@ export default function AccountDetailPage({
             <button
               type="button"
               onClick={() => setChartsOpen(!chartsOpen)}
-              className="flex items-center justify-between w-full p-4 border rounded-2xl bg-card hover:bg-accent/40 transition-colors"
+              className="flex items-center justify-between w-full p-4 border rounded-lg bg-card hover:bg-accent/40 transition-colors"
             >
               <div className="text-left">
                 <div className="text-sm font-semibold">Estadísticas de gastos</div>
