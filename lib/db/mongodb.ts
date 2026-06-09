@@ -14,16 +14,30 @@ declare global {
   var _mongoIndexesReady: Promise<void> | undefined;
 }
 
-const clientPromise: Promise<MongoClient> =
-  global._mongoClientPromise ??
-  (global._mongoClientPromise = new MongoClient(uri, {
+function newClientPromise(): Promise<MongoClient> {
+  return (global._mongoClientPromise = new MongoClient(uri!, {
     maxPoolSize: 10,
     minPoolSize: 1,
     maxIdleTimeMS: 60_000,
-    serverSelectionTimeoutMS: 5_000,
-    // Lower latency by skipping retryable-write bookkeeping on idempotent ops
+    // Cold serverless starts need room for DNS SRV + TLS + SCRAM (and an Atlas
+    // tier that may be waking). 5s was too tight and made the first request of
+    // the day fail; the retry then hit a warm client and succeeded.
+    serverSelectionTimeoutMS: 15_000,
     retryWrites: true,
-  }).connect());
+  })
+    .connect()
+    .catch((err) => {
+      // Never cache a rejected promise: a poisoned global would make every
+      // later request on this instance re-throw the same failure forever.
+      global._mongoClientPromise = undefined;
+      throw err;
+    }));
+}
+
+// Kick off the connection at module load, but resolve it through the global on
+// each call so that after a cleared (rejected) promise we reconnect cleanly
+// instead of forever awaiting the original failed attempt.
+global._mongoClientPromise ?? newClientPromise();
 
 // Build indexes once per process, in the background — never blocks a request.
 // Each index is created independently so a name/spec conflict on one
@@ -57,7 +71,7 @@ async function ensureIndexes(db: Db): Promise<void> {
 }
 
 export async function getDb(): Promise<Db> {
-  const client = await clientPromise;
+  const client = await (global._mongoClientPromise ?? newClientPromise());
   const db = client.db(dbName);
   // Fire-and-forget: indexes build in the background, requests don't wait.
   global._mongoIndexesReady ??= ensureIndexes(db).catch((e) => {
