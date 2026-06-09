@@ -64,7 +64,7 @@ function LoginForm() {
       <div className="w-full max-w-sm">
         <div className="text-center mb-8">
           <div className="inline-flex mb-4 rounded-2xl overflow-hidden shadow-sm">
-            <img src="/cafe.svg" alt="Coffee" className="size-20 object-cover" />
+            <img src="/stat_icon.svg" alt="Coffee" className="size-20 object-cover" />
           </div>
           <h1 className="text-2xl font-semibold tracking-tight">Coffee</h1>
           <p className="text-muted-foreground text-sm mt-1">

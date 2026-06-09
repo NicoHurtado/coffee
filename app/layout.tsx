@@ -14,11 +14,11 @@ export const metadata: Metadata = {
     capable: true,
     statusBarStyle: "black-translucent",
     title: "Coffee",
-    startupImage: "/cafe.svg",
+    startupImage: "/stat_icon.svg",
   },
   icons: {
-    icon: "/cafe.svg",
-    apple: "/cafe.svg",
+    icon: "/stat_icon.svg",
+    apple: "/stat_icon.svg",
   },
 };
 
