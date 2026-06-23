@@ -18,7 +18,6 @@ import {
   availableCredit,
 } from "@/lib/finance/credit";
 import { accruedYield, daysToMaturity } from "@/lib/finance/fixed-income";
-import { colorStyle, type AccountColor } from "@/lib/finance/colors";
 import { PhysicalCard } from "@/components/accounts/physical-card";
 import { QuickAddWidget } from "@/components/accounts/quick-add-widget";
 import { PayCreditCardDialog } from "@/components/accounts/pay-credit-card-dialog";
@@ -94,8 +93,6 @@ export default function AccountDetailPage({
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [account?.type, (account as import("@/lib/types").InvestmentAccount)?.lastSyncDate]);
 
-  const usdToCopRate = useExchangeRateStore((s) => s.usdToCop);
-
   // Volver con el historial del navegador es instantáneo: restaura la página
   // anterior ya renderizada (router cache) en vez de disparar una navegación
   // nueva que vuelve a pedir el RSC de /cuentas al servidor. Si se entró por
@@ -132,17 +129,6 @@ export default function AccountDetailPage({
   }, [txs]);
 
   const isInvestmentUsd = account.type === "investment" && account.currency === "USD";
-  const copValue = isInvestmentUsd && usdToCopRate ? balance * usdToCopRate : null;
-  const displayBalanceStr = copValue !== null
-    ? Math.round(copValue).toLocaleString("es-CO", { style: "currency", currency: "COP", maximumFractionDigits: 0 })
-    : formatMoney(balance, account.currency);
-
-  const TYPE_LABEL = {
-    debit: "Débito",
-    credit: "Crédito",
-    fixed_income: "Renta Fija",
-    investment: "Inversión",
-  } as const;
 
   const actionButton = (() => {
     switch (account.type) {
@@ -230,48 +216,19 @@ export default function AccountDetailPage({
 
       {/* MOBILE LAYOUT — unchanged */}
       <div className="md:hidden flex flex-col gap-5">
-        {account.type === "debit" || account.type === "credit" ? (
-          <div className="w-full max-w-md mx-auto">
-            <PhysicalCard account={account} balance={balance} />
-          </div>
-        ) : (
-          (() => {
-            const s = colorStyle(account.color as AccountColor | undefined);
-            return (
-              <div className="rounded-lg p-5 space-y-2 border bg-card">
-                <div className="flex items-center justify-between gap-2">
-                  <span
-                    className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-medium uppercase tracking-wide"
-                    style={{ background: s.background, color: s.color }}
-                  >
-                    <span className="size-1.5 rounded-full" style={{ background: s.muted }} />
-                    {TYPE_LABEL[account.type]}
-                  </span>
-                  {account.type === "fixed_income" && (
-                    <span className="text-xs text-muted-foreground tabular-nums">
-                      {account.annualRate}% anual
-                    </span>
-                  )}
-                </div>
-                <div className="text-2xl font-semibold mt-2">{account.name}</div>
-                <div className="text-sm text-muted-foreground">{account.institution}</div>
-                <div className="text-4xl font-bold tabular-nums mt-3">
-                  {displayBalanceStr}
-                </div>
-                {isInvestmentUsd && (
-                  <div className="text-xs text-muted-foreground tabular-nums">
-                    {formatMoney(balance, account.currency)} USD
-                  </div>
-                )}
-                {account.type === "fixed_income" && account.maturityDate && (
-                  <div className="mt-2 text-xs text-muted-foreground">
-                    Vence: {account.maturityDate}
-                  </div>
-                )}
-              </div>
-            );
-          })()
-        )}
+        <div className="w-full max-w-md mx-auto">
+          <PhysicalCard account={account} balance={balance} />
+          {isInvestmentUsd && (
+            <div className="mt-2 text-xs text-muted-foreground tabular-nums text-right">
+              {formatMoney(balance, account.currency)} USD
+            </div>
+          )}
+          {account.type === "fixed_income" && account.maturityDate && (
+            <div className="mt-2 text-xs text-muted-foreground text-right">
+              Vence: {account.maturityDate}
+            </div>
+          )}
+        </div>
 
         {account.type === "debit" && (
           <button
@@ -396,48 +353,19 @@ export default function AccountDetailPage({
         <div className="grid grid-cols-12 gap-6 items-stretch">
           {/* ── Left column ── */}
           <div className="col-span-5 flex flex-col gap-4">
-            {account.type === "debit" || account.type === "credit" ? (
-              <div className="w-full">
-                <PhysicalCard account={account} balance={balance} />
-              </div>
-            ) : (
-              (() => {
-                const s = colorStyle(account.color as AccountColor | undefined);
-                return (
-                  <div className="w-full rounded-lg p-6 space-y-2 border bg-card flex-1 flex flex-col justify-between">
-                    <div className="flex items-center justify-between gap-2">
-                      <span
-                        className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-medium uppercase tracking-wide"
-                        style={{ background: s.background, color: s.color }}
-                      >
-                        <span className="size-1.5 rounded-full" style={{ background: s.muted }} />
-                        {TYPE_LABEL[account.type]}
-                      </span>
-                      {account.type === "fixed_income" && (
-                        <span className="text-xs text-muted-foreground tabular-nums">
-                          {account.annualRate}% anual
-                        </span>
-                      )}
-                    </div>
-                    <div className="text-2xl font-semibold mt-2">{account.name}</div>
-                    <div className="text-sm text-muted-foreground">{account.institution}</div>
-                    <div className="text-4xl font-bold tabular-nums mt-3">
-                      {displayBalanceStr}
-                    </div>
-                    {isInvestmentUsd && (
-                      <div className="text-xs text-muted-foreground tabular-nums mt-1">
-                        {formatMoney(balance, account.currency)} USD
-                      </div>
-                    )}
-                    {account.type === "fixed_income" && account.maturityDate && (
-                      <div className="mt-2 text-xs text-muted-foreground">
-                        Vence: {account.maturityDate}
-                      </div>
-                    )}
-                  </div>
-                );
-              })()
-            )}
+            <div className="w-full">
+              <PhysicalCard account={account} balance={balance} />
+              {isInvestmentUsd && (
+                <div className="mt-2 text-xs text-muted-foreground tabular-nums text-right">
+                  {formatMoney(balance, account.currency)} USD
+                </div>
+              )}
+              {account.type === "fixed_income" && account.maturityDate && (
+                <div className="mt-2 text-xs text-muted-foreground text-right">
+                  Vence: {account.maturityDate}
+                </div>
+              )}
+            </div>
 
             {/* Debit summary under card — fills the column height */}
             {account.type === "debit" && (
