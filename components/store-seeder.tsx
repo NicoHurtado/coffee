@@ -4,7 +4,8 @@ import { useAccountsStore } from "@/lib/store/accounts";
 import { useTransactionsStore } from "@/lib/store/transactions";
 import { useSettingsStore } from "@/lib/store/settings";
 import { useCategoriesStore } from "@/lib/store/categories";
-import type { Account, Transaction } from "@/lib/types";
+import { useSubscriptionsStore } from "@/lib/store/subscriptions";
+import type { Account, Subscription, Transaction } from "@/lib/types";
 import type { CategoryData, SettingsData } from "@/lib/db/queries";
 
 export interface InitialData {
@@ -12,6 +13,7 @@ export interface InitialData {
   transactions: Transaction[];
   settings: SettingsData;
   categories: CategoryData[];
+  subscriptions: Subscription[];
 }
 
 /**
@@ -33,6 +35,7 @@ export function StoreSeeder({ data }: { data: InitialData }) {
     useTransactionsStore.getState().seed(data.transactions);
     useSettingsStore.getState().seed(data.settings);
     useCategoriesStore.getState().seed(data.categories);
+    useSubscriptionsStore.getState().seed(data.subscriptions);
     // Seed once with the data present at mount; intentionally not reactive.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);

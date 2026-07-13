@@ -66,6 +66,12 @@ async function ensureIndexes(db: Db): Promise<void> {
     // load (settings, name, preferences). Without this index that read is a
     // collection scan; `id` is the user's unique primary key.
     db.collection("users").createIndex({ id: 1 }, { unique: true }),
+    db.collection("subscriptions").createIndex({ userId: 1, id: 1 }, { name: "userId_id" }),
+    // Cron sweep filters active due subscriptions across all users by billing day.
+    db.collection("subscriptions").createIndex(
+      { active: 1, billingDay: 1 },
+      { name: "active_billingDay" },
+    ),
   ];
   await Promise.allSettled(jobs);
 }

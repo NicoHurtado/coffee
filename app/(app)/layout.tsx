@@ -1,4 +1,5 @@
 import { Sidebar } from "@/components/nav/sidebar";
+import { TopBar } from "@/components/nav/top-bar";
 import { BottomNav } from "@/components/nav/bottom-nav";
 import { QuickAddPanel } from "@/components/transactions/quick-add-sheet";
 import { DataHydrator } from "@/components/data-hydrator";
@@ -8,6 +9,7 @@ import {
   getAccountsForUser,
   getCategories,
   getSettingsForUser,
+  getSubscriptionsForUser,
   getTransactionsForUser,
 } from "@/lib/db/queries";
 
@@ -20,13 +22,14 @@ async function loadInitialData(): Promise<InitialData | null> {
   if (!session) return null;
   const uid = session.uid;
   try {
-    const [accounts, transactions, settings, categories] = await Promise.all([
+    const [accounts, transactions, settings, categories, subscriptions] = await Promise.all([
       getAccountsForUser(uid),
       getTransactionsForUser(uid),
       getSettingsForUser(uid),
       getCategories(),
+      getSubscriptionsForUser(uid),
     ]);
-    return { accounts, transactions, settings, categories };
+    return { accounts, transactions, settings, categories, subscriptions };
   } catch {
     return null;
   }
@@ -41,6 +44,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
       <DataHydrator />
       <Sidebar />
       <main className="flex-1 min-w-0 pt-[env(safe-area-inset-top)] pb-[calc(56px+env(safe-area-inset-bottom)+16px)] md:pt-0 md:pb-0 relative">
+        <TopBar />
         {children}
       </main>
       <BottomNav />

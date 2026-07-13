@@ -56,6 +56,23 @@ export type Account =
   | FixedIncomeAccount
   | InvestmentAccount;
 
+export interface Subscription {
+  id: string;
+  accountId: string;
+  name: string;
+  amount: number;
+  currency: Currency;
+  category: Category;
+  /** Day of month the subscription is charged (1-31). Clamped to the last day
+   *  of shorter months (e.g. 31 charges on Feb 28/29). */
+  billingDay: number;
+  active: boolean;
+  createdAt: string;
+  /** "YYYY-MM" of the last month a transaction was auto-created for this
+   *  subscription. Prevents the cron job from double-charging. */
+  lastChargedMonth?: string;
+}
+
 export interface Transaction {
   id: string;
   accountId: string;

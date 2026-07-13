@@ -1,6 +1,6 @@
 "use client";
 import Link from "next/link";
-import { Plus } from "lucide-react";
+import { Plus, Repeat } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAccountsStore } from "@/lib/store/accounts";
 import { useTransactionsStore } from "@/lib/store/transactions";
@@ -39,6 +39,11 @@ export default function CuentasPage() {
     <div className="p-4 md:p-8">
       <div className="space-y-6">
         <PageHeader eyebrow="Portafolio" title="Cuentas">
+          <Link href="/cuentas/suscripciones">
+            <Button variant="outline" size="sm" className="gap-1">
+              <Repeat className="size-4" /> Suscripciones
+            </Button>
+          </Link>
           <Link href="/cuentas/nueva">
             <Button size="sm" className="gap-1">
               <Plus className="size-4" /> Nueva cuenta

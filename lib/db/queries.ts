@@ -1,5 +1,5 @@
 import { getDb } from "./mongodb";
-import type { Account, Currency, Transaction } from "@/lib/types";
+import type { Account, Currency, Subscription, Transaction } from "@/lib/types";
 
 /**
  * Server-side data access, shared by the API routes and the (app) layout's
@@ -43,6 +43,15 @@ export async function getTransactionsForUser(uid: string): Promise<Transaction[]
     .collection<Transaction>("transactions")
     .find({ userId: uid }, { projection: { _id: 0, userId: 0 } })
     .sort({ occurredAt: -1 })
+    .toArray();
+}
+
+export async function getSubscriptionsForUser(uid: string): Promise<Subscription[]> {
+  const db = await getDb();
+  return db
+    .collection<Subscription>("subscriptions")
+    .find({ userId: uid }, { projection: { _id: 0, userId: 0 } })
+    .sort({ billingDay: 1 })
     .toArray();
 }
 

@@ -5,6 +5,7 @@ import { useTransactionsStore } from "@/lib/store/transactions";
 import { useSettingsStore } from "@/lib/store/settings";
 import { useCategoriesStore } from "@/lib/store/categories";
 import { useExchangeRateStore } from "@/lib/store/exchange-rate";
+import { useSubscriptionsStore } from "@/lib/store/subscriptions";
 
 export function DataHydrator() {
   const hydrateAccounts = useAccountsStore((s) => s.hydrate);
@@ -12,6 +13,7 @@ export function DataHydrator() {
   const hydrateSettings = useSettingsStore((s) => s.hydrate);
   const hydrateCategories = useCategoriesStore((s) => s.hydrate);
   const hydrateExchangeRate = useExchangeRateStore((s) => s.hydrate);
+  const hydrateSubscriptions = useSubscriptionsStore((s) => s.hydrate);
 
   useEffect(() => {
     function hydrateAll() {
@@ -21,6 +23,7 @@ export function DataHydrator() {
       void hydrateSettings();
       void hydrateCategories();
       void hydrateExchangeRate();
+      void hydrateSubscriptions();
     }
 
     hydrateAll();
@@ -33,7 +36,8 @@ export function DataHydrator() {
         useTransactionsStore.getState().loaded &&
         useSettingsStore.getState().loaded &&
         useCategoriesStore.getState().loaded &&
-        useExchangeRateStore.getState().loaded;
+        useExchangeRateStore.getState().loaded &&
+        useSubscriptionsStore.getState().loaded;
       if (allLoaded) {
         clearInterval(interval);
         return;
@@ -42,7 +46,14 @@ export function DataHydrator() {
     }, 10_000);
 
     return () => clearInterval(interval);
-  }, [hydrateAccounts, hydrateTxs, hydrateSettings, hydrateCategories, hydrateExchangeRate]);
+  }, [
+    hydrateAccounts,
+    hydrateTxs,
+    hydrateSettings,
+    hydrateCategories,
+    hydrateExchangeRate,
+    hydrateSubscriptions,
+  ]);
 
   return null;
 }
