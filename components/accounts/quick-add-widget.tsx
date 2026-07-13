@@ -45,10 +45,17 @@ export function QuickAddWidget({ account }: { account: Account }) {
       if (!destinationId || destinationId === account.id) return;
       const dst = accounts.find((a) => a.id === destinationId);
       const pairId = `pair-${Date.now()}`;
+      // La dirección de cada pata depende del tipo de cuenta, no del flujo físico:
+      // en una tarjeta de crédito "out" = pago (baja deuda) e "in" = cargo (sube
+      // deuda). Por eso un traslado HACIA un crédito (pagarlo) es "out" en esa
+      // pata, y un traslado DESDE un crédito (avance) es "in" (sube deuda). En
+      // cuentas normales se mantiene el flujo físico: sale "out", entra "in".
+      const sourceDirection = account.type === "credit" ? "in" : "out";
+      const destDirection = dst?.type === "credit" ? "out" : "in";
       await addTx({
         accountId: account.id,
         kind: "transfer",
-        direction: "out",
+        direction: sourceDirection,
         amount: amountNum,
         category: "Traslado",
         description: description || (dst ? `Traslado a ${dst.name}` : undefined),
@@ -58,7 +65,7 @@ export function QuickAddWidget({ account }: { account: Account }) {
       await addTx({
         accountId: destinationId,
         kind: "transfer",
-        direction: "in",
+        direction: destDirection,
         amount: amountNum,
         category: "Traslado",
         description: description || `Traslado desde ${account.name}`,
