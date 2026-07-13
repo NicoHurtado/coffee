@@ -23,21 +23,10 @@ export function KpiCard({
       : valueTone === "down"
         ? "text-destructive"
         : "text-foreground";
-  const pillClass =
-    tone === "up"
-      ? "text-primary bg-primary/10"
-      : tone === "down"
-        ? "text-destructive bg-destructive/10"
-        : "text-muted-foreground bg-muted";
+  const deltaColor =
+    tone === "up" ? "text-primary" : tone === "down" ? "text-destructive" : "text-muted-foreground";
   return (
-    <div className="relative border bg-card p-4 flex flex-col gap-3 overflow-hidden">
-      <span
-        aria-hidden
-        className={cn(
-          "absolute inset-x-0 top-0 h-px",
-          tone === "up" ? "bg-primary/50" : tone === "down" ? "bg-destructive/50" : "bg-border",
-        )}
-      />
+    <div className="bg-card p-5 flex flex-col gap-3">
       <div className="flex items-center justify-between gap-2">
         <span className="text-[10px] font-semibold uppercase tracking-[0.14em] text-muted-foreground tabular-nums">
           {label}
@@ -48,20 +37,10 @@ export function KpiCard({
         {value}
       </div>
       {delta && (
-        <div className="text-[11px] flex items-center gap-2 text-muted-foreground tabular-nums">
-          {tone !== "neutral" && (
-            <span
-              className={cn(
-                "inline-flex items-center gap-0.5 rounded-sm px-1.5 py-0.5 font-semibold",
-                pillClass,
-              )}
-            >
-              {tone === "up" && <ArrowUp className="size-3" />}
-              {tone === "down" && <ArrowDown className="size-3" />}
-              {delta}
-            </span>
-          )}
-          {tone === "neutral" && delta}
+        <div className={cn("text-[11px] flex items-center gap-1 tabular-nums", deltaColor)}>
+          {tone === "up" && <ArrowUp className="size-3" />}
+          {tone === "down" && <ArrowDown className="size-3" />}
+          {delta}
         </div>
       )}
     </div>

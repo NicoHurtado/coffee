@@ -20,10 +20,7 @@ export function PageHeader({
 }) {
   return (
     <div
-      className={cn(
-        "flex items-end justify-between gap-4 flex-wrap border-b pb-4",
-        className,
-      )}
+      className={cn("flex items-end justify-between gap-4 flex-wrap", className)}
     >
       <div className="flex flex-col gap-1 min-w-0">
         {eyebrow && (

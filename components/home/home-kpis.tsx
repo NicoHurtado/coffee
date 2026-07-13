@@ -38,7 +38,7 @@ export function HomeKpis() {
   }, [accounts, txs, usdToCop]);
 
   return (
-    <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+    <div className="grid grid-cols-2 lg:grid-cols-4 gap-px overflow-hidden rounded-lg border bg-border">
       <KpiCard
         label="Patrimonio neto"
         value={`${nw < 0 ? "-" : ""}${formatMoney(nw, currency)}`}

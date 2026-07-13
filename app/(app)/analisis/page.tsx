@@ -10,8 +10,7 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
-import { format, startOfMonth, subMonths } from "date-fns";
-import { es } from "date-fns/locale";
+import { startOfMonth, subMonths } from "date-fns";
 import {
   ChartContainer,
   ChartTooltip,
@@ -26,11 +25,7 @@ import { formatMoney } from "@/lib/finance/format";
 import { useCategoriesStore } from "@/lib/store/categories";
 import { useExchangeRateStore } from "@/lib/store/exchange-rate";
 import { cn } from "@/lib/utils";
-import { SavingsRunway } from "@/components/analysis/savings-runway";
-import { SpendingHeatmap } from "@/components/analysis/spending-heatmap";
-import { RecurringSubscriptions } from "@/components/analysis/recurring-subscriptions";
 import { CategoryMonthDiff } from "@/components/analysis/category-month-diff";
-import { NetWorthComposition } from "@/components/analysis/net-worth-composition";
 import { PageHeader } from "@/components/nav/page-header";
 
 const TYPE_LABEL = {
@@ -55,13 +50,20 @@ const distributionConfig = {
   investment: { label: "Inversiones", color: TYPE_COLOR.investment },
 } satisfies ChartConfig;
 
+// One distinct color per category bar instead of a single flat primary tone.
+const CATEGORY_COLORS = [
+  "#16c784",
+  "#5fb6e8",
+  "#e8b85f",
+  "#b58ff0",
+  "#ea3943",
+  "#4f9bb0",
+  "#c76fa0",
+  "#8a9a4b",
+] as const;
+
 const categoryConfig = {
   amount: { label: "Monto", color: "var(--primary)" },
-} satisfies ChartConfig;
-
-const monthlyConfig = {
-  income: { label: "Ingresos", color: "var(--primary)" },
-  expense: { label: "Gastos", color: "var(--destructive)" },
 } satisfies ChartConfig;
 
 export default function AnalisisPage() {
@@ -94,12 +96,12 @@ export default function AnalisisPage() {
 
   const totalAssets = distribution.reduce((s, d) => s + d.value, 0);
 
-  // Top expense categories in selected window
   const fromDate = useMemo(
     () => startOfMonth(subMonths(new Date(), monthsBack - 1)),
     [monthsBack],
   );
 
+  // Top expense categories in selected window
   const categoryTotals = useMemo(() => {
     const map = new Map<string, number>();
     categories.forEach((c) => map.set(c.name, 0));
@@ -109,37 +111,22 @@ export default function AnalisisPage() {
     return [...map.entries()]
       .filter(([, v]) => v > 0)
       .sort((a, b) => b[1] - a[1])
-      .map(([category, amount]) => ({ category, amount }));
+      .map(([category, amount], i) => ({
+        category,
+        amount,
+        fill: CATEGORY_COLORS[i % CATEGORY_COLORS.length],
+      }));
   }, [txs, fromDate, categories]);
 
   const totalExpenses = categoryTotals.reduce((s, d) => s + d.amount, 0);
 
-  // Monthly income vs expense
-  const monthly = useMemo(() => {
-    const buckets = new Map<string, { month: string; ts: number; income: number; expense: number }>();
-    for (let i = monthsBack - 1; i >= 0; i--) {
-      const d = startOfMonth(subMonths(new Date(), i));
-      const key = format(d, "yyyy-MM");
-      buckets.set(key, {
-        month: format(d, "MMM yy", { locale: es }),
-        ts: d.getTime(),
-        income: 0,
-        expense: 0,
-      });
-    }
-    txs.forEach((t) => {
-      const d = new Date(t.occurredAt);
-      if (d < fromDate) return;
-      const key = format(startOfMonth(d), "yyyy-MM");
-      const b = buckets.get(key);
-      if (!b) return;
-      if (t.kind === "income") b.income += t.amount;
-      else if (t.kind === "expense") b.expense += t.amount;
-    });
-    return [...buckets.values()];
-  }, [txs, monthsBack, fromDate]);
-
-  const totalIncome = monthly.reduce((s, m) => s + m.income, 0);
+  const totalIncome = useMemo(
+    () =>
+      txs
+        .filter((t) => t.kind === "income" && new Date(t.occurredAt) >= fromDate)
+        .reduce((s, t) => s + t.amount, 0),
+    [txs, fromDate],
+  );
   const netFlow = totalIncome - totalExpenses;
 
   const ranges = [3, 6, 12];
@@ -169,9 +156,6 @@ export default function AnalisisPage() {
           ))}
         </div>
       </PageHeader>
-
-      {/* Salud financiera */}
-      <SavingsRunway />
 
       {/* KPI strip */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
@@ -299,52 +283,19 @@ export default function AnalisisPage() {
                     />
                   }
                 />
-                <Bar
-                  dataKey="amount"
-                  fill="var(--color-amount)"
-                  radius={[0, 6, 6, 0]}
-                />
+                <Bar dataKey="amount" radius={[0, 6, 6, 0]}>
+                  {categoryTotals.map((d) => (
+                    <Cell key={d.category} fill={d.fill} />
+                  ))}
+                </Bar>
               </BarChart>
             </ChartContainer>
           )}
         </div>
-
-        {/* Monthly income vs expense */}
-        <div className="col-span-12 rounded-lg border bg-card p-5">
-          <h2 className="text-[11px] font-semibold uppercase tracking-[0.16em] text-muted-foreground mb-1">Ingresos vs Gastos por mes</h2>
-          <p className="text-xs text-muted-foreground mb-4">
-            Comparativa mensual del flujo de dinero.
-          </p>
-          <ChartContainer config={monthlyConfig} className="h-72 w-full">
-            <BarChart data={monthly}>
-              <CartesianGrid vertical={false} stroke="var(--border)" strokeDasharray="3 3" />
-              <XAxis dataKey="month" tickLine={false} axisLine={false} tick={{ fontSize: 11, fill: "var(--muted-foreground)" }} />
-              <YAxis tickLine={false} axisLine={false} tick={{ fontSize: 11, fill: "var(--muted-foreground)" }} width={80} />
-              <ChartTooltip
-                content={
-                  <ChartTooltipContent
-                    formatter={(v) => formatMoney(Number(v), currency)}
-                  />
-                }
-              />
-              <Bar dataKey="income" fill="var(--color-income)" radius={[6, 6, 0, 0]} />
-              <Bar dataKey="expense" fill="var(--color-expense)" radius={[6, 6, 0, 0]} />
-            </BarChart>
-          </ChartContainer>
-        </div>
       </div>
 
-      {/* Composición del patrimonio en el tiempo */}
-      <NetWorthComposition />
-
-      {/* Calendario de gastos (heatmap) */}
-      <SpendingHeatmap />
-
-      {/* Suscripciones recurrentes + Diff vs mes pasado */}
-      <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
-        <RecurringSubscriptions />
-        <CategoryMonthDiff />
-      </div>
+      {/* Diferencia vs mes pasado */}
+      <CategoryMonthDiff />
     </div>
   );
 }
