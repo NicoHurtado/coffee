@@ -1,6 +1,14 @@
 "use client";
 import { useAccountsStore } from "@/lib/store/accounts";
+import type { AccountType } from "@/lib/types";
 import { AccountCard } from "./account-card";
+
+const GROUPS: { type: AccountType; label: string }[] = [
+  { type: "debit", label: "Débito" },
+  { type: "credit", label: "Crédito" },
+  { type: "fixed_income", label: "Renta Fija" },
+  { type: "investment", label: "Inversiones" },
+];
 
 export function AccountsGrid() {
   const accounts = useAccountsStore((s) => s.activeAccounts);
@@ -14,12 +22,26 @@ export function AccountsGrid() {
   }
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-4">
-      {accounts.map((a) => (
-        <div key={a.id} className="h-full [&>a]:min-w-0 [&>a]:max-w-none [&>a]:w-full">
-          <AccountCard account={a} />
-        </div>
-      ))}
+    <div className="space-y-6">
+      {GROUPS.map(({ type, label }) => {
+        const group = accounts.filter((a) => a.type === type);
+        if (group.length === 0) return null;
+        return (
+          <div key={type} className="space-y-2">
+            <h3 className="text-[10px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">
+              {label}
+              <span className="ml-2 font-normal opacity-70">{group.length}</span>
+            </h3>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-4">
+              {group.map((a) => (
+                <div key={a.id} className="h-full [&>a]:min-w-0 [&>a]:max-w-none [&>a]:w-full">
+                  <AccountCard account={a} />
+                </div>
+              ))}
+            </div>
+          </div>
+        );
+      })}
     </div>
   );
 }

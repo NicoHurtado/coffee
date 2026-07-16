@@ -30,6 +30,39 @@ export function netWorth(
   }, 0);
 }
 
+/** Patrimonio sin las inversiones de bolsa (plata que sí se puede tocar). */
+export function liquidNetWorth(
+  accounts: Account[],
+  txs: Transaction[],
+  now: Date = new Date(),
+  usdToCop?: number | null,
+): number {
+  return netWorth(
+    accounts.filter((a) => a.type !== "investment"),
+    txs,
+    now,
+    usdToCop,
+  );
+}
+
+/** Total en cuentas de inversión: en COP (vía TRM) y el subtotal en USD. */
+export function investmentsTotal(
+  accounts: Account[],
+  txs: Transaction[],
+  now: Date = new Date(),
+  usdToCop?: number | null,
+): { cop: number; usd: number } {
+  let cop = 0;
+  let usd = 0;
+  for (const a of accounts) {
+    if (a.type !== "investment") continue;
+    const bal = computeAccountBalance(a, txs, now);
+    cop += toBaseCurrency(bal, a.currency, usdToCop);
+    if (a.currency === "USD") usd += bal;
+  }
+  return { cop, usd };
+}
+
 /** % cambio vs hace 30 días aprox. */
 export function monthlyChangePct(
   accounts: Account[],

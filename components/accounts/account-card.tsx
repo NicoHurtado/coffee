@@ -25,9 +25,10 @@ export function AccountCard({ account }: { account: Account }) {
       className="flex flex-col h-full min-w-64 max-w-[20rem] w-full shrink-0 transition-transform hover:-translate-y-0.5"
     >
       <PhysicalCard account={account} balance={balance} className="flex-1" />
-      {footer && (
-        <div className="mt-2 text-xs text-muted-foreground truncate text-right">{footer}</div>
-      )}
+      {/* Siempre reservar la línea del footer para que todas las cards midan igual. */}
+      <div className="mt-2 h-4 text-xs text-muted-foreground truncate text-right">
+        {footer ?? " "}
+      </div>
     </Link>
   );
 }

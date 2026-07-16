@@ -1,12 +1,12 @@
 "use client";
 import { useMemo } from "react";
-import { Wallet, TrendingUp, ArrowDownRight, ArrowUpRight } from "lucide-react";
+import { Wallet, TrendingUp, ArrowDownRight, ArrowUpRight, LineChart, Landmark } from "lucide-react";
 import { startOfMonth } from "date-fns";
 import { useAccountsStore } from "@/lib/store/accounts";
 import { useTransactionsStore } from "@/lib/store/transactions";
 import { useSettingsStore } from "@/lib/store/settings";
 import { useExchangeRateStore } from "@/lib/store/exchange-rate";
-import { netWorth, monthlyChangePct } from "@/lib/finance/net-worth";
+import { netWorth, monthlyChangePct, liquidNetWorth, investmentsTotal } from "@/lib/finance/net-worth";
 import { formatMoney, formatPct } from "@/lib/finance/format";
 import { KpiCard } from "./kpi-card";
 
@@ -16,7 +16,7 @@ export function HomeKpis() {
   const currency = useSettingsStore((s) => s.defaultCurrency);
   const usdToCop = useExchangeRateStore((s) => s.usdToCop);
 
-  const { nw, pct, expensesMonth, incomeMonth, monthCount } = useMemo(() => {
+  const { nw, liquid, inv, pct, expensesMonth, incomeMonth, monthCount } = useMemo(() => {
     const now = new Date();
     const monthStart = startOfMonth(now);
     let expense = 0;
@@ -30,6 +30,8 @@ export function HomeKpis() {
     }
     return {
       nw: netWorth(accounts, txs, now, usdToCop),
+      liquid: liquidNetWorth(accounts, txs, now, usdToCop),
+      inv: investmentsTotal(accounts, txs, now, usdToCop),
       pct: monthlyChangePct(accounts, txs, now, usdToCop),
       expensesMonth: expense,
       incomeMonth: income,
@@ -38,9 +40,22 @@ export function HomeKpis() {
   }, [accounts, txs, usdToCop]);
 
   return (
-    <div className="grid grid-cols-2 lg:grid-cols-4 gap-px overflow-hidden rounded-lg border bg-border">
+    <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-px overflow-hidden rounded-lg border bg-border">
       <KpiCard
-        label="Patrimonio neto"
+        label="Patrimonio líquido"
+        value={`${liquid < 0 ? "-" : ""}${formatMoney(liquid, currency)}`}
+        delta="Sin inversiones de bolsa"
+        icon={Landmark}
+        valueTone={liquid < 0 ? "down" : "neutral"}
+      />
+      <KpiCard
+        label="Inversiones bolsa"
+        value={formatMoney(inv.cop, currency)}
+        delta={inv.usd > 0 ? `$${inv.usd.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })} USD` : undefined}
+        icon={LineChart}
+      />
+      <KpiCard
+        label="Patrimonio total"
         value={`${nw < 0 ? "-" : ""}${formatMoney(nw, currency)}`}
         delta={`${formatPct(pct)} este mes`}
         icon={Wallet}
