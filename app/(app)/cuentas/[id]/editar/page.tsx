@@ -134,19 +134,20 @@ export default function EditarCuentaPage({
 
   const save = async () => {
     if (!valid) return;
-    const basePatch: Partial<Account> = {
+    const basePatch = {
       institution: institution.trim(),
       name: name.trim(),
       currency,
       initialBalance: parseFloat(initialBalance),
       color,
       active: isActive,
+      // null = borrar el campo en la DB (el API lo traduce a $unset)
       miniLabel:
         (account.type === "fixed_income" || account.type === "investment") &&
         miniLabel.trim()
           ? miniLabel.trim().toUpperCase()
-          : undefined,
-    };
+          : null,
+    } as Partial<Account>;
     if (account.type === "credit") {
       await update(id, {
         ...basePatch,
@@ -166,16 +167,20 @@ export default function EditarCuentaPage({
         ...basePatch,
         annualRate: parseFloat(annualRate),
         startDate,
-        maturityDate: maturityDate || undefined,
-        isGoal: isGoal || undefined,
-        goalTarget: isGoal ? parseFloat(goalTarget) : undefined,
-        goalName: isGoal && goalName.trim() ? goalName.trim() : undefined,
+        maturityDate: maturityDate || null,
+        isGoal: isGoal ? true : null,
+        goalTarget: isGoal ? parseFloat(goalTarget) : null,
+        goalName: isGoal && goalName.trim() ? goalName.trim() : null,
       } as Partial<Account>);
     } else if (account.type === "investment") {
       await update(id, {
         ...basePatch,
-        syncUrl: syncEnabled && syncUrl.trim() ? syncUrl.trim() : undefined,
-        syncToken: syncEnabled && syncToken.trim() ? syncToken.trim() : undefined,
+        // Si el sync está apagado se borran ambos campos; si está activo pero el
+        // token quedó vacío, no se toca (el token guardado nunca llega al cliente).
+        syncUrl: syncEnabled && syncUrl.trim() ? syncUrl.trim() : null,
+        syncToken: syncEnabled
+          ? syncToken.trim() || undefined
+          : null,
       } as Partial<Account>);
     } else {
       await update(id, basePatch);

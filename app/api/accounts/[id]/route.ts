@@ -31,8 +31,22 @@ export async function PATCH(
     rest.syncToken = encrypt(rest.syncToken);
   }
 
+  // Nulls mean "remove this field" (JSON can't carry undefined): translate to $unset
+  // so e.g. quitar la meta de ahorro realmente borre isGoal/goalTarget en la DB.
+  const toSet: Record<string, unknown> = {};
+  const toUnset: Record<string, ""> = {};
+  for (const [k, v] of Object.entries(rest)) {
+    if (v === null) toUnset[k] = "";
+    else toSet[k] = v;
+  }
+  const ops: Record<string, unknown> = {};
+  if (Object.keys(toSet).length) ops.$set = toSet;
+  if (Object.keys(toUnset).length) ops.$unset = toUnset;
+
   // Filter by userId so a user can only modify their own accounts.
-  await db.collection<Account>("accounts").updateOne({ id, userId: uid }, { $set: rest });
+  if (Object.keys(ops).length) {
+    await db.collection<Account>("accounts").updateOne({ id, userId: uid }, ops);
+  }
 
   // Return doc without syncToken (server-only secret)
   const doc = await db.collection<Account>("accounts").findOne(

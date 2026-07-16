@@ -3,7 +3,7 @@ import { use, useState, useCallback, useEffect, useMemo } from "react";
 import { startOfMonth } from "date-fns";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { ArrowLeft, Pencil, ChevronDown } from "lucide-react";
+import { ArrowLeft, Pencil, ChevronDown, Scale } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -27,6 +27,7 @@ import { useExchangeRateStore } from "@/lib/store/exchange-rate";
 import { AccountCategoryPie } from "@/components/accounts/account-category-pie";
 import { AccountPeriodBars } from "@/components/accounts/account-period-bars";
 import { AccountActivity } from "@/components/accounts/account-activity";
+import { AdjustBalanceDialog } from "@/components/accounts/adjust-balance-dialog";
 import { InvestmentBalanceChart } from "@/components/accounts/investment-balance-chart";
 
 function InvestmentCopCard({ balance }: { balance: number }) {
@@ -63,6 +64,7 @@ export default function AccountDetailPage({
   const [depositOpen, setDepositOpen] = useState(false);
   const [depositMode, setDepositMode] = useState<"ingreso" | "retiro">("ingreso");
   const [transferOpen, setTransferOpen] = useState(false);
+  const [adjustOpen, setAdjustOpen] = useState(false);
   const [syncing, setSyncing] = useState(false);
   const refreshTxs = useTransactionsStore((s) => s.refresh);
   const refreshAccounts = useAccountsStore((s) => s.refresh);
@@ -205,13 +207,24 @@ export default function AccountDetailPage({
           <ArrowLeft className="size-5" />
         </button>
         <h1 className="text-base font-medium md:text-lg md:font-semibold">Detalle de Cuenta</h1>
-        <Link
-          href={`/cuentas/${account.id}/editar`}
-          className="size-9 rounded-md hover:bg-accent flex items-center justify-center"
-          aria-label="Editar"
-        >
-          <Pencil className="size-4" />
-        </Link>
+        <div className="flex items-center gap-1">
+          <button
+            type="button"
+            onClick={() => setAdjustOpen(true)}
+            className="size-9 rounded-md hover:bg-accent flex items-center justify-center"
+            aria-label="Ajustar balance"
+            title="Ajustar balance"
+          >
+            <Scale className="size-4" />
+          </button>
+          <Link
+            href={`/cuentas/${account.id}/editar`}
+            className="size-9 rounded-md hover:bg-accent flex items-center justify-center"
+            aria-label="Editar"
+          >
+            <Pencil className="size-4" />
+          </Link>
+        </div>
       </div>
 
       {/* MOBILE LAYOUT — unchanged */}
@@ -575,6 +588,13 @@ export default function AccountDetailPage({
           initialMode={depositMode}
         />
       )}
+
+      <AdjustBalanceDialog
+        open={adjustOpen}
+        onOpenChange={setAdjustOpen}
+        account={account}
+        currentBalance={balance}
+      />
 
       {account.type === "debit" && (
         <TransferToFixedIncomeDialog

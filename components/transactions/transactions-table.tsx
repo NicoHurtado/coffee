@@ -84,6 +84,11 @@ export function TransactionsTable({
               const Icon = getCategoryIcon(t.category);
               const isExpense = t.kind === "expense";
               const isIncome = t.kind === "income";
+              // Pago de tarjeta (transfer "out" en cuenta de crédito) → verde.
+              const isCardPayment =
+                t.kind === "transfer" &&
+                t.direction !== "in" &&
+                accounts.find((a) => a.id === t.accountId)?.type === "credit";
               const d = new Date(t.occurredAt);
               return (
                 <TableRow
@@ -113,7 +118,8 @@ export function TransactionsTable({
                     className={cn(
                       "text-right text-sm font-semibold tabular-nums",
                       isExpense && "text-destructive",
-                      isIncome && "text-primary",
+                      (isIncome || isCardPayment) && "text-primary",
+                      t.kind === "transfer" && !isCardPayment && "text-blue-500",
                     )}
                   >
                     {signedAmount(t.kind, t.amount, currency)}

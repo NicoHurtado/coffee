@@ -1,8 +1,9 @@
 "use client";
 import { useMemo, useState } from "react";
-import { Search, ChevronLeft, ChevronRight } from "lucide-react";
+import { Search, List, Table2 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
 import {
   Select,
   SelectContent,
@@ -11,27 +12,57 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { TransactionItem } from "@/components/transactions/transaction-item";
+import { TransactionsTable } from "@/components/transactions/transactions-table";
 import { TransactionEditDialog } from "@/components/transactions/transaction-edit-dialog";
 import { useTransactionsStore } from "@/lib/store/transactions";
+import { useAccountsStore } from "@/lib/store/accounts";
 import { useSettingsStore } from "@/lib/store/settings";
 import { useCategoriesStore } from "@/lib/store/categories";
 import { type Transaction } from "@/lib/types";
 import { isSyncTx } from "@/lib/finance/sync";
+import { cn } from "@/lib/utils";
 
 import { Separator } from "@/components/ui/separator";
 
 const PAGE_SIZE = 15;
 
+function dayKey(d: Date) {
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+}
+
 export function AccountActivity({ accountId }: { accountId: string }) {
   const txs = useTransactionsStore((s) => s.forAccount(accountId));
+  const account = useAccountsStore((s) => s.getById(accountId));
   const currency = useSettingsStore((s) => s.defaultCurrency);
   const categories = useCategoriesStore((s) => s.categories);
 
+  const [view, setView] = useState<"list" | "table">("list");
   const [q, setQ] = useState("");
-  const [day, setDay] = useState<string>(""); // yyyy-mm-dd or ""
+  const [from, setFrom] = useState<string>(""); // yyyy-mm-dd or ""
+  const [to, setTo] = useState<string>("");
+  const [month, setMonth] = useState<string>("all"); // "all" | yyyy-mm
   const [category, setCategory] = useState<string>("all");
   const [editing, setEditing] = useState<Transaction | null>(null);
   const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
+
+  const resetPage = () => setVisibleCount(PAGE_SIZE);
+
+  // Meses presentes en la actividad de la cuenta, del más reciente al más viejo.
+  const monthOptions = useMemo(() => {
+    const set = new Set<string>();
+    for (const t of txs) {
+      const d = new Date(t.occurredAt);
+      set.add(`${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`);
+    }
+    return Array.from(set).sort((a, b) => (a < b ? 1 : -1));
+  }, [txs]);
+
+  const monthLabel = (m: string) => {
+    const [y, mm] = m.split("-");
+    const d = new Date(Number(y), Number(mm) - 1, 1);
+    const label = d.toLocaleDateString("es", { month: "long", year: "numeric" });
+    return label.charAt(0).toUpperCase() + label.slice(1);
+  };
 
   const filtered = useMemo(() => {
     const qLow = q.trim().toLowerCase();
@@ -43,18 +74,18 @@ export function AccountActivity({ accountId }: { accountId: string }) {
           if (!hay.includes(qLow)) return false;
         }
         if (category !== "all" && t.category !== category) return false;
-        if (day) {
-          const d = new Date(t.occurredAt);
-          const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
-          if (key !== day) return false;
-        }
+        const d = new Date(t.occurredAt);
+        const key = dayKey(d);
+        if (month !== "all" && !key.startsWith(month)) return false;
+        if (from && key < from) return false;
+        if (to && key > to) return false;
         return true;
       })
       .sort((a, b) => +new Date(b.occurredAt) - +new Date(a.occurredAt));
-  }, [txs, q, day, category]);
+  }, [txs, q, from, to, month, category]);
 
   const total = filtered.length;
-  
+
   const pagedTxs = filtered.slice(0, visibleCount);
 
   // Group transactions by calendar day (yyyy-mm-dd key)
@@ -63,14 +94,12 @@ export function AccountActivity({ accountId }: { accountId: string }) {
     const today = new Date();
     const yesterday = new Date(today);
     yesterday.setDate(today.getDate() - 1);
-    const fmt = (d: Date) =>
-      `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
-    const todayKey = fmt(today);
-    const yesterdayKey = fmt(yesterday);
+    const todayKey = dayKey(today);
+    const yesterdayKey = dayKey(yesterday);
 
     for (const t of pagedTxs) {
       const d = new Date(t.occurredAt);
-      const key = fmt(d);
+      const key = dayKey(d);
       if (!map.has(key)) {
         let label: string;
         if (key === todayKey) {
@@ -98,7 +127,33 @@ export function AccountActivity({ accountId }: { accountId: string }) {
     <div className="md:rounded-2xl md:border md:bg-card md:p-5 space-y-4">
       <div className="flex items-center justify-between">
         <h2 className="text-base font-semibold">Actividad Reciente</h2>
-        <span className="text-xs text-muted-foreground">{total} transacciones</span>
+        <div className="flex items-center gap-3">
+          <span className="text-xs text-muted-foreground">{total} transacciones</span>
+          <div className="flex rounded-md border overflow-hidden">
+            <button
+              type="button"
+              onClick={() => setView("list")}
+              aria-label="Vista de lista"
+              className={cn(
+                "px-2.5 py-1.5 flex items-center justify-center transition",
+                view === "list" ? "bg-foreground text-background" : "hover:bg-accent",
+              )}
+            >
+              <List className="size-4" />
+            </button>
+            <button
+              type="button"
+              onClick={() => setView("table")}
+              aria-label="Vista de tabla"
+              className={cn(
+                "px-2.5 py-1.5 flex items-center justify-center transition",
+                view === "table" ? "bg-foreground text-background" : "hover:bg-accent",
+              )}
+            >
+              <Table2 className="size-4" />
+            </button>
+          </div>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-[1fr_auto_auto] gap-2">
@@ -108,26 +163,36 @@ export function AccountActivity({ accountId }: { accountId: string }) {
             value={q}
             onChange={(e) => {
               setQ(e.target.value);
-              setVisibleCount(PAGE_SIZE);
+              resetPage();
             }}
             placeholder="Buscar texto o categoría"
             className="pl-9"
           />
         </div>
-        <Input
-          type="date"
-          value={day}
-          onChange={(e) => {
-            setDay(e.target.value);
-            setVisibleCount(PAGE_SIZE);
+        <Select
+          value={month}
+          onValueChange={(v) => {
+            setMonth(v);
+            resetPage();
           }}
-          className="md:w-[160px]"
-        />
+        >
+          <SelectTrigger className="md:w-[170px]">
+            <SelectValue placeholder="Mes" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">Todos los meses</SelectItem>
+            {monthOptions.map((m) => (
+              <SelectItem key={m} value={m}>
+                {monthLabel(m)}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
         <Select
           value={category}
           onValueChange={(v) => {
             setCategory(v);
-            setVisibleCount(PAGE_SIZE);
+            resetPage();
           }}
         >
           <SelectTrigger className="md:w-[160px]">
@@ -144,10 +209,60 @@ export function AccountActivity({ accountId }: { accountId: string }) {
         </Select>
       </div>
 
-      {grouped.length === 0 ? (
+      <div className="flex flex-wrap items-end gap-2">
+        <div className="space-y-1">
+          <Label htmlFor="act-from" className="text-xs text-muted-foreground">
+            Desde
+          </Label>
+          <Input
+            id="act-from"
+            type="date"
+            value={from}
+            onChange={(e) => {
+              setFrom(e.target.value);
+              resetPage();
+            }}
+            className="w-[150px] h-9"
+          />
+        </div>
+        <div className="space-y-1">
+          <Label htmlFor="act-to" className="text-xs text-muted-foreground">
+            Hasta
+          </Label>
+          <Input
+            id="act-to"
+            type="date"
+            value={to}
+            onChange={(e) => {
+              setTo(e.target.value);
+              resetPage();
+            }}
+            className="w-[150px] h-9"
+          />
+        </div>
+        {(from || to || month !== "all") && (
+          <Button
+            variant="ghost"
+            size="sm"
+            className="h-9 text-xs text-muted-foreground"
+            onClick={() => {
+              setFrom("");
+              setTo("");
+              setMonth("all");
+              resetPage();
+            }}
+          >
+            Limpiar fechas
+          </Button>
+        )}
+      </div>
+
+      {total === 0 ? (
         <div className="text-sm text-muted-foreground py-8 text-center">
           Sin transacciones que coincidan.
         </div>
+      ) : view === "table" ? (
+        <TransactionsTable txs={filtered} currency={currency} />
       ) : (
         <>
           <div className="flex flex-col gap-6">
@@ -163,6 +278,7 @@ export function AccountActivity({ accountId }: { accountId: string }) {
                         tx={t}
                         currency={currency}
                         showTime
+                        accountType={account?.type}
                         onClick={() => setEditing(t)}
                       />
                       {idx < group.txs.length - 1 && <Separator className="my-1" />}

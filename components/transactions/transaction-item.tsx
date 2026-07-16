@@ -2,7 +2,7 @@
 import { format } from "date-fns";
 import { getCategoryIcon } from "@/lib/finance/categories";
 import { signedAmount } from "@/lib/finance/format";
-import type { Transaction, Currency } from "@/lib/types";
+import type { Transaction, Currency, AccountType } from "@/lib/types";
 import { cn } from "@/lib/utils";
 
 export function TransactionItem({
@@ -10,16 +10,23 @@ export function TransactionItem({
   currency = "USD",
   showTime = false,
   onClick,
+  accountType,
 }: {
   tx: Transaction;
   currency?: Currency;
   showTime?: boolean;
   onClick?: () => void;
+  /** Tipo de la cuenta cuya actividad se está mostrando (vistas por cuenta). */
+  accountType?: AccountType;
 }) {
   const Icon = getCategoryIcon(tx.category);
   const isExpense = tx.kind === "expense";
   const isIncome = tx.kind === "income";
   const isTransfer = tx.kind === "transfer";
+  // En una tarjeta de crédito, el traslado "out" es un pago que reduce la
+  // deuda: se muestra en verde (como un ingreso) en vez de azul.
+  const isCardPayment =
+    isTransfer && accountType === "credit" && tx.direction !== "in";
   return (
     <button
       type="button"
@@ -43,7 +50,7 @@ export function TransactionItem({
           "text-sm font-semibold tabular-nums",
           isExpense && "text-destructive",
           isIncome && "text-primary",
-          isTransfer && "text-blue-500",
+          isTransfer && (isCardPayment ? "text-primary" : "text-blue-500"),
         )}
       >
         {signedAmount(tx.kind, tx.amount, currency)}
