@@ -12,19 +12,20 @@ import { useSettingsStore } from "@/lib/store/settings";
 import { useCategoriesStore } from "@/lib/store/categories";
 import { formatMoney } from "@/lib/finance/format";
 
-// Scale based on #8E8E93 — alternates dark & light for max contrast.
+// Monochrome scale mixed from the theme's foreground so every shade keeps
+// contrast against the card in both light and dark mode.
 const MONO_SHADES = [
-  "#1c1c1d",
-  "#d2d2d4",
-  "#47474a",
-  "#b0b0b3",
-  "#555558",
-  "#8e8e93",
-  "#c7c7c9",
-  "#1c1c1d",
-  "#d2d2d4",
-  "#47474a",
-  "#b0b0b3",
+  "color-mix(in oklab, var(--foreground) 92%, var(--card))",
+  "color-mix(in oklab, var(--foreground) 28%, var(--card))",
+  "color-mix(in oklab, var(--foreground) 76%, var(--card))",
+  "color-mix(in oklab, var(--foreground) 40%, var(--card))",
+  "color-mix(in oklab, var(--foreground) 64%, var(--card))",
+  "color-mix(in oklab, var(--foreground) 52%, var(--card))",
+  "color-mix(in oklab, var(--foreground) 34%, var(--card))",
+  "color-mix(in oklab, var(--foreground) 92%, var(--card))",
+  "color-mix(in oklab, var(--foreground) 28%, var(--card))",
+  "color-mix(in oklab, var(--foreground) 76%, var(--card))",
+  "color-mix(in oklab, var(--foreground) 40%, var(--card))",
 ] as const;
 
 export function AccountCategoryPie({ accountId }: { accountId: string }) {

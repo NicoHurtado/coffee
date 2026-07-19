@@ -22,7 +22,7 @@ const RANGES = [
 type RangeKey = (typeof RANGES)[number]["key"];
 
 const config = {
-  expense: { label: "Gastos", color: "#27272a" },
+  expense: { label: "Gastos", color: "var(--foreground)" },
 } satisfies ChartConfig;
 
 export function AccountPeriodBars({ accountId }: { accountId: string }) {

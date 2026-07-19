@@ -36,10 +36,10 @@ const TYPE_LABEL = {
 } as const;
 
 const TYPE_COLOR = {
-  debit: "#16c784", // emerald (liquidez)
-  fixed_income: "#4f9bb0", // steel blue (renta fija)
-  investment: "#c79a4b", // muted amber (inversión)
-  credit: "#ea3943", // strong red (deuda)
+  debit: "var(--chart-1)", // emerald (liquidez)
+  fixed_income: "var(--chart-2)", // blue (renta fija)
+  investment: "var(--chart-3)", // amber (inversión)
+  credit: "var(--destructive)", // strong red (deuda)
 } as const;
 
 const distributionConfig = {
@@ -52,11 +52,11 @@ const distributionConfig = {
 
 // One distinct color per category bar instead of a single flat primary tone.
 const CATEGORY_COLORS = [
-  "#16c784",
-  "#5fb6e8",
-  "#e8b85f",
-  "#b58ff0",
-  "#ea3943",
+  "var(--chart-1)",
+  "var(--chart-2)",
+  "var(--chart-3)",
+  "var(--chart-4)",
+  "var(--destructive)",
   "#4f9bb0",
   "#c76fa0",
   "#8a9a4b",

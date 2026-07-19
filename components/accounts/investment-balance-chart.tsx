@@ -66,7 +66,7 @@ export function InvestmentBalanceChart({
   const delta = last - first;
   const deltaPct = first !== 0 ? (delta / Math.abs(first)) * 100 : 0;
   const up = delta >= 0;
-  const stroke = up ? "#10b981" : "#ef4444";
+  const stroke = up ? "var(--chart-1)" : "var(--destructive)";
 
   return (
     <section className="rounded-2xl border bg-card p-4 space-y-3">
