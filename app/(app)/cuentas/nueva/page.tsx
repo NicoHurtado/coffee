@@ -20,6 +20,7 @@ import { PageHeader, SectionHeading } from "@/components/nav/page-header";
 import { AccountPreviewCard } from "@/components/accounts/account-preview-card";
 import { ColorPicker } from "@/components/accounts/color-picker";
 import { CardNetworkPicker } from "@/components/accounts/card-network-picker";
+import { CardPresetPicker } from "@/components/accounts/card-preset-picker";
 import { useAccountsStore } from "@/lib/store/accounts";
 import { useSettingsStore } from "@/lib/store/settings";
 import type { AccountType, CardNetwork, Currency } from "@/lib/types";
@@ -37,6 +38,10 @@ export default function NuevaCuentaPage() {
   const [initialBalance, setInitialBalance] = useState("");
   const [color, setColor] = useState<AccountColor>("blue");
   const [miniLabel, setMiniLabel] = useState("");
+
+  // Card artwork: a pinned real-card design and/or a photo of the actual card.
+  const [presetId, setPresetId] = useState<string | undefined>(undefined);
+  const [artImageUrl, setArtImageUrl] = useState("");
 
   // Debit also keeps optional network + last4 for the physical card look
   const [debitLast4, setDebitLast4] = useState("");
@@ -80,6 +85,11 @@ export default function NuevaCuentaPage() {
       miniLabel:
         (type === "fixed_income" || type === "investment") && miniLabel.trim()
           ? miniLabel.trim().toUpperCase()
+          : undefined,
+      presetId: type === "debit" || type === "credit" ? presetId : undefined,
+      artImageUrl:
+        (type === "debit" || type === "credit") && artImageUrl.trim()
+          ? artImageUrl.trim()
           : undefined,
     };
     if (type === "credit") {
@@ -154,6 +164,8 @@ export default function NuevaCuentaPage() {
               network={network}
               annualRate={annualRate ? parseFloat(annualRate) : undefined}
               color={color}
+              presetId={presetId}
+              artImageUrl={artImageUrl}
             />
           </div>
 
@@ -161,6 +173,29 @@ export default function NuevaCuentaPage() {
             <SectionHeading>Color de la tarjeta</SectionHeading>
             <ColorPicker value={color} onChange={setColor} />
           </div>
+
+          {(type === "debit" || type === "credit") && (
+            <div className="rounded-lg border bg-card p-5 space-y-4">
+              <SectionHeading>Diseño de la tarjeta</SectionHeading>
+              <CardPresetPicker
+                value={presetId}
+                onChange={(p) => setPresetId(p?.id)}
+              />
+              <div className="space-y-1.5">
+                <Label htmlFor="art-url">Foto de tu tarjeta (opcional)</Label>
+                <Input
+                  id="art-url"
+                  value={artImageUrl}
+                  onChange={(e) => setArtImageUrl(e.target.value)}
+                  placeholder="https://…/mi-tarjeta.png"
+                />
+                <p className="text-xs text-muted-foreground">
+                  Si pegas una imagen se usa como fondo real de la tarjeta y de su
+                  miniatura, por encima del diseño elegido.
+                </p>
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Right column: form */}

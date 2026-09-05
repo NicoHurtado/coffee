@@ -4,6 +4,11 @@ import { CardBrandLogo } from "./card-brand";
 import { cn } from "@/lib/utils";
 import { Check } from "lucide-react";
 
+/**
+ * Grid of the real card designs. Picking one pins the account's art; leaving it
+ * on "Automático" lets the institution name decide (Bancolombia → amarilla,
+ * Nu → morada, …).
+ */
 export function CardPresetPicker({
   value,
   onChange,
@@ -24,8 +29,8 @@ export function CardPresetPicker({
               : "border-dashed hover:bg-accent",
           )}
         >
-          <span className="text-muted-foreground">Personalizado</span>
-          <span className="text-[10px] text-muted-foreground">(color manual)</span>
+          <span className="text-muted-foreground">Automático</span>
+          <span className="text-[10px] text-muted-foreground">(según institución)</span>
         </button>
 
         {CARD_PRESETS.map((p) => {
@@ -41,7 +46,10 @@ export function CardPresetPicker({
                 isLight ? "text-white" : "text-zinc-900",
                 active ? "ring-2 ring-foreground ring-offset-2" : "hover:scale-[1.02]",
               )}
-              style={{ background: p.gradient, borderColor: p.border }}
+              style={{
+                background: p.pattern ? `${p.pattern}, ${p.gradient}` : p.gradient,
+                borderColor: p.border,
+              }}
             >
               <div className="text-[9px] uppercase tracking-wider opacity-80 truncate">
                 {p.issuer}

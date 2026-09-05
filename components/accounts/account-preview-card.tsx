@@ -1,11 +1,14 @@
 "use client";
 import { formatMoney } from "@/lib/finance/format";
+import { artTextColors, resolveCardArtFrom } from "@/lib/finance/card-art";
 import type { AccountType, CardNetwork, Currency } from "@/lib/types";
 import { CardBrandLogo } from "./card-brand";
+import { CardFace } from "./card-face";
 
 /**
- * Live preview shown while creating/editing an account. Mirrors the minimal
- * PhysicalCard exactly so what you see in the form is what lands on the list.
+ * Live preview shown while creating/editing an account. Mirrors the
+ * PhysicalCard exactly — real card art included — so what you see in the form
+ * is what lands on the list.
  */
 export function AccountPreviewCard({
   type,
@@ -16,6 +19,8 @@ export function AccountPreviewCard({
   last4,
   network,
   annualRate,
+  presetId,
+  artImageUrl,
 }: {
   type: AccountType;
   name?: string;
@@ -26,8 +31,21 @@ export function AccountPreviewCard({
   network?: string;
   annualRate?: number;
   color?: string;
+  presetId?: string;
+  artImageUrl?: string;
 }) {
   const isCard = type === "debit" || type === "credit";
+  const art = isCard
+    ? resolveCardArtFrom({
+        presetId,
+        institution,
+        network: network as CardNetwork | undefined,
+        imageUrl: artImageUrl,
+      })
+    : undefined;
+  const tone = art ? artTextColors(art.textTone) : undefined;
+  const labelStyle = tone ? { color: tone.label } : undefined;
+  const valueStyle = tone ? { color: tone.value } : undefined;
 
   let secondaryLabel = "NUMBER";
   let secondaryValue = `•••• •••• ${last4 || "0000"}`;
@@ -42,36 +60,67 @@ export function AccountPreviewCard({
   const balanceLabel = type === "credit" ? "DEUDA" : "BALANCE";
 
   return (
-    <div className="relative w-full min-h-[160px] overflow-hidden rounded-xl border border-border/60 bg-card p-5 flex flex-col justify-between gap-6">
-      <div className="flex items-start justify-between gap-4">
+    <div
+      className={`relative w-full min-h-[160px] overflow-hidden rounded-xl border p-5 flex flex-col justify-between gap-6 ${
+        art ? "" : "border-border/60 bg-card"
+      }`}
+      style={art ? { borderColor: art.border } : undefined}
+    >
+      {art && <CardFace art={art} />}
+
+      <div className="relative flex items-start justify-between gap-4">
         <div className="min-w-0">
-          <div className="text-[10px] uppercase tracking-[0.16em] text-muted-foreground">
+          <div
+            className="text-[10px] uppercase tracking-[0.16em] text-muted-foreground"
+            style={labelStyle}
+          >
             NAME
           </div>
-          <div className="text-sm font-medium truncate mt-1">{name || "Nombre"}</div>
+          <div className="text-sm font-medium truncate mt-1" style={valueStyle}>
+            {name || "Nombre"}
+          </div>
         </div>
         <div className="min-w-0 text-right">
-          <div className="text-[10px] uppercase tracking-[0.16em] text-muted-foreground">
+          <div
+            className="text-[10px] uppercase tracking-[0.16em] text-muted-foreground"
+            style={labelStyle}
+          >
             {secondaryLabel}
           </div>
-          <div className="text-sm font-medium tabular-nums truncate mt-1">{secondaryValue}</div>
+          <div
+            className="text-sm font-medium tabular-nums truncate mt-1"
+            style={valueStyle}
+          >
+            {secondaryValue}
+          </div>
         </div>
       </div>
 
-      <div className="flex items-end justify-between gap-4">
+      <div className="relative flex items-end justify-between gap-4">
         <div className="min-w-0">
-          <div className="text-[10px] uppercase tracking-[0.16em] text-muted-foreground">
+          <div
+            className="text-[10px] uppercase tracking-[0.16em] text-muted-foreground"
+            style={labelStyle}
+          >
             {balanceLabel}
           </div>
-          <div className="text-2xl font-semibold tabular-nums truncate mt-1">
+          <div
+            className="text-2xl font-semibold tabular-nums truncate mt-1"
+            style={valueStyle}
+          >
             {formatMoney(initialBalance ?? 0, currency ?? "COP")}
           </div>
         </div>
         {isCard && (
-          <CardBrandLogo
-            network={network as CardNetwork | undefined}
-            className="h-7 w-auto shrink-0 self-end"
-          />
+          <span
+            className="inline-flex shrink-0 self-end"
+            style={art ? { color: art.brandColor } : undefined}
+          >
+            <CardBrandLogo
+              network={network as CardNetwork | undefined}
+              className="h-7 w-auto"
+            />
+          </span>
         )}
       </div>
     </div>

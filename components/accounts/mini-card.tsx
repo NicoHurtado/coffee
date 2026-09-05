@@ -1,13 +1,16 @@
 "use client";
 import { getColorDef, type AccountColor } from "@/lib/finance/colors";
+import { resolveCardArt } from "@/lib/finance/card-art";
 import { CardBrandLogo } from "./card-brand";
+import { CardFace } from "./card-face";
 import type { Account, CardNetwork } from "@/lib/types";
 import { cn } from "@/lib/utils";
 
 /**
- * Small high-contrast account identifier. Dark tile that matches the app
- * surface, with the account's color shown only as a left accent bar + tinted
- * mark — consistent with the redesigned physical cards.
+ * Small account identifier. Debit and credit accounts show a thumbnail of the
+ * real card art — same design as the big card, cropped to the tile — so a card
+ * is recognisable straight from the list. Fixed income and investments keep the
+ * dark tile with the accent monogram.
  */
 export function MiniCard({
   account,
@@ -20,16 +23,25 @@ export function MiniCard({
 
   if (account.type === "debit" || account.type === "credit") {
     const network = account.network as CardNetwork | undefined;
+    const art = resolveCardArt(account);
     return (
       <div
         className={cn(
-          "relative h-9 w-12 shrink-0 overflow-hidden rounded-md border bg-muted flex items-end justify-end p-1",
+          "relative h-9 w-12 shrink-0 overflow-hidden rounded-md border flex items-end justify-end p-1",
+          art ? "" : "bg-muted",
           className,
         )}
-        style={{ borderLeft: `2px solid ${accent}` }}
+        style={art ? { borderColor: art.border } : { borderLeft: `2px solid ${accent}` }}
       >
-        <div className="absolute left-1.5 top-1.5 h-1.5 w-2 rounded-[1px]" style={{ background: accent }} />
-        <span style={{ color: accent }} className="inline-flex">
+        {art ? (
+          <CardFace art={art} detail="mini" />
+        ) : (
+          <div
+            className="absolute left-1.5 top-1.5 h-1.5 w-2 rounded-[1px]"
+            style={{ background: accent }}
+          />
+        )}
+        <span style={{ color: art ? art.brandColor : accent }} className="relative inline-flex">
           <CardBrandLogo network={network} className="h-2.5 w-auto" />
         </span>
       </div>

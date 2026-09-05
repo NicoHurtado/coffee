@@ -26,6 +26,7 @@ import {
 import { AccountPreviewCard } from "@/components/accounts/account-preview-card";
 import { ColorPicker } from "@/components/accounts/color-picker";
 import { CardNetworkPicker } from "@/components/accounts/card-network-picker";
+import { CardPresetPicker } from "@/components/accounts/card-preset-picker";
 import { useAccountsStore } from "@/lib/store/accounts";
 import type { Account, CardNetwork, Currency } from "@/lib/types";
 import type { AccountColor } from "@/lib/finance/colors";
@@ -56,6 +57,10 @@ export default function EditarCuentaPage({
     (account?.color as AccountColor) ?? "blue",
   );
   const [miniLabel, setMiniLabel] = useState(account?.miniLabel ?? "");
+
+  // Card artwork: pinned real-card design and/or a photo of the actual card.
+  const [presetId, setPresetId] = useState<string | undefined>(account?.presetId);
+  const [artImageUrl, setArtImageUrl] = useState(account?.artImageUrl ?? "");
 
   // credit
   const [creditLimit, setCreditLimit] = useState(
@@ -147,6 +152,8 @@ export default function EditarCuentaPage({
         miniLabel.trim()
           ? miniLabel.trim().toUpperCase()
           : null,
+      presetId: presetId ?? null,
+      artImageUrl: artImageUrl.trim() || null,
     } as Partial<Account>;
     if (account.type === "credit") {
       await update(id, {
@@ -234,6 +241,8 @@ export default function EditarCuentaPage({
               network={account.type === "credit" ? creditNetwork : debitNetwork}
               annualRate={annualRate ? parseFloat(annualRate) : undefined}
               color={color}
+              presetId={presetId}
+              artImageUrl={artImageUrl}
             />
           </div>
         </div>
@@ -393,6 +402,26 @@ export default function EditarCuentaPage({
         <Label>Color de la tarjeta</Label>
         <ColorPicker value={color} onChange={setColor} />
       </div>
+
+      {(account.type === "debit" || account.type === "credit") && (
+        <div className="space-y-3">
+          <Label>Diseño de la tarjeta</Label>
+          <CardPresetPicker value={presetId} onChange={(p) => setPresetId(p?.id)} />
+          <div className="space-y-1.5">
+            <Label htmlFor="art-url">Foto de tu tarjeta (opcional)</Label>
+            <Input
+              id="art-url"
+              value={artImageUrl}
+              onChange={(e) => setArtImageUrl(e.target.value)}
+              placeholder="https://…/mi-tarjeta.png"
+            />
+            <p className="text-xs text-muted-foreground">
+              Si pegas una imagen se usa como fondo real de la tarjeta y de su
+              miniatura, por encima del diseño elegido.
+            </p>
+          </div>
+        </div>
+      )}
 
       {(account.type === "fixed_income" || account.type === "investment") && (
         <div className="space-y-1.5">

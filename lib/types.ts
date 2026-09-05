@@ -17,6 +17,8 @@ export interface BaseAccount {
   createdAt: string;
   color?: string;
   presetId?: string;
+  /** Real photo of the card, pasted by the user. Overrides the preset art. */
+  artImageUrl?: string;
   /** Short label (~5 chars) shown inside the mini-card tile. */
   miniLabel?: string;
   active?: boolean;
