@@ -3,6 +3,7 @@ import { getColorDef, type AccountColor } from "@/lib/finance/colors";
 import { resolveCardArt } from "@/lib/finance/card-art";
 import { CardBrandLogo } from "./card-brand";
 import { CardFace } from "./card-face";
+import { savingsIcon } from "./savings-face";
 import type { Account, CardNetwork } from "@/lib/types";
 import { cn } from "@/lib/utils";
 
@@ -49,7 +50,22 @@ export function MiniCard({
     );
   }
 
-  // renta fija / inversión: dark tile with accent monogram
+  // Renta fija / inversión: el mismo ícono del producto que en la ficha grande.
+  if (!account.miniLabel && (account.type === "fixed_income" || account.type === "investment")) {
+    return (
+      <div
+        className={cn(
+          "flex h-9 w-12 shrink-0 items-center justify-center rounded-md border bg-muted text-primary",
+          className,
+        )}
+        style={{ borderLeft: `2px solid ${accent}` }}
+      >
+        {savingsIcon(account.type, "size-5")}
+      </div>
+    );
+  }
+
+  // Etiqueta propia (miniLabel) o cualquier otro producto: monograma.
   const fallback =
     account.type === "fixed_income" ? "RF" : account.type === "investment" ? "IN" : "·";
   const label = (account.miniLabel ?? fallback).slice(0, 5).toUpperCase();

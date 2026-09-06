@@ -6,6 +6,7 @@ import { CardBrandLogo } from "./card-brand";
 import { CardFace } from "./card-face";
 import { CardPhoto } from "./card-photo";
 import { CardImageDetails } from "./card-image-details";
+import { SavingsFace } from "./savings-face";
 
 export interface PhysicalCardProps {
   account: Account;
@@ -46,6 +47,24 @@ export function PhysicalCard({ account, balance, className }: PhysicalCardProps)
 
   const labelStyle = tone ? { color: tone.label } : undefined;
   const valueStyle = tone ? { color: tone.value } : undefined;
+
+  // Renta fija e inversiones no son plástico: llevan el ícono del producto.
+  if (account.type === "fixed_income" || account.type === "investment") {
+    return (
+      <SavingsFace
+        type={account.type}
+        name={account.name}
+        subtitle={
+          account.type === "fixed_income"
+            ? `${account.institution} · ${account.annualRate.toFixed(2)}% E.A.`
+            : account.institution
+        }
+        balance={balance}
+        currency={account.currency as Currency}
+        className={className}
+      />
+    );
+  }
 
   if (art?.imageUrl) {
     return (

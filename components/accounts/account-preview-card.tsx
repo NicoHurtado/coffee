@@ -6,6 +6,7 @@ import { CardBrandLogo } from "./card-brand";
 import { CardFace } from "./card-face";
 import { CardPhoto } from "./card-photo";
 import { CardImageDetails } from "./card-image-details";
+import { SavingsFace } from "./savings-face";
 
 /**
  * Live preview shown while creating/editing an account. Mirrors the
@@ -62,6 +63,23 @@ export function AccountPreviewCard({
   }
 
   const balanceLabel = type === "credit" ? "DEUDA" : "BALANCE";
+
+  // Misma ficha que en la lista para renta fija e inversiones.
+  if (type === "fixed_income" || type === "investment") {
+    return (
+      <SavingsFace
+        type={type}
+        name={name || "Nombre"}
+        subtitle={
+          type === "fixed_income"
+            ? `${institution || "Entidad"} · ${(annualRate ?? 0).toFixed(2)}% E.A.`
+            : institution || "Entidad"
+        }
+        balance={initialBalance ?? 0}
+        currency={currency ?? "COP"}
+      />
+    );
+  }
 
   if (art?.imageUrl) {
     return (
