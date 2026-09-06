@@ -55,10 +55,10 @@ export function MiniCard({
     return (
       <div
         className={cn(
-          "flex h-9 w-12 shrink-0 items-center justify-center rounded-md border bg-muted text-primary",
+          "flex h-9 w-12 shrink-0 items-center justify-center rounded-md border bg-muted",
           className,
         )}
-        style={{ borderLeft: `2px solid ${accent}` }}
+        style={{ borderLeft: `2px solid ${accent}`, color: accent }}
       >
         {savingsIcon(account.type, "size-5")}
       </div>

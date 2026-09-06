@@ -1,12 +1,13 @@
 "use client";
 import { formatMoney } from "@/lib/finance/format";
 import { artTextColors, resolveCardArtFrom } from "@/lib/finance/card-art";
+import { getColorDef, type AccountColor } from "@/lib/finance/colors";
 import type { AccountType, CardNetwork, Currency } from "@/lib/types";
 import { CardBrandLogo } from "./card-brand";
 import { CardFace } from "./card-face";
 import { CardPhoto } from "./card-photo";
 import { CardImageDetails } from "./card-image-details";
-import { SavingsFace } from "./savings-face";
+import { SavingsFace, savingsSubtitle } from "./savings-face";
 
 /**
  * Live preview shown while creating/editing an account. Mirrors the
@@ -22,6 +23,7 @@ export function AccountPreviewCard({
   last4,
   network,
   annualRate,
+  color,
   presetId,
   artImageUrl,
 }: {
@@ -70,21 +72,18 @@ export function AccountPreviewCard({
       <SavingsFace
         type={type}
         name={name || "Nombre"}
-        subtitle={
-          type === "fixed_income"
-            ? `${institution || "Entidad"} · ${(annualRate ?? 0).toFixed(2)}% E.A.`
-            : institution || "Entidad"
-        }
+        subtitle={savingsSubtitle(type, name || "Nombre", institution || "", annualRate)}
         balance={initialBalance ?? 0}
         currency={currency ?? "COP"}
+        accent={getColorDef(color as AccountColor | undefined).base}
       />
     );
   }
 
   if (art?.imageUrl) {
     return (
-      <div className={`w-full max-w-[22rem] space-y-3 `}>
-        <CardImageDetails name={name || "Nombre"} last4={last4 || "0000"} balance={initialBalance ?? 0} currency={currency ?? "COP"} credit={type === "credit"} />
+      <div className="w-full max-w-[22rem] space-y-3">
+        <CardImageDetails name={name || "Nombre"} balance={initialBalance ?? 0} currency={currency ?? "COP"} credit={type === "credit"} />
         <CardPhoto src={art.imageUrl} name={name || "Nombre"} />
       </div>
     );

@@ -44,9 +44,29 @@ export function savingsIcon(type: "fixed_income" | "investment", className?: str
 }
 
 /**
- * Renta fija e inversiones: no son plástico, así que en vez del frente de una
- * tarjeta llevan el ícono del producto en una pastilla junto al nombre, con el
- * balance solo. Mide igual que una tarjeta para que la fila siga pareja.
+ * Segunda línea de la ficha: la entidad y, en renta fija, la tasa. La entidad
+ * se omite cuando el nombre ya la dice ("IBKR Interactive Brokers" · IBKR).
+ */
+export function savingsSubtitle(
+  type: "fixed_income" | "investment",
+  name: string,
+  institution: string,
+  annualRate?: number,
+): string {
+  const parts: string[] = [];
+  const said = name.toLowerCase().includes(institution.trim().toLowerCase());
+  if (institution.trim() && !said) parts.push(institution);
+  if (type === "fixed_income" && annualRate != null) parts.push(`${annualRate.toFixed(2)}% E.A.`);
+  if (parts.length === 0) parts.push(type === "investment" ? "Inversión" : "Renta fija");
+  return parts.join(" · ");
+}
+
+/**
+ * Renta fija e inversiones: no son plástico, así que en lugar de la foto de la
+ * tarjeta llevan el ícono del producto en su pastilla. La composición es la
+ * misma que la de una tarjeta con foto — datos arriba, arte abajo en el mismo
+ * formato 1010×630 — para que en la grilla y en el slider midan exactamente
+ * igual, también en celular.
  */
 export function SavingsFace({
   type,
@@ -54,6 +74,7 @@ export function SavingsFace({
   subtitle,
   balance,
   currency,
+  accent,
   className,
 }: {
   type: "fixed_income" | "investment";
@@ -61,31 +82,29 @@ export function SavingsFace({
   subtitle: string;
   balance: number;
   currency: Currency;
+  /** Color elegido para la cuenta: pinta el ícono y tiñe su pastilla. */
+  accent: string;
   className?: string;
 }) {
   return (
-    <div
-      className={cn(
-        "relative w-full min-h-[160px] overflow-hidden rounded-xl border border-border/60 bg-card p-5",
-        "flex flex-col justify-between gap-6",
-        className,
-      )}
-    >
-      <div className="flex items-start gap-3">
-        <span className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
-          {savingsIcon(type, "size-6")}
-        </span>
-        <div className="min-w-0">
-          <div className="truncate text-[15px] font-semibold leading-5">{name}</div>
-          <div className="truncate text-xs text-muted-foreground">{subtitle}</div>
+    <div className={cn("w-full space-y-3", className)}>
+      <div className="space-y-1 text-foreground">
+        <div className="break-words text-sm font-semibold leading-5">{name}</div>
+        <div className="truncate text-xs text-muted-foreground">
+          {subtitle} · {type === "investment" ? "Valor actual" : "Saldo"}
+        </div>
+        <div className="break-words text-xl font-semibold tabular-nums">
+          {formatMoney(balance, currency)}
         </div>
       </div>
 
-      <div>
-        <div className="text-[10px] uppercase tracking-[0.16em] text-muted-foreground">BALANCE</div>
-        <div className="mt-1 truncate text-2xl font-semibold tabular-nums">
-          {formatMoney(balance, currency)}
-        </div>
+      <div className="flex aspect-[1010/630] items-center justify-center rounded-xl border border-border/60 bg-card">
+        <span
+          className="flex aspect-square h-[38%] min-h-11 items-center justify-center rounded-2xl"
+          style={{ background: `color-mix(in srgb, ${accent} 14%, transparent)`, color: accent }}
+        >
+          {savingsIcon(type, "h-1/2 w-1/2")}
+        </span>
       </div>
     </div>
   );

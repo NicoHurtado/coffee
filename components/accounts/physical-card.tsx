@@ -1,12 +1,13 @@
 "use client";
 import { formatMoney } from "@/lib/finance/format";
 import { artTextColors, resolveCardArt } from "@/lib/finance/card-art";
+import { getColorDef, type AccountColor } from "@/lib/finance/colors";
 import type { Account, CardNetwork, Currency } from "@/lib/types";
 import { CardBrandLogo } from "./card-brand";
 import { CardFace } from "./card-face";
 import { CardPhoto } from "./card-photo";
 import { CardImageDetails } from "./card-image-details";
-import { SavingsFace } from "./savings-face";
+import { SavingsFace, savingsSubtitle } from "./savings-face";
 
 export interface PhysicalCardProps {
   account: Account;
@@ -54,13 +55,15 @@ export function PhysicalCard({ account, balance, className }: PhysicalCardProps)
       <SavingsFace
         type={account.type}
         name={account.name}
-        subtitle={
-          account.type === "fixed_income"
-            ? `${account.institution} · ${account.annualRate.toFixed(2)}% E.A.`
-            : account.institution
-        }
+        subtitle={savingsSubtitle(
+          account.type,
+          account.name,
+          account.institution,
+          account.type === "fixed_income" ? account.annualRate : undefined,
+        )}
         balance={balance}
         currency={account.currency as Currency}
+        accent={getColorDef(account.color as AccountColor | undefined).base}
         className={className}
       />
     );
@@ -68,8 +71,8 @@ export function PhysicalCard({ account, balance, className }: PhysicalCardProps)
 
   if (art?.imageUrl) {
     return (
-      <div className={`w-full max-w-[22rem] space-y-3 ${className ?? ""}`}>
-        <CardImageDetails name={account.name} last4={last4} balance={balance} currency={account.currency} credit={isCredit} />
+      <div className={`w-full space-y-3 ${className ?? ""}`}>
+        <CardImageDetails name={account.name} balance={balance} currency={account.currency} credit={isCredit} />
         <CardPhoto src={art.imageUrl} name={account.name} />
       </div>
     );
