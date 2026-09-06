@@ -4,6 +4,7 @@ import { artTextColors, resolveCardArt } from "@/lib/finance/card-art";
 import type { Account, CardNetwork, Currency } from "@/lib/types";
 import { CardBrandLogo } from "./card-brand";
 import { CardFace } from "./card-face";
+import { CardImageDetails } from "./card-image-details";
 
 export interface PhysicalCardProps {
   account: Account;
@@ -44,6 +45,15 @@ export function PhysicalCard({ account, balance, className }: PhysicalCardProps)
 
   const labelStyle = tone ? { color: tone.label } : undefined;
   const valueStyle = tone ? { color: tone.value } : undefined;
+
+  if (art?.imageUrl) {
+    return (
+      <div className={`relative w-full min-h-[160px] overflow-hidden rounded-xl border ${className ?? ""}`} style={{ borderColor: art.border }}>
+        <CardFace art={art} />
+        <CardImageDetails name={account.name} last4={last4} balance={balance} currency={account.currency} credit={isCredit} />
+      </div>
+    );
+  }
 
   return (
     <div

@@ -41,9 +41,9 @@ export function MiniCard({
             style={{ background: accent }}
           />
         )}
-        <span style={{ color: art ? art.brandColor : accent }} className="relative inline-flex">
+        {!art?.imageUrl && <span style={{ color: art ? art.brandColor : accent }} className="relative inline-flex">
           <CardBrandLogo network={network} className="h-2.5 w-auto" />
-        </span>
+        </span>}
       </div>
     );
   }

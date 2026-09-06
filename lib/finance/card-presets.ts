@@ -6,6 +6,8 @@ export interface CardPreset {
   issuer: string;
   network: CardNetwork;
   institutionHint?: string;
+  /** Bundled artwork sourced from the issuer; see public/cards/SOURCES.md. */
+  imageUrl?: string;
   /** CSS background (gradients allowed). */
   gradient: string;
   border: string;
@@ -33,6 +35,18 @@ export interface CardPreset {
 }
 
 export const CARD_PRESETS: CardPreset[] = [
+  {
+    id: "bancolombia-visa-platinum", label: "Visa Platinum", issuer: "Bancolombia",
+    institutionHint: "Bancolombia", network: "visa",
+    imageUrl: "/cards/app/bancolombia-visa-platinum.webp",
+    gradient: "#b6b6b6", border: "#a3a3a3", textTone: "dark", brandColor: "#111111",
+  },
+  {
+    id: "arq", label: "ARQ Global", issuer: "ARQ", institutionHint: "ARQ",
+    network: "mastercard", imageUrl: "/cards/app/arq.webp",
+    gradient: "#cbc5b7", border: "#b3ae9e", textTone: "dark", brandColor: "#222222",
+    match: ["arq", "dolarapp", "dolar app"],
+  },
   {
     id: "apple-card",
     label: "Apple Card",
@@ -140,21 +154,23 @@ export const CARD_PRESETS: CardPreset[] = [
   },
   {
     id: "bancolombia-debito",
+    imageUrl: "/cards/app/bancolombia-debito.webp",
     label: "Débito Bancolombia",
     issuer: "Bancolombia",
-    network: "visa",
+    network: "mastercard",
     institutionHint: "Bancolombia",
     gradient: "linear-gradient(135deg, #003a70 0%, #00204a 100%)",
     pattern:
       "linear-gradient(115deg, transparent 66%, rgba(253,216,53,0.55) 100%)",
-    border: "#00509e",
-    textTone: "light",
+    border: "#ffdb00",
+    textTone: "dark",
     brandColor: "#fff",
     wordmark: "Bancolombia",
     match: ["bancolombia", "banco colombia"],
   },
   {
     id: "nu-nubank",
+    imageUrl: "/cards/app/nu-credit.webp",
     label: "Nu",
     issuer: "Nubank",
     network: "mastercard",
@@ -294,6 +310,7 @@ export const CARD_PRESETS: CardPreset[] = [
   },
   {
     id: "rappicard",
+    imageUrl: "/cards/app/rappicard.webp",
     label: "RappiCard",
     issuer: "RappiCard",
     network: "visa",
@@ -301,7 +318,7 @@ export const CARD_PRESETS: CardPreset[] = [
     gradient: "linear-gradient(135deg, #161616 0%, #000000 100%)",
     pattern:
       "linear-gradient(115deg, transparent 62%, rgba(255,68,31,0.9) 100%)",
-    border: "#ff441f",
+    border: "#343541",
     textTone: "light",
     brandColor: "#fff",
     wordmark: "Rappi",

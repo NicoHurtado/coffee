@@ -1,4 +1,5 @@
 "use client";
+import { useState } from "react";
 import type { CardArt } from "@/lib/finance/card-art";
 import { CardChip, ContactlessIcon } from "./card-brand";
 import { cn } from "@/lib/utils";
@@ -22,25 +23,28 @@ export function CardFace({
   className?: string;
 }) {
   const isMini = detail === "mini";
+  const [failedUrl, setFailedUrl] = useState<string>();
+  const imageUrl = art.imageUrl !== failedUrl ? art.imageUrl : undefined;
 
   return (
     <div
       aria-hidden
       className={cn("pointer-events-none absolute inset-0 overflow-hidden", className)}
-      style={art.imageUrl ? undefined : { background: art.background }}
+      style={{ background: art.background }}
     >
-      {art.imageUrl && (
+      {imageUrl && (
         // eslint-disable-next-line @next/next/no-img-element -- arbitrary user-pasted URL
         <img
-          src={art.imageUrl}
+          src={imageUrl}
+          onError={() => setFailedUrl(imageUrl)}
           alt=""
-          className="h-full w-full object-cover"
+          className="h-full w-full object-fill"
           loading="lazy"
         />
       )}
 
       {/* Legibility scrim so the balance stays readable over busy artwork. */}
-      <div
+      {!isMini && !imageUrl && <div
         className="absolute inset-0"
         style={{
           background:
@@ -48,9 +52,9 @@ export function CardFace({
               ? "linear-gradient(180deg, rgba(0,0,0,0.30) 0%, rgba(0,0,0,0.10) 45%, rgba(0,0,0,0.42) 100%)"
               : "linear-gradient(180deg, rgba(255,255,255,0.24) 0%, rgba(255,255,255,0.06) 45%, rgba(255,255,255,0.34) 100%)",
         }}
-      />
+      />}
 
-      {!isMini && !art.imageUrl && (
+      {!isMini && !imageUrl && (
         <>
           <div
             className="absolute left-5 flex -translate-y-1/2 items-center gap-2"

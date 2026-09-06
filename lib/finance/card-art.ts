@@ -33,7 +33,7 @@ function toArt(preset: CardPreset, imageUrl?: string): CardArt {
     wordmark: preset.wordmark,
     wordmarkColor: preset.wordmarkColor ?? preset.brandColor,
     network: preset.network,
-    imageUrl,
+    imageUrl: imageUrl || preset.imageUrl,
   };
 }
 
@@ -48,6 +48,8 @@ export function resolveCardArt(account: Account): CardArt | undefined {
   return resolveCardArtFrom({
     presetId: account.presetId,
     institution: account.institution,
+    name: account.name,
+    type: account.type,
     network: account.network as CardNetwork | undefined,
     imageUrl: account.artImageUrl,
   });
@@ -57,17 +59,30 @@ export function resolveCardArt(account: Account): CardArt | undefined {
 export function resolveCardArtFrom({
   presetId,
   institution,
+  name,
+  type,
   network,
   imageUrl,
 }: {
   presetId?: string;
   institution?: string;
+  name?: string;
+  type?: Account["type"];
   network?: CardNetwork;
   imageUrl?: string;
 }): CardArt | undefined {
+  const identity = `${institution ?? ""} ${name ?? ""}`.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+  // Type matters: the yellow debit is Mastercard, even on older accounts
+  // created with the form's Visa default. Never infer an Amex as Visa Platinum.
+  const bank = /bancolombia|banco colombia/.test(identity);
+  const automaticId = bank && type === "debit" ? "bancolombia-debito"
+    : bank && type === "credit" && (network === "visa" || /visa/.test(identity)) && !/infinite|oro|clasica|signature/.test(identity)
+      ? "bancolombia-visa-platinum"
+      : undefined;
   const preset =
     getCardPreset(presetId) ??
-    matchCardPreset(institution, network) ??
+    getCardPreset(automaticId) ??
+    matchCardPreset(institution || name, network) ??
     getCardPreset(GENERIC_BY_NETWORK[network ?? "other"]);
   if (!preset) return undefined;
 

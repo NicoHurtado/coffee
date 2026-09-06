@@ -51,14 +51,18 @@ export function CardPresetPicker({
                 borderColor: p.border,
               }}
             >
-              <div className="text-[9px] uppercase tracking-wider opacity-80 truncate">
+              {p.imageUrl && (
+                // eslint-disable-next-line @next/next/no-img-element -- local card artwork
+                <img src={p.imageUrl} alt="" className="absolute inset-0 h-full w-full object-fill" />
+              )}
+              <div className="relative text-[9px] uppercase tracking-wider opacity-80 truncate">
                 {p.issuer}
               </div>
-              <div className="flex items-end justify-between gap-2">
+              <div className="relative flex items-end justify-between gap-2 rounded bg-black/70 px-1 text-white">
                 <span className="text-xs font-semibold truncate">{p.label}</span>
-                <span style={{ color: p.brandColor }} className="inline-flex shrink-0">
+                {!p.imageUrl && <span style={{ color: p.brandColor }} className="inline-flex shrink-0">
                   <CardBrandLogo network={p.network} className="h-3 w-auto" />
-                </span>
+                </span>}
               </div>
               {active && (
                 <div className="absolute top-1 right-1 size-5 rounded-full bg-foreground text-background flex items-center justify-center">

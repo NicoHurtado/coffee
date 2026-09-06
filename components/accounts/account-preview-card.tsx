@@ -4,6 +4,7 @@ import { artTextColors, resolveCardArtFrom } from "@/lib/finance/card-art";
 import type { AccountType, CardNetwork, Currency } from "@/lib/types";
 import { CardBrandLogo } from "./card-brand";
 import { CardFace } from "./card-face";
+import { CardImageDetails } from "./card-image-details";
 
 /**
  * Live preview shown while creating/editing an account. Mirrors the
@@ -39,6 +40,8 @@ export function AccountPreviewCard({
     ? resolveCardArtFrom({
         presetId,
         institution,
+        name,
+        type,
         network: network as CardNetwork | undefined,
         imageUrl: artImageUrl,
       })
@@ -58,6 +61,15 @@ export function AccountPreviewCard({
   }
 
   const balanceLabel = type === "credit" ? "DEUDA" : "BALANCE";
+
+  if (art?.imageUrl) {
+    return (
+      <div className={`relative w-full min-h-[160px] overflow-hidden rounded-xl border `} style={{ borderColor: art.border }}>
+        <CardFace art={art} />
+        <CardImageDetails name={name || "Nombre"} last4={last4 || "0000"} balance={initialBalance ?? 0} currency={currency ?? "COP"} credit={type === "credit"} />
+      </div>
+    );
+  }
 
   return (
     <div
