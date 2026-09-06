@@ -27,7 +27,8 @@ export function MiniCard({
     return (
       <div
         className={cn(
-          "relative h-9 w-12 shrink-0 overflow-hidden rounded-md border flex items-end justify-end p-1",
+          "relative h-9 w-12 shrink-0 overflow-hidden rounded-md flex items-end justify-end p-1",
+          art?.imageUrl ? "" : "border",
           art ? "" : "bg-muted",
           className,
         )}

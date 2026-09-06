@@ -36,6 +36,14 @@ export function CardPresetPicker({
         {CARD_PRESETS.map((p) => {
           const active = value === p.id;
           const isLight = p.textTone === "light";
+          if (p.imageUrl) return (
+            <button key={p.id} type="button" onClick={() => onChange(p)} aria-pressed={active}
+              className={cn("rounded-xl border p-2 text-left space-y-2 self-start", active && "ring-2 ring-foreground ring-offset-2")}>
+              {/* eslint-disable-next-line @next/next/no-img-element -- bundled artwork */}
+              <img src={p.imageUrl} alt="" className="block h-auto w-full rounded-md" />
+              <span className="block text-xs font-medium text-foreground">{p.issuer} · {p.label}</span>
+            </button>
+          );
           return (
             <button
               key={p.id}
@@ -51,18 +59,14 @@ export function CardPresetPicker({
                 borderColor: p.border,
               }}
             >
-              {p.imageUrl && (
-                // eslint-disable-next-line @next/next/no-img-element -- local card artwork
-                <img src={p.imageUrl} alt="" className="absolute inset-0 h-full w-full object-fill" />
-              )}
               <div className="relative text-[9px] uppercase tracking-wider opacity-80 truncate">
                 {p.issuer}
               </div>
               <div className="relative flex items-end justify-between gap-2 rounded bg-black/70 px-1 text-white">
                 <span className="text-xs font-semibold truncate">{p.label}</span>
-                {!p.imageUrl && <span style={{ color: p.brandColor }} className="inline-flex shrink-0">
+                <span style={{ color: p.brandColor }} className="inline-flex shrink-0">
                   <CardBrandLogo network={p.network} className="h-3 w-auto" />
-                </span>}
+                </span>
               </div>
               {active && (
                 <div className="absolute top-1 right-1 size-5 rounded-full bg-foreground text-background flex items-center justify-center">

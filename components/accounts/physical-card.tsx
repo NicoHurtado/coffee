@@ -4,6 +4,7 @@ import { artTextColors, resolveCardArt } from "@/lib/finance/card-art";
 import type { Account, CardNetwork, Currency } from "@/lib/types";
 import { CardBrandLogo } from "./card-brand";
 import { CardFace } from "./card-face";
+import { CardPhoto } from "./card-photo";
 import { CardImageDetails } from "./card-image-details";
 
 export interface PhysicalCardProps {
@@ -48,9 +49,9 @@ export function PhysicalCard({ account, balance, className }: PhysicalCardProps)
 
   if (art?.imageUrl) {
     return (
-      <div className={`relative w-full min-h-[160px] overflow-hidden rounded-xl border ${className ?? ""}`} style={{ borderColor: art.border }}>
-        <CardFace art={art} />
+      <div className={`w-full max-w-[22rem] space-y-3 ${className ?? ""}`}>
         <CardImageDetails name={account.name} last4={last4} balance={balance} currency={account.currency} credit={isCredit} />
+        <CardPhoto src={art.imageUrl} name={account.name} />
       </div>
     );
   }

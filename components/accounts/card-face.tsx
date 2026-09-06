@@ -7,7 +7,7 @@ import { cn } from "@/lib/utils";
 /**
  * The face of the real plastic, painted behind the account data: the issuer's
  * colors and wordmark, the gold chip and the contactless mark. If the user
- * pasted a photo of their actual card it is used instead, cropped to fill.
+ * pasted a photo of their actual card it is contained without distortion.
  *
  * Purely decorative and absolutely positioned — it never affects the size or
  * the layout of whatever card component renders it.
@@ -30,7 +30,7 @@ export function CardFace({
     <div
       aria-hidden
       className={cn("pointer-events-none absolute inset-0 overflow-hidden", className)}
-      style={{ background: art.background }}
+      style={{ background: imageUrl ? "transparent" : art.background }}
     >
       {imageUrl && (
         // eslint-disable-next-line @next/next/no-img-element -- arbitrary user-pasted URL
@@ -38,7 +38,7 @@ export function CardFace({
           src={imageUrl}
           onError={() => setFailedUrl(imageUrl)}
           alt=""
-          className="h-full w-full object-fill"
+          className="h-full w-full object-contain"
           loading="lazy"
         />
       )}

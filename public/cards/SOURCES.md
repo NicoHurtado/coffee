@@ -13,6 +13,12 @@ Los archivos finales usan las imágenes de las fuentes oficiales, no ilustracion
 
 Los originales de Nu, RappiCard y ARQ están en `originals/`. El recorte conserva textura, marcas y chip de las fotos; la ampliación no añade detalle. No se usan los resultados generativos probados durante la preparación.
 
-La imagen está separada del nombre, los últimos dígitos y el saldo/deuda. Esos datos son HTML de la aplicación, nunca parte de estos archivos. Las miniaturas no agregan logos ni velos sobre las fotos. La app adapta el frente completo a sus dimensiones previas.
+La imagen está separada del nombre, los últimos dígitos y el saldo/deuda. Esos datos son HTML encima de la foto, fuera de sus límites. Las miniaturas no agregan logos ni velos sobre las fotos. La app conserva la proporción natural del frente completo.
 
 `app/` contiene copias WebP optimizadas (hasta 960 px) para la aplicación. Los archivos grandes de esta carpeta se conservan para descargar.
+
+## Actualización: ARQ verde y proporciones
+
+`arq-green.png` es la imagen ARQ Global verde adjuntada por el usuario. Se conserva intacta; `app/arq-green.webp` es una conversión sin pérdida. Sustituye la variante metálica como diseño activo.
+
+Las tarjetas muestran título, tipo (Crédito/Débito), últimos dígitos y valor encima de la foto. La foto usa ancho adaptable y altura natural, sin superposiciones. Las miniaturas usan `object-contain`.

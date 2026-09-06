@@ -4,6 +4,7 @@ import { artTextColors, resolveCardArtFrom } from "@/lib/finance/card-art";
 import type { AccountType, CardNetwork, Currency } from "@/lib/types";
 import { CardBrandLogo } from "./card-brand";
 import { CardFace } from "./card-face";
+import { CardPhoto } from "./card-photo";
 import { CardImageDetails } from "./card-image-details";
 
 /**
@@ -64,9 +65,9 @@ export function AccountPreviewCard({
 
   if (art?.imageUrl) {
     return (
-      <div className={`relative w-full min-h-[160px] overflow-hidden rounded-xl border `} style={{ borderColor: art.border }}>
-        <CardFace art={art} />
+      <div className={`w-full max-w-[22rem] space-y-3 `}>
         <CardImageDetails name={name || "Nombre"} last4={last4 || "0000"} balance={initialBalance ?? 0} currency={currency ?? "COP"} credit={type === "credit"} />
+        <CardPhoto src={art.imageUrl} name={name || "Nombre"} />
       </div>
     );
   }

@@ -43,8 +43,8 @@ export const CARD_PRESETS: CardPreset[] = [
   },
   {
     id: "arq", label: "ARQ Global", issuer: "ARQ", institutionHint: "ARQ",
-    network: "mastercard", imageUrl: "/cards/app/arq.webp",
-    gradient: "#cbc5b7", border: "#b3ae9e", textTone: "dark", brandColor: "#222222",
+    network: "mastercard", imageUrl: "/cards/app/arq-green.webp",
+    gradient: "#082e20", border: "#174c33", textTone: "light", brandColor: "#f6efe4",
     match: ["arq", "dolarapp", "dolar app"],
   },
   {
@@ -408,11 +408,11 @@ export function matchCardPreset(
   network?: CardNetwork,
 ): CardPreset | undefined {
   if (!institution) return undefined;
-  const inst = normalize(institution);
+  const inst = normalize(institution).replace(/[^a-z0-9]+/g, " ").trim();
   if (!inst) return undefined;
 
   const hits = CARD_PRESETS.filter((p) =>
-    p.match?.some((m) => inst.includes(m) || m.includes(inst)),
+    p.match?.some((m) => ` ${inst} `.includes(` ${normalize(m).replace(/[^a-z0-9]+/g, " ").trim()} `)),
   );
   if (hits.length === 0) return undefined;
   return hits.find((p) => p.network === network) ?? hits[0];
