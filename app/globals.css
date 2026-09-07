@@ -49,85 +49,87 @@
     --radius-4xl: calc(var(--radius) * 2.6);
 }
 
-/* ============================================================
-   Coffee — "Trading desk" theme
-   Dark-first, near-black canvas, emerald accent, strong reds.
-   Light theme kept refined for daytime use.
-   ============================================================ */
+/* Coffee — quiet mint, deep forest and softly lit glass. */
 :root {
-    /* LIGHT — refined administrative */
-    --background: #f4f6f8;
-    --foreground: #0b0d12;
+    --background: #f3f5f3;
+    --foreground: #172b25;
     --card: #ffffff;
-    --card-foreground: #0b0d12;
-    --popover: #ffffff;
-    --popover-foreground: #0b0d12;
-    --primary: #0b8a5c;
+    --card-foreground: #172b25;
+    --popover: #fcfdfc;
+    --popover-foreground: #172b25;
+    --primary: #176c50;
     --primary-foreground: #ffffff;
-    --secondary: #eef1f4;
-    --secondary-foreground: #14171a;
-    --muted: #eef1f4;
-    --muted-foreground: #697280;
-    --accent: #e7f4ee;
-    --accent-foreground: #076c48;
-    --destructive: #d92d3a;
-    --border: #e2e2de;
-    --input: #d7d7d2;
-    --ring: #0b8a5c;
-    --chart-1: #0e8f60;
-    --chart-2: #2277c2;
-    --chart-3: #b8821f;
-    --chart-4: #7a52d4;
-    --chart-5: #868c95;
-    --radius: 0.75rem;
-    --sidebar: #ffffff;
-    --sidebar-foreground: #0d0f12;
-    --sidebar-primary: #0b8a5c;
+    --secondary: #eaf0ec;
+    --secondary-foreground: #243d32;
+    --muted: #edf1ee;
+    --muted-foreground: #65756d;
+    --accent: #e2efdf;
+    --accent-foreground: #20523b;
+    --destructive: #c24f59;
+    --border: #dfe7e1;
+    --input: #d5dfd8;
+    --ring: #367b5c;
+    --chart-1: #318060;
+    --chart-2: #8bbd72;
+    --chart-3: #a99a70;
+    --chart-4: #83a7af;
+    --chart-5: #9f97b4;
+    --radius: 1rem;
+    --sidebar: #f7faf6;
+    --sidebar-foreground: #172b25;
+    --sidebar-primary: #176c50;
     --sidebar-primary-foreground: #ffffff;
-    --sidebar-accent: #e7f4ee;
-    --sidebar-accent-foreground: #076c48;
-    --sidebar-border: #e2e2de;
-    --sidebar-ring: #0b8a5c;
+    --sidebar-accent: #e2efdf;
+    --sidebar-accent-foreground: #20523b;
+    --sidebar-border: #dfe7e1;
+    --sidebar-ring: #367b5c;
+    --glass: rgba(250, 253, 249, 0.82);
+    --glass-border: rgba(255, 255, 255, 0.8);
+    --glass-highlight: rgba(255, 255, 255, 0.95);
+    --glass-blur: 24px;
+    --shadow-soft: 0 2px 4px -2px #254c3010, 0 12px 36px -20px #254c3024;
+    --shadow-lifted: 0 8px 20px -10px #254c3020, 0 28px 70px -30px #254c3040;
+    --hero: #e4f2ce;
 }
 
 .dark {
-    /* DARK — trading desk */
-    --background: #0a0c10;
-    --foreground: #eceef1;
-    --card: #14171d;
-    --card-foreground: #eceef1;
-    --popover: #171b22;
-    --popover-foreground: #eceef1;
-    --primary: #16c784;
-    --primary-foreground: #06140a;
-    --secondary: #1b1f27;
-    --secondary-foreground: #eceef1;
-    --muted: #171b22;
-    --muted-foreground: #949bab;
-    --accent: #1b1f27;
-    --accent-foreground: #eceef1;
-    --destructive: #ea3943;
-    --border: #242932;
-    --input: #2a303a;
-    --glass: rgba(20, 23, 29, 0.68);
-    --glass-border: rgba(255, 255, 255, 0.08);
-    --glass-highlight: rgba(255, 255, 255, 0.06);
-    --shadow-soft: 0 1px 2px rgba(0, 0, 0, 0.5), 0 14px 34px -22px rgba(0, 0, 0, 0.9);
-    --shadow-lifted: 0 1px 2px rgba(0, 0, 0, 0.6), 0 28px 64px -34px rgba(0, 0, 0, 1);
-    --ring: #16c784;
-    --chart-1: #16c784;
-    --chart-2: #5fb6e8;
-    --chart-3: #e8b85f;
-    --chart-4: #b58ff0;
-    --chart-5: #6b7079;
-    --sidebar: #0a0c0f;
-    --sidebar-foreground: #e9ebee;
-    --sidebar-primary: #16c784;
-    --sidebar-primary-foreground: #06140a;
-    --sidebar-accent: #171b21;
-    --sidebar-accent-foreground: #e9ebee;
-    --sidebar-border: #1b1f25;
-    --sidebar-ring: #16c784;
+    --background: #101a17;
+    --foreground: #edf3ed;
+    --card: #1a2923;
+    --card-foreground: #edf3ed;
+    --popover: #203129;
+    --popover-foreground: #edf3ed;
+    --primary: #b8df91;
+    --primary-foreground: #183521;
+    --secondary: #273b30;
+    --secondary-foreground: #edf3ed;
+    --muted: #23352d;
+    --muted-foreground: #a5b6aa;
+    --accent: #304836;
+    --accent-foreground: #e1efdc;
+    --destructive: #f08e97;
+    --border: #314439;
+    --input: #3d5345;
+    --ring: #b8df91;
+    --chart-1: #b8df91;
+    --chart-2: #71b89c;
+    --chart-3: #d2be8b;
+    --chart-4: #8fb7c1;
+    --chart-5: #b8a7cd;
+    --sidebar: #15221b;
+    --sidebar-foreground: #edf3ed;
+    --sidebar-primary: #b8df91;
+    --sidebar-primary-foreground: #183521;
+    --sidebar-accent: #304836;
+    --sidebar-accent-foreground: #edf3ed;
+    --sidebar-border: #314439;
+    --sidebar-ring: #b8df91;
+    --glass: rgba(24, 40, 31, 0.86);
+    --glass-border: rgba(204, 236, 211, 0.12);
+    --glass-highlight: rgba(224, 249, 222, 0.12);
+    --shadow-soft: 0 2px 5px #00000016, 0 16px 40px -22px #00000070;
+    --shadow-lifted: 0 12px 50px -15px #00000090;
+    --hero: #30462a;
 }
 
 @layer base {
@@ -151,11 +153,13 @@
     }
 }
 
-/* Dark = flat near-black canvas, no texture — contrast comes from hairline
-   borders and card fills, not from a background pattern. */
-.dark body {
-  background-color: var(--background);
+body {
+  background-image: radial-gradient(ellipse at 85% 0%, color-mix(in srgb, var(--accent) 65%, transparent), transparent 55%);
+  background-attachment: fixed;
 }
+button, a, input, select, textarea { -webkit-tap-highlight-color: transparent; }
+:focus-visible { outline: 2px solid var(--ring); outline-offset: 3px; }
+::selection { background: var(--accent); color: var(--accent-foreground); }
 
 /* Unlayered: wins over Tailwind utilities.
    Las cifras usan la misma tipografía del texto con figuras tabulares —el
@@ -211,4 +215,54 @@
     animation-duration: 0.01ms !important;
     transition-duration: 0.01ms !important;
   }
+}
+
+/* Shared surfaces keep the same visual hierarchy on every route. */
+.surface, .surface-lifted, [data-slot="card"] {
+  border-radius: 26px;
+  background-image: linear-gradient(145deg, var(--glass-highlight), transparent 65%);
+}
+.coffee-sidebar { border-right: 1px solid var(--border); }
+.coffee-brand {
+  width: 34px; height: 34px; display: grid; place-items: center;
+  border-radius: 12px; background: var(--foreground); color: var(--background);
+  box-shadow: 0 4px 10px -5px var(--foreground);
+}
+.coffee-nav-active { background: var(--foreground); color: var(--background); box-shadow: var(--shadow-soft); }
+.coffee-nav-active svg { color: inherit; }
+.coffee-kpi { min-width: 0; container-type: inline-size; }
+.coffee-kpi-value { font-size: clamp(0.875rem, 12cqi, 1.75rem); letter-spacing: -0.045em; white-space: nowrap; line-height: 1.2; }
+.coffee-kpi-icon { padding: 8px; border-radius: 13px; background: var(--muted); color: var(--primary); }
+.coffee-kpis > :nth-child(3), .coffee-net-worth {
+  background: radial-gradient(ellipse at 100% 0%, #ffffff30, transparent 65%), var(--hero);
+  box-shadow: inset 0 1px 0 var(--glass-highlight), var(--shadow-soft);
+}
+.coffee-kpis > :nth-child(3) .coffee-kpi-icon { background: #ffffff30; }
+.coffee-net-worth { padding: 24px; border-radius: 30px; }
+.coffee-net-worth > :first-child { font-weight: 600; font-size: clamp(1.75rem, 7.8vw, 2.75rem); overflow-wrap: anywhere; }
+[data-slot="input"], [data-slot="select-trigger"], textarea {
+  border-radius: 14px;
+  background-color: color-mix(in srgb, var(--muted) 55%, var(--card));
+  box-shadow: inset 0 1px 2px #182c2010;
+}
+[data-slot="dialog-content"], [data-slot="sheet-content"], [data-slot="popover-content"], [data-slot="dropdown-menu-content"] {
+  background-color: var(--glass);
+  backdrop-filter: blur(24px) saturate(150%);
+  -webkit-backdrop-filter: blur(24px) saturate(150%);
+  box-shadow: inset 0 1px 0 var(--glass-highlight), var(--shadow-lifted);
+}
+[data-slot="dialog-content"] { border-radius: 30px; }
+[data-slot="popover-content"], [data-slot="dropdown-menu-content"] { border-radius: 18px; }
+[data-slot="table-head"] { font-size: 11px; font-weight: 500; color: var(--muted-foreground); }
+[data-slot="table-row"] { border-color: color-mix(in srgb, var(--border) 60%, transparent); }
+[data-slot="table-cell"] { padding-block: 16px; }
+[data-slot="tabs-list"] { border-radius: 999px; padding: 5px; }
+[data-slot="tabs-trigger"] { border-radius: 999px; }
+[data-slot="chart"] { font-family: var(--font-sans); }
+.recharts-cartesian-grid line { stroke-opacity: 0.6; }
+@media (max-width: 767px) {
+  .surface, .surface-lifted, [data-slot="card"] { border-radius: 24px; }
+  [data-slot="input"], [data-slot="select-trigger"], textarea { font-size: 16px; min-height: 44px; }
+  [data-slot="dialog-content"] { max-height: 90dvh; overflow-y: auto; }
+  .coffee-chart-heading { flex-wrap: wrap; row-gap: 12px; }
 }

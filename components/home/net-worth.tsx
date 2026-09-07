@@ -25,7 +25,7 @@ export function NetWorth({ size = "xl" }: { size?: "xl" | "lg" }) {
   const up = pct >= 0;
   const negative = total < 0;
   return (
-    <div>
+    <div className="coffee-net-worth">
       <div
         className={`${size === "xl" ? "text-4xl" : "text-3xl"} font-bold tabular-nums ${negative ? "text-destructive" : ""}`}
       >

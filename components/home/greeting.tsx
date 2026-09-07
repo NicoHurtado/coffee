@@ -14,7 +14,7 @@ export function Greeting() {
       <span className="hidden md:block text-[12px] font-medium tracking-[-0.005em] text-muted-foreground tabular-nums">
         Panorama general · {today}
       </span>
-      <h1 className="text-2xl font-semibold tracking-tight">
+      <h1 className="text-[28px] md:text-[32px] font-semibold tracking-[-0.035em]">
         {name ? `Hola, ${name}` : "Hola"}
       </h1>
     </div>

@@ -26,14 +26,14 @@ export function KpiCard({
   const deltaColor =
     tone === "up" ? "text-primary" : tone === "down" ? "text-destructive" : "text-muted-foreground";
   return (
-    <div className="surface rounded-2xl p-5 flex flex-col gap-3">
+    <div className="coffee-kpi surface rounded-2xl p-4 flex flex-col gap-4">
       <div className="flex items-center justify-between gap-2">
         <span className="text-[13px] font-medium tracking-[-0.01em] text-muted-foreground">
           {label}
         </span>
-        {Icon && <Icon className="size-3.5 text-muted-foreground" />}
+        {Icon && <span className="coffee-kpi-icon"><Icon className="size-4" /></span>}
       </div>
-      <div className={cn("text-[1.75rem] font-semibold tabular-nums leading-none tracking-[-0.03em]", valueColor)}>
+      <div className={cn("coffee-kpi-value font-semibold tabular-nums leading-none tracking-[-0.03em]", valueColor)}>
         {value}
       </div>
       {delta && (

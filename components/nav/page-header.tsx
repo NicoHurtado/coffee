@@ -1,9 +1,9 @@
 import { cn } from "@/lib/utils";
 
 /**
- * Administrative page header: mono uppercase eyebrow + title, optional subtitle,
+ * Shared page header: quiet eyebrow + title, optional subtitle,
  * and a right-aligned actions slot. Used across all top-level pages so the
- * "trading desk" header language stays consistent.
+ * visual hierarchy stays consistent.
  */
 export function PageHeader({
   eyebrow,
@@ -28,7 +28,7 @@ export function PageHeader({
             {eyebrow}
           </span>
         )}
-        <h1 className="text-[28px] font-semibold tracking-[-0.03em] leading-tight">{title}</h1>
+        <h1 className="text-[30px] md:text-[34px] font-semibold tracking-[-0.03em] leading-tight">{title}</h1>
         {subtitle && <p className="text-sm text-muted-foreground">{subtitle}</p>}
       </div>
       {children && <div className="flex items-center gap-2 shrink-0">{children}</div>}
@@ -36,7 +36,7 @@ export function PageHeader({
   );
 }
 
-/** Mono uppercase section label with a hairline underline. */
+/** Compact section heading with optional actions. */
 export function SectionHeading({
   children,
   right,

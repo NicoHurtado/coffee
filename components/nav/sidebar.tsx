@@ -1,7 +1,7 @@
 "use client";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Home, ListOrdered, Wallet, Target, BarChart3, LogOut } from "lucide-react";
+import { Home, ListOrdered, Wallet, Target, BarChart3, LogOut, Coffee } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useExchangeRateStore } from "@/lib/store/exchange-rate";
 
@@ -25,9 +25,10 @@ export function Sidebar() {
   }
 
   return (
-    <aside className="glass hidden md:flex md:flex-col w-60 border-r h-screen sticky top-0 p-3 gap-1">
+    <aside className="coffee-sidebar glass hidden md:flex md:flex-col w-60 border-r h-screen sticky top-0 p-3 gap-1">
       <div className="px-2 py-3 flex items-center gap-2.5">
-        <span className="font-semibold text-[17px] tracking-[-0.03em]">Coffee</span>
+        <span className="coffee-brand"><Coffee className="size-5" /></span>
+        <span className="font-semibold text-[20px] tracking-[-0.03em]">Coffee</span>
       </div>
       <div className="px-3.5 pt-3 pb-1.5 text-[11px] font-medium tracking-[-0.005em] text-muted-foreground">
         General
@@ -44,7 +45,7 @@ export function Sidebar() {
               className={cn(
                 "flex items-center gap-3 rounded-2xl px-3.5 py-2.5 text-[14px] font-medium tracking-[-0.01em] transition-colors",
                 active
-                  ? "bg-primary/10 text-foreground"
+                  ? "coffee-nav-active"
                   : "text-muted-foreground hover:bg-accent/60 hover:text-foreground",
               )}
             >

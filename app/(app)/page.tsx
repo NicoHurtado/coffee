@@ -51,8 +51,8 @@ export default function HomePage() {
         </div>
 
         <section className="space-y-3">
-          <div className="flex items-center justify-between border-b pb-2">
-            <h2 className="text-[11px] font-semibold tracking-[-0.005em] text-muted-foreground">
+          <div className="flex items-center justify-between pb-2">
+            <h2 className="text-[17px] font-semibold tracking-[-0.02em] text-foreground">
               Mis cuentas
             </h2>
           </div>

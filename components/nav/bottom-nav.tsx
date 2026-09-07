@@ -30,7 +30,7 @@ function NavLink({
       href={href}
       className={cn(
         "flex flex-col items-center justify-center gap-1 rounded-2xl py-2 text-[10px] font-medium tracking-[-0.01em] flex-1 transition-colors",
-        active ? "text-primary" : "text-muted-foreground",
+        active ? "bg-foreground text-background shadow-sm" : "text-muted-foreground",
       )}
     >
       <Icon className="size-5" />

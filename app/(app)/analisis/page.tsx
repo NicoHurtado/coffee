@@ -192,7 +192,7 @@ export default function AnalisisPage() {
       <div className="grid grid-cols-12 gap-6">
         {/* Distribution donut */}
         <div className="col-span-12 xl:col-span-5 surface rounded-2xl p-5">
-          <h2 className="text-[11px] font-semibold tracking-[-0.005em] text-muted-foreground mb-1">Distribución de activos</h2>
+          <h2 className="text-[15px] font-semibold tracking-[-0.02em] text-foreground mb-1">Distribución de activos</h2>
           <p className="text-xs text-muted-foreground mb-4">
             Cómo se reparte tu patrimonio entre tipos de cuenta.
           </p>
@@ -217,7 +217,9 @@ export default function AnalisisPage() {
                     nameKey="name"
                     innerRadius={55}
                     outerRadius={85}
-                    strokeWidth={2}
+                    strokeWidth={0}
+                    paddingAngle={3}
+                    cornerRadius={7}
                   >
                     {distribution.map((d) => (
                       <Cell
@@ -228,7 +230,7 @@ export default function AnalisisPage() {
                   </Pie>
                 </PieChart>
               </ChartContainer>
-              <div className="flex-1 min-w-0 space-y-2">
+              <div className="flex-1 min-w-[220px] space-y-2">
                 {distribution.map((d) => (
                   <div key={d.key} className="flex items-center justify-between gap-3">
                     <div className="flex items-center gap-2 text-sm min-w-0">
@@ -255,7 +257,7 @@ export default function AnalisisPage() {
 
         {/* Categories bar */}
         <div className="col-span-12 xl:col-span-7 surface rounded-2xl p-5">
-          <h2 className="text-[11px] font-semibold tracking-[-0.005em] text-muted-foreground mb-1">Gastos por categoría</h2>
+          <h2 className="text-[15px] font-semibold tracking-[-0.02em] text-foreground mb-1">Gastos por categoría</h2>
           <p className="text-xs text-muted-foreground mb-4">
             Total acumulado en el período seleccionado.
           </p>
@@ -283,7 +285,7 @@ export default function AnalisisPage() {
                     />
                   }
                 />
-                <Bar dataKey="amount" radius={[0, 6, 6, 0]}>
+                <Bar dataKey="amount" radius={[8, 8, 8, 8]} maxBarSize={32}>
                   {categoryTotals.map((d) => (
                     <Cell key={d.category} fill={d.fill} />
                   ))}

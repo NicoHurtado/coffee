@@ -180,7 +180,7 @@ export function NetWorthChart() {
 
         <div className="flex items-center justify-between gap-3">
           <span className="inline-flex items-center gap-1.5 text-muted-foreground">
-            <span className="w-3 h-0.5 bg-foreground" /> Patrimonio
+            <span className="w-3 h-0.5 bg-primary" /> Patrimonio
           </span>
           <span className="font-semibold tabular-nums">
             {d.value < 0 ? "-" : ""}
@@ -253,8 +253,8 @@ export function NetWorthChart() {
   }
 
   return (
-    <section className="surface rounded-2xl p-4 space-y-3">
-      <div className="flex items-start justify-between gap-2">
+    <section className="surface rounded-2xl p-5 md:p-6 space-y-4">
+      <div className="coffee-chart-heading flex items-start justify-between gap-2">
         <div>
           <div className="text-xs text-muted-foreground tracking-[-0.005em]">
             Patrimonio
@@ -290,7 +290,7 @@ export function NetWorthChart() {
 
       <div className="flex flex-wrap items-center gap-3 text-xs">
         <span className="inline-flex items-center gap-1.5">
-          <span className="w-3 h-0.5 bg-foreground" />
+          <span className="w-3 h-0.5 bg-primary" />
           <span className="text-muted-foreground">Patrimonio</span>
         </span>
         <span className="inline-flex items-center gap-1.5">

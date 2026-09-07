@@ -68,7 +68,7 @@ export function ExpensesBreakdown() {
             {formatMoney(total, currency)}
           </div>
         </div>
-        <div className="flex gap-1">
+        <div className="flex gap-1 rounded-full bg-muted p-1">
           {RANGES.map((r) => (
             <button
               key={r.key}

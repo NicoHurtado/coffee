@@ -40,7 +40,7 @@ export function HomeKpis() {
   }, [accounts, txs, usdToCop]);
 
   return (
-    <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-px overflow-hidden rounded-lg border bg-border">
+    <div className="coffee-kpis grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-3">
       <KpiCard
         label="Patrimonio líquido"
         value={`${liquid < 0 ? "-" : ""}${formatMoney(liquid, currency)}`}
