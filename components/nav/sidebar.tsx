@@ -27,14 +27,9 @@ export function Sidebar() {
 
   return (
     <aside className="glass hidden md:flex md:flex-col w-60 shrink-0 rounded-3xl border sticky top-3 my-3 ml-3 h-[calc(100vh-1.5rem)] p-3 gap-1">
-      <div className="px-2 py-3 flex items-center gap-3">
-        {/* eslint-disable-next-line @next/next/no-img-element -- marca local */}
-        <img src="/coffee-cup.svg" alt="" className="size-10 shrink-0 object-contain" />
-        <div className="min-w-0">
-          <div className="truncate font-semibold text-[16px] leading-tight tracking-[-0.025em]">
-            {userName || "Coffee"}
-          </div>
-          <div className="text-[11px] text-muted-foreground">Coffee</div>
+      <div className="px-2 py-3">
+        <div className="truncate font-semibold text-[18px] leading-tight tracking-[-0.03em]">
+          {userName}
         </div>
       </div>
       <div className="px-3.5 pt-3 pb-1.5 text-[11px] font-medium tracking-[-0.005em] text-muted-foreground">
