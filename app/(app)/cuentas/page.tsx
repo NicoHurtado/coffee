@@ -35,6 +35,9 @@ export default function CuentasPage() {
     return s + toBaseCurrency(computeAccountBalance(a, txs), a.currency, usdToCop);
   }, 0);
 
+  const gross = totalAssets + Math.abs(totalDebt);
+  const assetShare = gross > 0 ? (totalAssets / gross) * 100 : 100;
+
   return (
     <div className="p-4 md:p-8">
       <div className="space-y-6">
@@ -51,32 +54,51 @@ export default function CuentasPage() {
           </Link>
         </PageHeader>
 
-        {/* Patrimonio y su composición: una sola pieza, sin tarjeta sobre tarjeta */}
-        <section className="surface p-5 md:p-6 grid gap-6 md:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)] md:items-center">
-          <div>
+        {/* Patrimonio y su composición: una sola tarjeta. Activos y deuda no
+            son cifras sueltas flotando en el vacío: cada una ocupa media
+            columna y muestra cuánto pesa en la balanza. */}
+        <section className="surface p-5 md:p-6 grid gap-6 md:grid-cols-[minmax(0,1.5fr)_minmax(0,1fr)]">
+          <div className="flex flex-col justify-center">
             <div className="text-[12px] font-medium tracking-[-0.005em] text-muted-foreground mb-1">
               Patrimonio neto
             </div>
-            <NetWorth size="lg" />
+            <NetWorth size="lg" bare />
           </div>
-          <div className="grid grid-cols-2 gap-3">
-            <div className="rounded-2xl bg-muted/50 px-4 py-3">
-              <div className="text-[12px] font-medium tracking-[-0.005em] text-muted-foreground">
-                Activos
+          <div className="flex flex-col gap-3">
+            {[
+              {
+                label: "Activos",
+                value: formatMoney(totalAssets, currency),
+                share: assetShare,
+                tone: "text-positive",
+                bar: "bg-positive",
+              },
+              {
+                label: "Deuda",
+                value: `${totalDebt > 0 ? "-" : ""}${formatMoney(totalDebt, currency)}`,
+                share: 100 - assetShare,
+                tone: "text-destructive",
+                bar: "bg-destructive",
+              },
+            ].map((r) => (
+              <div
+                key={r.label}
+                className="flex flex-1 flex-col justify-center gap-2 rounded-2xl bg-muted/50 px-4 py-3.5"
+              >
+                <div className="flex items-baseline justify-between gap-3">
+                  <span className="text-[12px] font-medium tracking-[-0.005em] text-muted-foreground">
+                    {r.label}
+                  </span>
+                  <span className="text-[11px] text-muted-foreground tabular-nums">
+                    {r.share.toFixed(0)}%
+                  </span>
+                </div>
+                <div className={`text-lg font-semibold tabular-nums ${r.tone}`}>{r.value}</div>
+                <div className="h-1.5 w-full overflow-hidden rounded-full bg-foreground/10">
+                  <div className={`h-full rounded-full ${r.bar}`} style={{ width: `${r.share}%` }} />
+                </div>
               </div>
-              <div className="mt-1 text-lg font-semibold tabular-nums text-positive">
-                {formatMoney(totalAssets, currency)}
-              </div>
-            </div>
-            <div className="rounded-2xl bg-muted/50 px-4 py-3">
-              <div className="text-[12px] font-medium tracking-[-0.005em] text-muted-foreground">
-                Deuda
-              </div>
-              <div className="mt-1 text-lg font-semibold tabular-nums text-destructive">
-                {totalDebt > 0 ? "-" : ""}
-                {formatMoney(totalDebt, currency)}
-              </div>
-            </div>
+            ))}
           </div>
         </section>
 

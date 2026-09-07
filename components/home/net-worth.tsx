@@ -8,7 +8,14 @@ import { useExchangeRateStore } from "@/lib/store/exchange-rate";
 import { netWorth, monthlyChangePct, liquidNetWorth, investmentsTotal } from "@/lib/finance/net-worth";
 import { formatMoney, formatPct } from "@/lib/finance/format";
 
-export function NetWorth({ size = "xl" }: { size?: "xl" | "lg" }) {
+export function NetWorth({
+  size = "xl",
+  bare = false,
+}: {
+  size?: "xl" | "lg";
+  /** Sin su propio panel: para cuando ya vive dentro de otra tarjeta. */
+  bare?: boolean;
+}) {
   const accounts = useAccountsStore((s) => s.activeAccounts);
   const txs = useTransactionsStore((s) => s.transactions);
   const currency = useSettingsStore((s) => s.defaultCurrency);
@@ -25,7 +32,7 @@ export function NetWorth({ size = "xl" }: { size?: "xl" | "lg" }) {
   const up = pct >= 0;
   const negative = total < 0;
   return (
-    <div className="coffee-net-worth">
+    <div className={bare ? undefined : "coffee-net-worth"}>
       <div
         className={`${size === "xl" ? "text-4xl" : "text-3xl"} font-bold tabular-nums ${negative ? "text-destructive" : ""}`}
       >
