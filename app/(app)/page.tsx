@@ -3,6 +3,7 @@ import { NetWorth } from "@/components/home/net-worth";
 import { NetWorthChartLazy } from "@/components/home/net-worth-chart-lazy";
 import { ExpensesBreakdown } from "@/components/home/expenses-breakdown";
 import { AccountsSlider } from "@/components/accounts/accounts-slider";
+import { ProductList } from "@/components/accounts/product-row";
 import { AccountsGrid } from "@/components/accounts/accounts-grid";
 import { RecentActivity } from "@/components/home/recent-activity";
 import { AddTransactionButton } from "@/components/nav/add-transaction-button";
@@ -24,6 +25,7 @@ export default function HomePage() {
         </div>
         <NetWorth />
         <AccountsSlider />
+        <ProductList />
         <NetWorthChartLazy />
         <ExpensesBreakdown />
         <RecentActivity card />

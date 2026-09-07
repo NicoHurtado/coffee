@@ -2,6 +2,7 @@
 import { useAccountsStore } from "@/lib/store/accounts";
 import type { AccountType } from "@/lib/types";
 import { AccountCard } from "./account-card";
+import { ProductRow } from "./product-row";
 
 const GROUPS: { type: AccountType; label: string }[] = [
   { type: "debit", label: "Débito" },
@@ -32,13 +33,21 @@ export function AccountsGrid() {
               {label}
               <span className="ml-2 font-normal opacity-70">{group.length}</span>
             </h3>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-4">
-              {group.map((a) => (
-                <div key={a.id} className="h-full [&>a]:min-w-0 [&>a]:max-w-none [&>a]:w-full">
-                  <AccountCard account={a} />
-                </div>
-              ))}
-            </div>
+            {type === "fixed_income" || type === "investment" ? (
+              <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+                {group.map((a) => (
+                  <ProductRow key={a.id} account={a} />
+                ))}
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-4">
+                {group.map((a) => (
+                  <div key={a.id} className="h-full [&>a]:min-w-0 [&>a]:max-w-none [&>a]:w-full">
+                    <AccountCard account={a} />
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         );
       })}

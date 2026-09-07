@@ -9,7 +9,12 @@ import { AccountCard } from "./account-card";
  * avanza de a una, y si se suelta a medias vuelve a la más cercana.
  */
 export function AccountsSlider() {
-  const accounts = useAccountsStore((s) => s.activeAccounts);
+  const all = useAccountsStore((s) => s.activeAccounts);
+  const accounts = all.filter((a) => a.type === "debit" || a.type === "credit");
+
+  // Sin tarjetas pero con productos, el carrusel simplemente no aparece: la
+  // lista de productos que va debajo ya muestra lo que hay.
+  if (accounts.length === 0 && all.length > 0) return null;
 
   if (accounts.length === 0) {
     return (

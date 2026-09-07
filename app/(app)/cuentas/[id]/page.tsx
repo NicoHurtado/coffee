@@ -39,6 +39,7 @@ export default function AccountDetailPage({
   const { id } = use(params);
   const router = useRouter();
   const account = useAccountsStore((s) => s.getById(id));
+  const accountsLoaded = useAccountsStore((s) => s.loaded);
   const txs = useTransactionsStore((s) => s.forAccount(id));
   const openQuickAdd = useUIStore((s) => s.openQuickAdd);
   const usdToCop = useExchangeRateStore((s) => s.usdToCop);
@@ -90,14 +91,6 @@ export default function AccountDetailPage({
     }
   }, [router]);
 
-  if (!account) {
-    return (
-      <div className="p-8 text-center text-muted-foreground">Cuenta no encontrada.</div>
-    );
-  }
-
-  const balance = computeAccountBalance(account, txs);
-
   // Month-to-date flow summary for the account (used to fill the debit detail).
   const monthStats = useMemo(() => {
     const ms = startOfMonth(new Date());
@@ -112,6 +105,20 @@ export default function AccountDetailPage({
     }
     return { income, expense, net: income - expense, count };
   }, [txs]);
+
+  // Al recargar de golpe, el store todavía no tiene nada: eso no es una cuenta
+  // inexistente, es que aún no ha llegado. Sin esta distinción la pantalla
+  // parpadea en "Cuenta no encontrada" antes de pintar.
+  if (!account) {
+    return (
+      <div className="p-8 text-center text-muted-foreground">
+        {accountsLoaded ? "Cuenta no encontrada." : "Cargando…"}
+      </div>
+    );
+  }
+
+  const balance = computeAccountBalance(account, txs);
+
 
   const isInvestmentUsd = account.type === "investment" && account.currency === "USD";
   const copValue =
@@ -220,37 +227,45 @@ export default function AccountDetailPage({
 
       {/* Una sola pieza: el arte a la izquierda, las cifras y las acciones a la
           derecha. Nada de tarjetas dentro de tarjetas ni huecos en blanco. */}
-      <section className="surface p-5 md:p-6 grid gap-6 md:grid-cols-[minmax(0,300px)_minmax(0,1fr)] md:items-start">
-        <div className="flex flex-col gap-3">
-          {isCard ? (
-            art?.imageUrl ? (
+      <section
+        className={cn(
+          "surface p-5 md:p-6 gap-6",
+          // Solo las tarjetas parten la pieza en dos: su arte ocupa una columna.
+          // Los productos sin plástico no tienen qué poner ahí, así que van a
+          // una sola columna en vez de dejar medio panel en blanco.
+          isCard
+            ? "grid md:grid-cols-[minmax(0,300px)_minmax(0,1fr)] md:items-start"
+            : "flex flex-col",
+        )}
+      >
+        {isCard ? (
+          <div className="flex flex-col gap-3">
+            {art?.imageUrl ? (
               <CardPhoto src={art.imageUrl} name={account.name} />
             ) : (
               <div className="relative aspect-[1010/630] w-full overflow-hidden rounded-2xl border">
                 {art && <CardFace art={art} />}
               </div>
-            )
-          ) : (
-            <div className="flex items-center gap-3">
-              <span
-                className="flex size-12 shrink-0 items-center justify-center rounded-2xl"
-                style={{ background: `color-mix(in srgb, ${accent} 16%, transparent)`, color: accent }}
-              >
-                {savingsIcon(account.type, "size-6")}
-              </span>
-              <div className="min-w-0">
-                <div className="truncate text-[15px] font-semibold">{account.name}</div>
-                <div className="truncate text-xs text-muted-foreground">{subtitle}</div>
-              </div>
-            </div>
-          )}
-          {isCard && (
+            )}
             <div className="min-w-0">
               <div className="truncate text-[15px] font-semibold">{account.name}</div>
               <div className="truncate text-xs text-muted-foreground">{subtitle}</div>
             </div>
-          )}
-        </div>
+          </div>
+        ) : (
+          <div className="flex items-center gap-3">
+            <span
+              className="flex size-11 shrink-0 items-center justify-center rounded-2xl"
+              style={{ background: `color-mix(in srgb, ${accent} 16%, transparent)`, color: accent }}
+            >
+              {savingsIcon(account.type, "size-6")}
+            </span>
+            <div className="min-w-0">
+              <div className="truncate text-[17px] font-semibold tracking-[-0.02em]">{account.name}</div>
+              <div className="truncate text-xs text-muted-foreground">{subtitle}</div>
+            </div>
+          </div>
+        )}
 
         <div className="flex flex-col gap-5">
           <div>
