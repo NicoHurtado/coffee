@@ -122,8 +122,8 @@ export function AdjustBalanceDialog({ open, onOpenChange, account, currentBalanc
                 className={cn(
                   "font-semibold tabular-nums",
                   delta === 0 && "text-muted-foreground",
-                  delta > 0 && (account.type === "credit" ? "text-destructive" : "text-primary"),
-                  delta < 0 && (account.type === "credit" ? "text-primary" : "text-destructive"),
+                  delta > 0 && (account.type === "credit" ? "text-destructive" : "text-positive"),
+                  delta < 0 && (account.type === "credit" ? "text-positive" : "text-destructive"),
                 )}
               >
                 {delta > 0 ? "+" : delta < 0 ? "-" : ""}

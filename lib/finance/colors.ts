@@ -167,14 +167,14 @@ export function getColorDef(key?: AccountColor): AccountColorDef {
   return ACCOUNT_COLORS.find((c) => c.key === key) ?? ACCOUNT_COLORS[3]; // default blue
 }
 
-/** Pastel style for non-card visuals (renta fija, inversión, metas). */
+/** Neutral surfaces for savings and goals; stored account colors stay intact. */
 export function colorStyle(key?: AccountColor) {
-  const c = getColorDef(key);
+  void key;
   return {
-    background: c.pastelBg,
-    color: c.pastelText,
-    muted: c.pastelMuted,
-    border: c.pastelBorder,
+    background: "var(--muted)",
+    color: "var(--foreground)",
+    muted: "var(--muted-foreground)",
+    border: "var(--border)",
   };
 }
 

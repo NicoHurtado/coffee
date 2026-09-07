@@ -126,7 +126,7 @@ export default function HistorialPage() {
             <div className="text-[10px] font-semibold text-muted-foreground tracking-[-0.005em]">Resumen del filtro</div>
             <div className="flex justify-between text-sm">
               <span className="text-muted-foreground">Ingresos</span>
-              <span className="font-semibold text-primary tabular-nums">
+              <span className="font-semibold text-positive tabular-nums">
                 +{formatMoney(totals.income, currency)}
               </span>
             </div>
@@ -139,7 +139,7 @@ export default function HistorialPage() {
             <div className="border-t pt-2 flex justify-between text-sm">
               <span>Neto</span>
               <span
-                className={`font-bold tabular-nums ${totals.net >= 0 ? "text-primary" : "text-destructive"}`}
+                className={`font-bold tabular-nums ${totals.net >= 0 ? "text-positive" : "text-destructive"}`}
               >
                 {totals.net >= 0 ? "+" : "-"}
                 {formatMoney(Math.abs(totals.net), currency)}

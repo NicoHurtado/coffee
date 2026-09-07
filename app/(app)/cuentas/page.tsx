@@ -63,7 +63,7 @@ export default function CuentasPage() {
             <div className="text-[12px] font-medium tracking-[-0.005em] text-muted-foreground">
               Activos
             </div>
-            <div className="text-xl font-semibold tabular-nums text-primary mt-1">
+            <div className="text-xl font-semibold tabular-nums text-positive mt-1">
               {formatMoney(totalAssets, currency)}
             </div>
           </div>

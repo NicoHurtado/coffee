@@ -56,7 +56,7 @@ type RangeKey = (typeof RANGES)[number]["key"];
 
 const chartConfig = {
   value: { label: "Patrimonio", color: "var(--primary)" },
-  income: { label: "Ingresos", color: "var(--primary)" },
+  income: { label: "Ingresos", color: "var(--positive)" },
   expense: { label: "Gastos", color: "var(--destructive)" },
 } satisfies ChartConfig;
 
@@ -193,15 +193,15 @@ export function NetWorthChart() {
             <div className="space-y-1">
               <div className="flex items-center justify-between gap-3">
                 <span className="inline-flex items-center gap-1.5 text-muted-foreground">
-                  <span className="size-2 rounded-sm" style={{ background: "var(--primary)" }} />
+                  <span className="size-2 rounded-sm" style={{ background: "var(--positive)" }} />
                   Ingresos
                 </span>
-                <span className="font-semibold tabular-nums text-primary">
+                <span className="font-semibold tabular-nums text-positive">
                   +{formatMoney(d.income, currency)}
                 </span>
               </div>
               {d.incomeItems.length > 0 && (
-                <ul className="pl-4 space-y-0.5 text-primary">
+                <ul className="pl-4 space-y-0.5 text-positive">
                   {d.incomeItems.slice(0, 6).map((it, idx) => (
                     <li key={idx} className="flex items-center justify-between gap-2">
                       <span className="truncate">{it.label}</span>
@@ -263,7 +263,7 @@ export function NetWorthChart() {
             {last < 0 ? "-" : ""}
             {formatMoney(last, currency)}
           </div>
-          <div className={cn("text-xs", up ? "text-primary" : "text-destructive")}>
+          <div className={cn("text-xs", up ? "text-positive" : "text-destructive")}>
             {up ? "+" : "-"}
             {formatMoney(Math.abs(delta), currency)} ({deltaPct >= 0 ? "+" : ""}
             {deltaPct.toFixed(1)}%)
@@ -294,7 +294,7 @@ export function NetWorthChart() {
           <span className="text-muted-foreground">Patrimonio</span>
         </span>
         <span className="inline-flex items-center gap-1.5">
-          <span className="size-2.5 rounded-sm" style={{ background: "var(--primary)" }} />
+          <span className="size-2.5 rounded-sm" style={{ background: "var(--positive)" }} />
           <span className="text-muted-foreground">Día con ahorro</span>
         </span>
         <span className="inline-flex items-center gap-1.5">
@@ -308,8 +308,8 @@ export function NetWorthChart() {
         <AreaChart data={data} margin={{ top: 10, right: 6, left: 0, bottom: 0 }}>
           <defs>
             <linearGradient id="netWorthFill" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stopColor="var(--color-value)" stopOpacity={0.28} />
-              <stop offset="65%" stopColor="var(--color-value)" stopOpacity={0.06} />
+              <stop offset="0%" stopColor="var(--color-value)" stopOpacity={0.09} />
+              <stop offset="65%" stopColor="var(--color-value)" stopOpacity={0.025} />
               <stop offset="100%" stopColor="var(--color-value)" stopOpacity={0} />
             </linearGradient>
           </defs>
@@ -332,7 +332,7 @@ export function NetWorthChart() {
             dataKey="value"
             name="Patrimonio"
             stroke="var(--color-value)"
-            strokeWidth={2.75}
+            strokeWidth={1.8}
             fill="url(#netWorthFill)"
             dot={false}
             activeDot={{ r: 5, strokeWidth: 3, stroke: "var(--card)" }}
@@ -368,9 +368,9 @@ export function NetWorthChart() {
               cursor={{ fill: "var(--muted)", opacity: 0.6, radius: 8 }}
               content={(props) => renderFlowTooltip(props.payload)}
             />
-            <Bar dataKey="netScaled" name="Flujo neto" radius={[8, 8, 8, 8]} maxBarSize={12}>
+            <Bar dataKey="netScaled" name="Flujo neto" radius={[3, 3, 3, 3]} maxBarSize={8}>
               {flowData.map((d) => (
-                <Cell key={d.ts} fill={d.net >= 0 ? "var(--primary)" : "var(--destructive)"} />
+                <Cell key={d.ts} fill={d.net >= 0 ? "var(--positive)" : "var(--destructive)"} />
               ))}
             </Bar>
           </BarChart>

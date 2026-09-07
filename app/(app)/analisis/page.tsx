@@ -36,9 +36,9 @@ const TYPE_LABEL = {
 } as const;
 
 const TYPE_COLOR = {
-  debit: "var(--chart-1)", // emerald (liquidez)
-  fixed_income: "var(--chart-2)", // blue (renta fija)
-  investment: "var(--chart-3)", // amber (inversión)
+  debit: "var(--chart-1)", // liquidez
+  fixed_income: "var(--chart-2)", // renta fija
+  investment: "var(--chart-3)", // inversión
   credit: "var(--destructive)", // strong red (deuda)
 } as const;
 
@@ -56,10 +56,10 @@ const CATEGORY_COLORS = [
   "var(--chart-2)",
   "var(--chart-3)",
   "var(--chart-4)",
-  "var(--destructive)",
-  "#4f9bb0",
-  "#c76fa0",
-  "#8a9a4b",
+  "var(--chart-5)",
+  "var(--chart-2)",
+  "var(--chart-3)",
+  "var(--chart-4)",
 ] as const;
 
 const categoryConfig = {
@@ -165,7 +165,7 @@ export default function AnalisisPage() {
         </div>
         <div className="surface rounded-2xl p-5">
           <div className="text-[12px] font-medium tracking-[-0.005em] text-muted-foreground tabular-nums">Ingresos del período</div>
-          <div className="text-2xl font-bold tabular-nums text-primary mt-1">
+          <div className="text-2xl font-bold tabular-nums text-positive mt-1">
             +{formatMoney(totalIncome, currency)}
           </div>
         </div>
@@ -180,7 +180,7 @@ export default function AnalisisPage() {
           <div
             className={cn(
               "text-2xl font-bold tabular-nums mt-1",
-              netFlow >= 0 ? "text-primary" : "text-destructive",
+              netFlow >= 0 ? "text-positive" : "text-destructive",
             )}
           >
             {netFlow >= 0 ? "+" : "-"}

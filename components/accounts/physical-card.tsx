@@ -83,7 +83,7 @@ export function PhysicalCard({ account, balance, className }: PhysicalCardProps)
       className={`relative w-full min-h-[160px] overflow-hidden rounded-xl border p-5 flex flex-col justify-between gap-6 ${
         art ? "" : "border-border/60 bg-card"
       } ${className ?? ""}`}
-      style={art ? { borderColor: art.border } : undefined}
+      style={art ? { borderColor: "var(--border)" } : undefined}
     >
       {art && <CardFace art={art} />}
 
@@ -135,7 +135,7 @@ export function PhysicalCard({ account, balance, className }: PhysicalCardProps)
         </div>
         {isCard && (
           <span
-            className="inline-flex shrink-0 self-end"
+            className="coffee-card-art inline-flex shrink-0 self-end"
             style={art ? { color: art.brandColor } : undefined}
           >
             <CardBrandLogo network={network} className="h-7 w-auto" />

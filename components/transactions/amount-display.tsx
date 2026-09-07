@@ -17,7 +17,7 @@ export function AmountDisplay({
     tone === "expense"
       ? "text-destructive"
       : tone === "income"
-        ? "text-primary"
+        ? "text-positive"
         : "text-foreground";
   return (
     <div className={`text-center text-5xl font-semibold tabular-nums ${color}`}>

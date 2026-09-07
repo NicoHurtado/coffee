@@ -33,7 +33,7 @@ export function NetWorth({ size = "xl" }: { size?: "xl" | "lg" }) {
         {formatMoney(total, currency)}
       </div>
       <div
-        className={`mt-1 text-sm flex items-center gap-1 ${up ? "text-primary" : "text-destructive"}`}
+        className={`mt-1 text-sm flex items-center gap-1 ${up ? "text-positive" : "text-destructive"}`}
       >
         {up ? <ArrowUp className="size-4" /> : <ArrowDown className="size-4" />}
         {formatPct(pct)} este mes

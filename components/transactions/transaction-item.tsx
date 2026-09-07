@@ -49,8 +49,8 @@ export function TransactionItem({
         className={cn(
           "text-sm font-semibold tabular-nums",
           isExpense && "text-destructive",
-          isIncome && "text-primary",
-          isTransfer && (isCardPayment ? "text-primary" : "text-blue-500"),
+          isIncome && "text-positive",
+          isTransfer && (isCardPayment ? "text-positive" : "text-foreground"),
         )}
       >
         {signedAmount(tx.kind, tx.amount, currency)}

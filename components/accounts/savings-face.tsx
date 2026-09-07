@@ -74,7 +74,6 @@ export function SavingsFace({
   subtitle,
   balance,
   currency,
-  accent,
   className,
 }: {
   type: "fixed_income" | "investment";
@@ -82,7 +81,7 @@ export function SavingsFace({
   subtitle: string;
   balance: number;
   currency: Currency;
-  /** Color elegido para la cuenta: pinta el ícono y tiñe su pastilla. */
+  /** Stored account accent; the neutral presentation does not tint the surface. */
   accent: string;
   className?: string;
 }) {
@@ -101,7 +100,7 @@ export function SavingsFace({
       <div className="flex aspect-[1010/630] items-center justify-center rounded-xl border border-border/60 bg-card">
         <span
           className="flex aspect-square h-[38%] min-h-11 items-center justify-center rounded-2xl"
-          style={{ background: `color-mix(in srgb, ${accent} 14%, transparent)`, color: accent }}
+          style={{ background: "var(--muted)", color: "var(--foreground)" }}
         >
           {savingsIcon(type, "h-1/2 w-1/2")}
         </span>

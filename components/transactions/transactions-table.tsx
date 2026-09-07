@@ -118,8 +118,8 @@ export function TransactionsTable({
                     className={cn(
                       "text-right text-sm font-semibold tabular-nums",
                       isExpense && "text-destructive",
-                      (isIncome || isCardPayment) && "text-primary",
-                      t.kind === "transfer" && !isCardPayment && "text-blue-500",
+                      (isIncome || isCardPayment) && "text-positive",
+                      t.kind === "transfer" && !isCardPayment && "text-foreground",
                     )}
                   >
                     {signedAmount(t.kind, t.amount, currency)}

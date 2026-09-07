@@ -125,7 +125,7 @@ export function QuickAddWidget({ account }: { account: Account }) {
             className={cn(
               "py-1.5 rounded-md text-sm font-medium transition",
               creditMode === "pay"
-                ? "bg-primary text-white shadow-sm"
+                ? "bg-primary text-primary-foreground shadow-sm"
                 : "text-muted-foreground hover:text-foreground",
             )}
           >

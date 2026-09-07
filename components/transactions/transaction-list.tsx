@@ -55,7 +55,7 @@ export function TransactionList({
           <div key={key} className="space-y-1.5">
             <div className="flex items-center justify-between px-1 text-[10px] font-semibold text-muted-foreground tracking-[-0.005em] tabular-nums">
               <span>{dayLabel(date)}</span>
-              <span className={net >= 0 ? "text-primary" : "text-destructive"}>
+              <span className={net >= 0 ? "text-positive" : "text-destructive"}>
                 {net >= 0 ? "+" : "-"}
                 {formatMoney(Math.abs(net), currency)}
               </span>

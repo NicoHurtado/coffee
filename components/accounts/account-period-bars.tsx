@@ -119,7 +119,8 @@ export function AccountPeriodBars({ accountId }: { accountId: string }) {
             <Bar
               dataKey="expense"
               fill="var(--color-expense)"
-              radius={[8, 8, 8, 8]}
+              radius={[4, 4, 4, 4]}
+              maxBarSize={16}
             />
           </BarChart>
         </ChartContainer>

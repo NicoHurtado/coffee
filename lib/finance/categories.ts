@@ -27,20 +27,13 @@ const CATEGORY_ICON: Record<string, LucideIcon> = {
   Otro: Tag,
 };
 
-// Professional, desaturated data-viz palette. Leans on the app's emerald accent
-// and cools/neutrals around it — no neon pinks/indigos. Reads as "finance terminal".
+// Neutral category shades: financial direction is conveyed separately in red/green.
 export const CATEGORY_COLOR: Record<string, string> = {
-  Salud: "#16c784", // emerald (primary accent)
-  Hogar: "#3aa88a", // deep teal-green
-  Facturas: "#4f9bb0", // muted steel blue
-  Transporte: "#6f8fb3", // slate blue
-  Tecnologia: "#5bb8a8", // muted teal
-  Comida: "#c79a4b", // muted amber
-  Educacion: "#b07f53", // clay
-  Shopping: "#9a8fc0", // muted violet
-  Viajes: "#7aa6c2", // muted sky
-  Trabajo: "#8a929c", // slate gray
-  Otro: "#5f656e", // neutral gray
+  Salud: "var(--chart-1)", Hogar: "var(--chart-2)",
+  Facturas: "var(--chart-3)", Transporte: "var(--chart-4)",
+  Tecnologia: "var(--chart-5)", Comida: "var(--chart-1)",
+  Educacion: "var(--chart-2)", Shopping: "var(--chart-3)",
+  Viajes: "var(--chart-4)", Trabajo: "var(--chart-5)", Otro: "var(--chart-2)",
 };
 
 export function getCategoryIcon(name: string): LucideIcon {
@@ -48,5 +41,5 @@ export function getCategoryIcon(name: string): LucideIcon {
 }
 
 export function getCategoryColor(name: string): string {
-  return CATEGORY_COLOR[name] ?? "#94a3b8";
+  return CATEGORY_COLOR[name] ?? "var(--chart-3)";
 }

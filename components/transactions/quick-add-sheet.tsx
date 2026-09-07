@@ -160,7 +160,7 @@ function QuickAddBody({
             placeholder="0.00"
             className={cn(
               "text-xl font-bold h-11 tabular-nums w-full",
-              isTransfer ? "text-foreground" : kind === "income" ? "text-primary" : "text-destructive",
+              isTransfer ? "text-foreground" : kind === "income" ? "text-positive" : "text-destructive",
             )}
           />
         </div>

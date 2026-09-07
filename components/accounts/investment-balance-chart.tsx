@@ -66,7 +66,7 @@ export function InvestmentBalanceChart({
   const delta = last - first;
   const deltaPct = first !== 0 ? (delta / Math.abs(first)) * 100 : 0;
   const up = delta >= 0;
-  const stroke = up ? "var(--chart-1)" : "var(--destructive)";
+  const stroke = up ? "var(--positive)" : "var(--destructive)";
 
   return (
     <section className="surface rounded-2xl p-4 space-y-3">
@@ -78,7 +78,7 @@ export function InvestmentBalanceChart({
           <div className="text-xl font-semibold tabular-nums">
             {formatMoney(last, account.currency)}
           </div>
-          <div className={cn("text-xs", up ? "text-primary" : "text-destructive")}>
+          <div className={cn("text-xs", up ? "text-positive" : "text-destructive")}>
             {up ? "+" : "-"}
             {formatMoney(Math.abs(delta), account.currency)} (
             {deltaPct >= 0 ? "+" : ""}
@@ -91,7 +91,7 @@ export function InvestmentBalanceChart({
         <AreaChart data={data} margin={{ top: 6, right: 6, left: 0, bottom: 0 }}>
           <defs>
             <linearGradient id="invBalanceFill" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stopColor={stroke} stopOpacity={0.25} />
+              <stop offset="0%" stopColor={stroke} stopOpacity={0.1} />
               <stop offset="100%" stopColor={stroke} stopOpacity={0} />
             </linearGradient>
           </defs>
@@ -129,7 +129,7 @@ export function InvestmentBalanceChart({
             dataKey="value"
             name="Balance"
             stroke={stroke}
-            strokeWidth={2.75}
+            strokeWidth={1.8}
             fill="url(#invBalanceFill)"
             dot={false}
             activeDot={{ r: 4 }}

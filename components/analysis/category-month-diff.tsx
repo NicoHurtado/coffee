@@ -74,7 +74,7 @@ export function CategoryMonthDiff() {
         <div
           className={cn(
             "text-sm font-semibold tabular-nums flex items-center gap-1",
-            totalDiff > 0 ? "text-destructive" : totalDiff < 0 ? "text-primary" : "text-muted-foreground",
+            totalDiff > 0 ? "text-destructive" : totalDiff < 0 ? "text-positive" : "text-muted-foreground",
           )}
         >
           {totalDiff > 0 ? (
@@ -121,7 +121,7 @@ export function CategoryMonthDiff() {
                   className={cn(
                     "text-sm font-semibold tabular-nums shrink-0 flex items-center gap-1",
                     isUp && "text-destructive",
-                    isDown && "text-primary",
+                    isDown && "text-positive",
                     !isUp && !isDown && "text-muted-foreground",
                   )}
                 >

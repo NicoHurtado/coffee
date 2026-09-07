@@ -113,7 +113,7 @@ export function TransactionEditDialog({
                 onClick={() => setKind("income")}
                 className={
                   "py-1.5 rounded-md text-sm font-medium transition " +
-                  (kind === "income" ? "bg-primary text-white" : "text-muted-foreground")
+                  (kind === "income" ? "bg-positive text-positive-foreground" : "text-muted-foreground")
                 }
               >
                 Ingreso

@@ -265,7 +265,7 @@ export default function AccountDetailPage({
               </div>
               <div className="rounded-lg border p-3">
                 <div className="text-[10px] text-muted-foreground tracking-[-0.005em]">Crédito disponible</div>
-                <div className="text-lg font-semibold text-primary tabular-nums">
+                <div className="text-lg font-semibold text-positive tabular-nums">
                   {formatMoney(availableCredit(account, txs), account.currency)}
                 </div>
                 <Progress
@@ -293,7 +293,7 @@ export default function AccountDetailPage({
             <div className="grid grid-cols-2 gap-3">
               <div className="rounded-lg border p-3">
                 <div className="text-[10px] text-muted-foreground tracking-[-0.005em]">Rendimiento</div>
-                <div className="text-base font-semibold text-primary tabular-nums">
+                <div className="text-base font-semibold text-positive tabular-nums">
                   {formatMoney(accruedYield(account, txs), account.currency)}
                 </div>
               </div>
@@ -391,7 +391,7 @@ export default function AccountDetailPage({
                     <div className="text-[12px] font-medium tracking-[-0.005em] text-muted-foreground">
                       Ingresos
                     </div>
-                    <div className="text-xl font-semibold tabular-nums text-primary mt-1">
+                    <div className="text-xl font-semibold tabular-nums text-positive mt-1">
                       +{formatMoney(monthStats.income, account.currency)}
                     </div>
                   </div>
@@ -412,7 +412,7 @@ export default function AccountDetailPage({
                     <div
                       className={cn(
                         "text-2xl font-bold tabular-nums mt-1",
-                        monthStats.net >= 0 ? "text-primary" : "text-destructive",
+                        monthStats.net >= 0 ? "text-positive" : "text-destructive",
                       )}
                     >
                       {monthStats.net >= 0 ? "+" : "-"}
@@ -444,7 +444,7 @@ export default function AccountDetailPage({
                 <div className="surface rounded-2xl p-4 flex flex-col justify-between">
                   <div className="text-[10px] text-muted-foreground tracking-[-0.005em]">Crédito disponible</div>
                   <div>
-                    <div className="text-xl font-bold text-primary tabular-nums">
+                    <div className="text-xl font-bold text-positive tabular-nums">
                       {formatMoney(availableCredit(account, txs), account.currency)}
                     </div>
                     <Progress
@@ -486,7 +486,7 @@ export default function AccountDetailPage({
                 <div className="grid grid-cols-2 gap-4">
                   <div className="surface rounded-2xl p-4">
                     <div className="text-[10px] text-muted-foreground tracking-[-0.005em]">Rendimiento</div>
-                    <div className="text-lg font-bold text-primary tabular-nums mt-1">
+                    <div className="text-lg font-bold text-positive tabular-nums mt-1">
                       {formatMoney(accruedYield(account, txs), account.currency)}
                     </div>
                   </div>

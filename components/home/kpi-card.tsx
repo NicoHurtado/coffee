@@ -19,15 +19,15 @@ export function KpiCard({
 }) {
   const valueColor =
     valueTone === "up"
-      ? "text-primary"
+      ? "text-positive"
       : valueTone === "down"
         ? "text-destructive"
         : "text-foreground";
   const deltaColor =
-    tone === "up" ? "text-primary" : tone === "down" ? "text-destructive" : "text-muted-foreground";
+    tone === "up" ? "text-positive" : tone === "down" ? "text-destructive" : "text-muted-foreground";
   return (
     <div className="coffee-kpi surface rounded-2xl p-4 flex flex-col gap-4">
-      <div className="flex items-center justify-between gap-2">
+      <div className="flex min-h-9 items-start justify-between gap-2">
         <span className="text-[13px] font-medium tracking-[-0.01em] text-muted-foreground">
           {label}
         </span>
@@ -37,7 +37,7 @@ export function KpiCard({
         {value}
       </div>
       {delta && (
-        <div className={cn("text-[12px] flex items-center gap-1 tabular-nums font-medium", deltaColor)}>
+        <div data-tone={tone} className={cn("coffee-kpi-delta text-[11px] flex items-center gap-1 tabular-nums font-medium", deltaColor)}>
           {tone === "up" && <ArrowUp className="size-3" />}
           {tone === "down" && <ArrowDown className="size-3" />}
           {delta}
