@@ -28,7 +28,7 @@ export function MiniCard({
     return (
       <div
         className={cn(
-          "coffee-card-art relative h-9 w-12 shrink-0 overflow-hidden rounded-md flex items-end justify-end p-1",
+          "relative h-9 w-12 shrink-0 overflow-hidden rounded-md flex items-end justify-end p-1",
           art?.imageUrl ? "" : "border",
           art ? "" : "bg-muted",
           className,
@@ -55,7 +55,7 @@ export function MiniCard({
     return (
       <div
         className={cn(
-          "coffee-card-art flex h-9 w-12 shrink-0 items-center justify-center rounded-md border bg-muted",
+          "flex h-9 w-12 shrink-0 items-center justify-center rounded-md border bg-muted",
           className,
         )}
         style={{ borderLeft: `2px solid ${accent}`, color: accent }}
@@ -72,7 +72,7 @@ export function MiniCard({
   return (
     <div
       className={cn(
-        "coffee-card-art flex h-9 w-12 shrink-0 items-center justify-center rounded-md border bg-muted px-0.5 font-mono font-semibold tracking-wider",
+        "flex h-9 w-12 shrink-0 items-center justify-center rounded-md border bg-muted px-0.5 font-mono font-semibold tracking-wider",
         label.length <= 2 ? "text-[10px]" : label.length <= 3 ? "text-[9px]" : "text-[8px]",
         className,
       )}

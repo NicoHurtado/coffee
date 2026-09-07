@@ -29,7 +29,7 @@ export function CardFace({
   return (
     <div
       aria-hidden
-      className={cn("coffee-card-art pointer-events-none absolute inset-0 overflow-hidden", className)}
+      className={cn("pointer-events-none absolute inset-0 overflow-hidden", className)}
       style={{ background: imageUrl ? "transparent" : art.background }}
     >
       {imageUrl && (

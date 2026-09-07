@@ -308,8 +308,8 @@ export function NetWorthChart() {
         <AreaChart data={data} margin={{ top: 10, right: 6, left: 0, bottom: 0 }}>
           <defs>
             <linearGradient id="netWorthFill" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stopColor="var(--color-value)" stopOpacity={0.09} />
-              <stop offset="65%" stopColor="var(--color-value)" stopOpacity={0.025} />
+              <stop offset="0%" stopColor="var(--color-value)" stopOpacity={0.22} />
+              <stop offset="65%" stopColor="var(--color-value)" stopOpacity={0.05} />
               <stop offset="100%" stopColor="var(--color-value)" stopOpacity={0} />
             </linearGradient>
           </defs>

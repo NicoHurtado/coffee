@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Geist_Mono, Inter } from "next/font/google"
+import { Geist_Mono, Urbanist } from "next/font/google"
 
 import "./globals.css"
 import { ThemeProvider } from "@/components/theme-provider"
@@ -29,10 +29,9 @@ export const viewport: Viewport = {
   viewportFit: "cover",
 };
 
-// Apple usa SF Pro y no se puede servir fuera de sus plataformas: el stack
-// arranca en la del sistema —SF real en iPhone y Mac— y cae en Inter, que es
-// la más cercana, para Windows, Android y Linux.
-const fontSans = Inter({ subsets: ["latin"], variable: "--font-inter", display: "swap" });
+// Urbanist: la geométrica del specimen de referencia. Redonda y ligera, es la
+// que da el aire de los tableros que sirvieron de guía.
+const fontSans = Urbanist({ subsets: ["latin"], variable: "--font-urbanist", display: "swap" });
 
 const fontMono = Geist_Mono({
   subsets: ["latin"],

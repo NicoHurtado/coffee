@@ -8,6 +8,6 @@ export function CardPhoto({ src, name }: { src: string; name: string }) {
   return (
     // eslint-disable-next-line @next/next/no-img-element -- bundled artwork or a user-provided image
     <img src={src} alt={`Tarjeta ${name}`} onError={() => setFailed(src)}
-      className="coffee-card-art block h-auto w-full rounded-xl" loading="lazy" />
+      className="block h-auto w-full rounded-xl" loading="lazy" />
   );
 }
