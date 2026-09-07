@@ -15,7 +15,7 @@ export function AccountsGrid() {
 
   if (accounts.length === 0) {
     return (
-      <div className="rounded-xl border border-dashed p-8 text-center text-sm text-muted-foreground">
+      <div className="rounded-2xl border border-dashed p-8 text-center text-sm text-muted-foreground">
         Aún no tienes cuentas.
       </div>
     );
@@ -28,7 +28,7 @@ export function AccountsGrid() {
         if (group.length === 0) return null;
         return (
           <div key={type} className="space-y-2">
-            <h3 className="text-[10px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">
+            <h3 className="text-[12px] font-medium tracking-[-0.005em] text-muted-foreground">
               {label}
               <span className="ml-2 font-normal opacity-70">{group.length}</span>
             </h3>

@@ -22,7 +22,7 @@ export default function MetasPage() {
       <PageHeader eyebrow="Objetivos de ahorro" title="Metas" />
 
       {goals.length === 0 ? (
-        <div className="rounded-lg border border-dashed p-8 text-center text-sm text-muted-foreground">
+        <div className="rounded-2xl border border-dashed p-8 text-center text-sm text-muted-foreground">
           Aún no tienes metas de ahorro. Crea una cuenta de Renta Fija y márcala
           como meta para verla aquí.
         </div>
@@ -39,12 +39,12 @@ export default function MetasPage() {
               <Link
                 key={a.id}
                 href={`/cuentas/${a.id}`}
-                className="block rounded-lg border bg-card p-5 space-y-3 hover:bg-accent/40 transition-colors"
+                className="block surface rounded-2xl p-5 space-y-3 hover:bg-accent/40 transition-colors"
               >
                 <div className="flex items-start justify-between gap-3">
                   <div className="min-w-0">
                     <span
-                      className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-sm text-[10px] font-semibold uppercase tracking-[0.12em]"
+                      className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-sm text-[12px] font-medium tracking-[-0.005em]"
                       style={{ background: s.background, color: s.color }}
                     >
                       <span className="size-1.5 rounded-full" style={{ background: s.muted }} />

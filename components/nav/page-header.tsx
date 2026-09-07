@@ -24,11 +24,11 @@ export function PageHeader({
     >
       <div className="flex flex-col gap-1 min-w-0">
         {eyebrow && (
-          <span className="text-[10px] font-semibold uppercase tracking-[0.18em] text-muted-foreground tabular-nums">
+          <span className="text-[13px] font-medium tracking-[-0.01em] text-muted-foreground">
             {eyebrow}
           </span>
         )}
-        <h1 className="text-2xl font-semibold tracking-tight">{title}</h1>
+        <h1 className="text-[28px] font-semibold tracking-[-0.03em] leading-tight">{title}</h1>
         {subtitle && <p className="text-sm text-muted-foreground">{subtitle}</p>}
       </div>
       {children && <div className="flex items-center gap-2 shrink-0">{children}</div>}
@@ -49,11 +49,11 @@ export function SectionHeading({
   return (
     <div
       className={cn(
-        "flex items-center justify-between gap-3 border-b pb-2",
+        "flex items-center justify-between gap-3 pb-1",
         className,
       )}
     >
-      <h2 className="text-[11px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">
+      <h2 className="text-[15px] font-semibold tracking-[-0.02em] text-foreground">
         {children}
       </h2>
       {right}

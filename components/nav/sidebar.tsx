@@ -25,11 +25,11 @@ export function Sidebar() {
   }
 
   return (
-    <aside className="hidden md:flex md:flex-col w-60 border-r bg-sidebar h-screen sticky top-0 p-3 gap-1">
+    <aside className="glass hidden md:flex md:flex-col w-60 border-r h-screen sticky top-0 p-3 gap-1">
       <div className="px-2 py-3 flex items-center gap-2.5">
-        <span className="font-semibold text-[15px] tracking-tight">Coffee</span>
+        <span className="font-semibold text-[17px] tracking-[-0.03em]">Coffee</span>
       </div>
-      <div className="px-3 pt-3 pb-1.5 text-[10px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">
+      <div className="px-3.5 pt-3 pb-1.5 text-[11px] font-medium tracking-[-0.005em] text-muted-foreground">
         General
       </div>
       <div className="flex-1 flex flex-col gap-0.5">
@@ -42,9 +42,9 @@ export function Sidebar() {
               key={it.href}
               href={it.href}
               className={cn(
-                "flex items-center gap-3 rounded-xl px-3 py-2 text-[13.5px] font-medium transition-colors",
+                "flex items-center gap-3 rounded-2xl px-3.5 py-2.5 text-[14px] font-medium tracking-[-0.01em] transition-colors",
                 active
-                  ? "bg-accent text-foreground"
+                  ? "bg-primary/10 text-foreground"
                   : "text-muted-foreground hover:bg-accent/60 hover:text-foreground",
               )}
             >
@@ -56,11 +56,11 @@ export function Sidebar() {
       </div>
       {usdToCop && (
         <div
-          className="mt-1 flex items-center justify-between rounded-xl border bg-card px-3 py-2.5"
+          className="mt-1 flex items-center justify-between surface rounded-2xl px-3.5 py-3"
           title={trmDate ? `TRM vigente ${trmDate}` : undefined}
         >
           <div className="flex flex-col">
-            <span className="text-[9.5px] font-semibold uppercase tracking-[0.12em] text-muted-foreground">
+            <span className="text-[10px] font-medium text-muted-foreground">
               TRM
             </span>
             <span className="text-[13px] font-semibold tabular-nums">

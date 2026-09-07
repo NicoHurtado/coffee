@@ -138,7 +138,7 @@ export default function NuevaCuentaPage() {
       <div className="space-y-3">
         <Link
           href="/cuentas"
-          className="inline-flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-[0.16em] text-muted-foreground transition-colors hover:text-foreground"
+          className="inline-flex items-center gap-1.5 text-[11px] font-semibold tracking-[-0.005em] text-muted-foreground transition-colors hover:text-foreground"
         >
           <ArrowLeft className="size-3.5" /> Volver a cuentas
         </Link>
@@ -152,7 +152,7 @@ export default function NuevaCuentaPage() {
       <div className="md:grid md:grid-cols-12 md:gap-6 space-y-6 md:space-y-0">
         {/* Left column: Preview card + color (sticky on desktop) */}
         <div className="md:col-span-5 md:sticky md:top-6 md:self-start space-y-4">
-          <div className="rounded-lg border bg-card p-5 space-y-4">
+          <div className="surface rounded-2xl p-5 space-y-4">
             <SectionHeading>Vista previa</SectionHeading>
             <AccountPreviewCard
               type={type}
@@ -169,13 +169,13 @@ export default function NuevaCuentaPage() {
             />
           </div>
 
-          <div className="rounded-lg border bg-card p-5 space-y-4">
+          <div className="surface rounded-2xl p-5 space-y-4">
             <SectionHeading>Color de la tarjeta</SectionHeading>
             <ColorPicker value={color} onChange={setColor} />
           </div>
 
           {(type === "debit" || type === "credit") && (
-            <div className="rounded-lg border bg-card p-5 space-y-4">
+            <div className="surface rounded-2xl p-5 space-y-4">
               <SectionHeading>Diseño de la tarjeta</SectionHeading>
               <CardPresetPicker
                 value={presetId}
@@ -201,7 +201,7 @@ export default function NuevaCuentaPage() {
         {/* Right column: form */}
         <div className="md:col-span-7 space-y-4">
           {/* Account type selector */}
-          <div className="rounded-lg border bg-card p-5 space-y-3">
+          <div className="surface rounded-2xl p-5 space-y-3">
             <SectionHeading>Tipo de cuenta</SectionHeading>
             <Tabs value={type} onValueChange={(v) => setType(v as AccountType)}>
               <TabsList className="grid grid-cols-4 w-full">
@@ -214,7 +214,7 @@ export default function NuevaCuentaPage() {
           </div>
 
           {/* Base details */}
-          <div className="rounded-lg border bg-card p-5 space-y-4">
+          <div className="surface rounded-2xl p-5 space-y-4">
             <SectionHeading>Detalles de la cuenta</SectionHeading>
             <div className="space-y-3">
               <div className="space-y-1.5">
@@ -268,7 +268,7 @@ export default function NuevaCuentaPage() {
 
           {/* Type-specific details */}
           {type === "debit" && (
-            <div className="rounded-lg border bg-card p-5 space-y-4">
+            <div className="surface rounded-2xl p-5 space-y-4">
               <SectionHeading>Tarjeta física (opcional)</SectionHeading>
               <div className="space-y-3">
                 <div className="space-y-2">
@@ -289,7 +289,7 @@ export default function NuevaCuentaPage() {
           )}
 
           {type === "credit" && (
-            <div className="rounded-lg border bg-card p-5 space-y-4">
+            <div className="surface rounded-2xl p-5 space-y-4">
               <SectionHeading>Detalles de crédito</SectionHeading>
               <div className="space-y-3">
                 <div className="space-y-1.5">
@@ -323,7 +323,7 @@ export default function NuevaCuentaPage() {
           )}
 
           {type === "fixed_income" && (
-            <div className="rounded-lg border bg-card p-5 space-y-4">
+            <div className="surface rounded-2xl p-5 space-y-4">
               <SectionHeading>Detalles de renta fija</SectionHeading>
               <div className="space-y-3">
                 <div className="space-y-1.5">
@@ -379,7 +379,7 @@ export default function NuevaCuentaPage() {
           )}
 
           {type === "investment" && (
-            <div className="rounded-lg border bg-card p-5 space-y-4">
+            <div className="surface rounded-2xl p-5 space-y-4">
               <SectionHeading>Sincronización (opcional)</SectionHeading>
               <div className="space-y-3">
                 <div className="flex items-center gap-2">

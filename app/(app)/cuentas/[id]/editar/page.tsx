@@ -227,8 +227,8 @@ export default function EditarCuentaPage({
       <div className="md:grid md:grid-cols-12 md:gap-6 space-y-4 md:space-y-0">
         {/* Left column: Preview card (sticky on desktop) */}
         <div className="md:col-span-5 md:sticky md:top-6 md:self-start">
-          <div className="rounded-2xl border bg-card p-4 md:p-6 space-y-3">
-            <div className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+          <div className="surface rounded-2xl p-4 md:p-6 space-y-3">
+            <div className="text-xs font-medium tracking-[-0.005em] text-muted-foreground">
               Vista previa
             </div>
             <AccountPreviewCard

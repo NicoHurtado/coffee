@@ -69,19 +69,19 @@ export function AccountPeriodBars({ accountId }: { accountId: string }) {
   }, [txs, accountId, range]);
 
   return (
-    <div className="rounded-2xl border bg-card p-4 flex flex-col gap-3 h-full">
+    <div className="surface rounded-2xl p-4 flex flex-col gap-3 h-full">
       <div className="flex items-center justify-between gap-2">
-        <div className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+        <div className="text-xs font-medium tracking-[-0.005em] text-muted-foreground">
           Gastos por período
         </div>
-        <div className="flex gap-1 bg-muted p-1 rounded-lg">
+        <div className="flex gap-1 bg-muted p-1 rounded-full">
           {RANGES.map((r) => (
             <button
               key={r.key}
               type="button"
               onClick={() => setRange(r.key)}
               className={cn(
-                "px-2.5 py-1 rounded-md text-[11px] font-medium transition",
+                "px-3 py-1.5 rounded-full text-[12px] font-medium transition",
                 range === r.key
                   ? "bg-background shadow-sm"
                   : "text-muted-foreground",
@@ -100,7 +100,7 @@ export function AccountPeriodBars({ accountId }: { accountId: string }) {
       ) : (
         <ChartContainer config={config} className="flex-1 min-h-[200px] w-full">
           <BarChart data={data} margin={{ top: 6, right: 6, left: 0, bottom: 0 }}>
-            <CartesianGrid vertical={false} strokeDasharray="3 3" />
+            <CartesianGrid vertical={false} strokeDasharray="2 8" stroke="var(--border)" />
             <XAxis
               dataKey="label"
               tickLine={false}
@@ -119,7 +119,7 @@ export function AccountPeriodBars({ accountId }: { accountId: string }) {
             <Bar
               dataKey="expense"
               fill="var(--color-expense)"
-              radius={[4, 4, 0, 0]}
+              radius={[8, 8, 8, 8]}
             />
           </BarChart>
         </ChartContainer>

@@ -69,10 +69,10 @@ export function InvestmentBalanceChart({
   const stroke = up ? "var(--chart-1)" : "var(--destructive)";
 
   return (
-    <section className="rounded-2xl border bg-card p-4 space-y-3">
+    <section className="surface rounded-2xl p-4 space-y-3">
       <div className="flex items-start justify-between gap-2">
         <div>
-          <div className="text-xs text-muted-foreground uppercase tracking-wide">
+          <div className="text-xs text-muted-foreground tracking-[-0.005em]">
             Movimiento del balance
           </div>
           <div className="text-xl font-semibold tabular-nums">
@@ -95,7 +95,7 @@ export function InvestmentBalanceChart({
               <stop offset="100%" stopColor={stroke} stopOpacity={0} />
             </linearGradient>
           </defs>
-          <CartesianGrid vertical={false} strokeDasharray="3 3" />
+          <CartesianGrid vertical={false} strokeDasharray="2 8" stroke="var(--border)" />
           <XAxis
             dataKey="label"
             tickLine={false}
@@ -110,7 +110,7 @@ export function InvestmentBalanceChart({
               const d = props.payload?.[0]?.payload as Point | undefined;
               if (!d) return null;
               return (
-                <div className="rounded-lg border bg-background shadow-md text-xs p-3 space-y-1">
+                <div className="glass rounded-2xl border text-xs p-3.5 space-y-1">
                   <div className="font-medium">
                     {format(new Date(d.ts), "d MMM yyyy", { locale: es })}
                   </div>
@@ -129,7 +129,7 @@ export function InvestmentBalanceChart({
             dataKey="value"
             name="Balance"
             stroke={stroke}
-            strokeWidth={2}
+            strokeWidth={2.75}
             fill="url(#invBalanceFill)"
             dot={false}
             activeDot={{ r: 4 }}

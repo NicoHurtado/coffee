@@ -21,7 +21,7 @@ function Row({ label, value }: { label: string; value: string | number | null | 
   if (value === null || value === undefined || value === "") return null;
   return (
     <div className="flex items-start justify-between gap-3 py-1.5 border-b border-border/60 last:border-0">
-      <span className="text-[11px] uppercase tracking-wide text-muted-foreground">{label}</span>
+      <span className="text-[12px] tracking-[-0.005em] text-muted-foreground">{label}</span>
       <span className="text-sm font-medium text-right truncate max-w-[60%]">
         {String(value)}
       </span>
@@ -39,8 +39,8 @@ export function CardInfo({ account }: { account: Account }) {
   const last4 = isCredit ? account.last4 : isDebit ? account.last4 : undefined;
 
   return (
-    <div className="rounded-2xl border bg-card p-4 space-y-0">
-      <div className="text-xs font-medium uppercase tracking-wide text-muted-foreground mb-2">
+    <div className="surface rounded-2xl p-4 space-y-0">
+      <div className="text-xs font-medium tracking-[-0.005em] text-muted-foreground mb-2">
         Información
       </div>
       <Row label="Tipo" value={TYPE_LABEL[account.type]} />

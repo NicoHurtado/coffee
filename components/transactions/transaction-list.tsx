@@ -53,14 +53,14 @@ export function TransactionList({
         );
         return (
           <div key={key} className="space-y-1.5">
-            <div className="flex items-center justify-between px-1 text-[10px] font-semibold text-muted-foreground uppercase tracking-[0.14em] tabular-nums">
+            <div className="flex items-center justify-between px-1 text-[10px] font-semibold text-muted-foreground tracking-[-0.005em] tabular-nums">
               <span>{dayLabel(date)}</span>
               <span className={net >= 0 ? "text-primary" : "text-destructive"}>
                 {net >= 0 ? "+" : "-"}
                 {formatMoney(Math.abs(net), currency)}
               </span>
             </div>
-            <div className="divide-y rounded-lg border bg-card overflow-hidden px-2">
+            <div className="divide-y surface rounded-2xl overflow-hidden px-2">
               {items.map((t) => (
                 <TransactionItem
                   key={t.id}

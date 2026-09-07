@@ -61,7 +61,7 @@ export default function HistorialPage() {
               type="button"
               onClick={() => setView("list")}
               className={cn(
-                "flex items-center gap-1.5 px-2.5 py-1 rounded-sm text-[10px] font-semibold uppercase tracking-[0.1em] transition",
+                "flex items-center gap-1.5 px-2.5 py-1 rounded-sm text-[12px] font-medium tracking-[-0.005em] transition",
                 view === "list" ? "bg-accent text-foreground" : "text-muted-foreground",
               )}
             >
@@ -72,7 +72,7 @@ export default function HistorialPage() {
               type="button"
               onClick={() => setView("table")}
               className={cn(
-                "flex items-center gap-1.5 px-2.5 py-1 rounded-sm text-[10px] font-semibold uppercase tracking-[0.1em] transition",
+                "flex items-center gap-1.5 px-2.5 py-1 rounded-sm text-[12px] font-medium tracking-[-0.005em] transition",
                 view === "table" ? "bg-accent text-foreground" : "text-muted-foreground",
               )}
             >
@@ -104,26 +104,26 @@ export default function HistorialPage() {
       {/* DESKTOP layout */}
       <div className="hidden md:grid md:grid-cols-12 gap-6">
         <aside className="col-span-3 space-y-4">
-          <div className="rounded-lg border bg-card p-4 space-y-4">
+          <div className="surface rounded-2xl p-4 space-y-4">
             <div>
-              <div className="text-[10px] font-semibold text-muted-foreground uppercase tracking-[0.14em] mb-2">Buscar</div>
+              <div className="text-[10px] font-semibold text-muted-foreground tracking-[-0.005em] mb-2">Buscar</div>
               <div className="relative">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
                 <Input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Texto o categoría" className="pl-9" />
               </div>
             </div>
             <div>
-              <div className="text-[10px] font-semibold text-muted-foreground uppercase tracking-[0.14em] mb-2">Período</div>
+              <div className="text-[10px] font-semibold text-muted-foreground tracking-[-0.005em] mb-2">Período</div>
               <PeriodPicker value={period} onChange={setPeriod} />
             </div>
             <div>
-              <div className="text-[10px] font-semibold text-muted-foreground uppercase tracking-[0.14em] mb-2">Cuenta</div>
+              <div className="text-[10px] font-semibold text-muted-foreground tracking-[-0.005em] mb-2">Cuenta</div>
               <AccountPills value={accountId} onChange={setAccountId} variant="wrap" />
             </div>
           </div>
 
-          <div className="rounded-lg border bg-card p-4 space-y-3">
-            <div className="text-[10px] font-semibold text-muted-foreground uppercase tracking-[0.14em]">Resumen del filtro</div>
+          <div className="surface rounded-2xl p-4 space-y-3">
+            <div className="text-[10px] font-semibold text-muted-foreground tracking-[-0.005em]">Resumen del filtro</div>
             <div className="flex justify-between text-sm">
               <span className="text-muted-foreground">Ingresos</span>
               <span className="font-semibold text-primary tabular-nums">
@@ -151,7 +151,7 @@ export default function HistorialPage() {
           </div>
         </aside>
 
-        <div className="col-span-9 rounded-lg border bg-card p-4">
+        <div className="col-span-9 surface rounded-2xl p-4">
           {view === "table" ? (
             <TransactionsTable txs={filtered} currency={currency} />
           ) : (

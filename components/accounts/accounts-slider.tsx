@@ -8,7 +8,7 @@ export function AccountsSlider() {
 
   if (accounts.length === 0) {
     return (
-      <div className="rounded-xl border border-dashed p-6 text-center text-sm text-muted-foreground">
+      <div className="rounded-2xl border border-dashed p-6 text-center text-sm text-muted-foreground">
         Crea tu primera cuenta para empezar.
       </div>
     );

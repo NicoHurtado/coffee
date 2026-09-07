@@ -11,7 +11,7 @@ export function Greeting() {
   });
   return (
     <div className="flex flex-col gap-1">
-      <span className="hidden md:block text-[10px] font-semibold uppercase tracking-[0.18em] text-muted-foreground tabular-nums">
+      <span className="hidden md:block text-[12px] font-medium tracking-[-0.005em] text-muted-foreground tabular-nums">
         Panorama general · {today}
       </span>
       <h1 className="text-2xl font-semibold tracking-tight">

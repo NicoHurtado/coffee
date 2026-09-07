@@ -31,16 +31,16 @@ export function TransactionItem({
     <button
       type="button"
       onClick={onClick}
-      className="w-full flex items-center gap-3 py-2.5 px-1.5 hover:bg-accent/40 rounded-md text-left"
+      className="w-full flex items-center gap-3 py-3 px-2.5 hover:bg-muted rounded-2xl text-left transition-colors"
     >
-      <div className="size-9 rounded-md border bg-muted flex items-center justify-center shrink-0">
+      <div className="size-10 rounded-full bg-muted flex items-center justify-center shrink-0">
         <Icon className="size-4.5 text-muted-foreground" />
       </div>
       <div className="flex-1 min-w-0">
         <div className="text-sm font-medium truncate">
           {tx.description || tx.category}
         </div>
-        <div className="text-[10.5px] uppercase tracking-wider text-muted-foreground truncate tabular-nums">
+        <div className="text-[10.5px] tracking-[-0.005em] text-muted-foreground truncate tabular-nums">
           {tx.category}
           {showTime ? ` · ${format(new Date(tx.occurredAt), "HH:mm")}` : ""}
         </div>

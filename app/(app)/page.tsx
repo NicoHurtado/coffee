@@ -44,7 +44,7 @@ export default function HomePage() {
             <ExpensesBreakdown />
           </div>
           <div className="col-span-12 xl:col-span-4">
-            <div className="rounded-lg border bg-card p-5 h-full">
+            <div className="surface rounded-2xl p-5 h-full">
               <RecentActivity limit={7} />
             </div>
           </div>
@@ -52,7 +52,7 @@ export default function HomePage() {
 
         <section className="space-y-3">
           <div className="flex items-center justify-between border-b pb-2">
-            <h2 className="text-[11px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">
+            <h2 className="text-[11px] font-semibold tracking-[-0.005em] text-muted-foreground">
               Mis cuentas
             </h2>
           </div>

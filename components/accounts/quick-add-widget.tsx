@@ -99,8 +99,8 @@ export function QuickAddWidget({ account }: { account: Account }) {
   const currentDebt = isCredit ? computeAccountBalance(account, txs) : 0;
 
   return (
-    <div className="rounded-2xl border bg-card p-4 space-y-3">
-      <div className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+    <div className="surface rounded-2xl p-4 space-y-3">
+      <div className="text-xs font-medium tracking-[-0.005em] text-muted-foreground">
         Nueva transacción
       </div>
 

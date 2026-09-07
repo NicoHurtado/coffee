@@ -57,7 +57,7 @@ export default function SuscripcionesPage() {
           >
             {totalCop > 0 && (
               <div className="bg-card p-5">
-                <div className="text-[10px] font-semibold uppercase tracking-[0.16em] text-muted-foreground mb-2">
+                <div className="text-[12px] font-medium tracking-[-0.005em] text-muted-foreground mb-2">
                   Total mensual (COP)
                 </div>
                 <div className="text-xl font-semibold tabular-nums">{formatMoney(totalCop, "COP")}</div>
@@ -65,7 +65,7 @@ export default function SuscripcionesPage() {
             )}
             {totalUsd > 0 && (
               <div className="bg-card p-5">
-                <div className="text-[10px] font-semibold uppercase tracking-[0.16em] text-muted-foreground mb-2">
+                <div className="text-[12px] font-medium tracking-[-0.005em] text-muted-foreground mb-2">
                   Total mensual (USD)
                 </div>
                 <div className="text-xl font-semibold tabular-nums">{formatMoney(totalUsd, "USD")}</div>
@@ -77,7 +77,7 @@ export default function SuscripcionesPage() {
         <section className="space-y-2.5">
           <SectionHeading>Tus suscripciones · {sorted.length}</SectionHeading>
           {sorted.length > 0 && (
-          <div className="overflow-hidden rounded-lg border bg-card divide-y">
+          <div className="overflow-hidden surface rounded-2xl divide-y">
             {sorted.map((s) => {
               const account = accounts.find((a) => a.id === s.accountId);
               const next = nextChargeDate(s.billingDay);
@@ -97,7 +97,7 @@ export default function SuscripcionesPage() {
                         <Badge variant="secondary" className="text-[9px]">Pausada</Badge>
                       )}
                     </div>
-                    <div className="text-[11px] uppercase tracking-wider text-muted-foreground truncate">
+                    <div className="text-[12px] tracking-[-0.005em] text-muted-foreground truncate">
                       {account?.name ?? "Cuenta eliminada"} · Día {s.billingDay} · Próx.{" "}
                       {next.toLocaleDateString("es-CO", { day: "numeric", month: "short" })}
                     </div>
@@ -115,7 +115,7 @@ export default function SuscripcionesPage() {
           )}
 
           {sorted.length === 0 && (
-            <div className="rounded-lg border border-dashed p-6 text-center text-sm text-muted-foreground">
+            <div className="rounded-2xl border border-dashed p-6 text-center text-sm text-muted-foreground">
               Aún no tienes suscripciones. Añade la primera con{" "}
               <strong>+ Nueva suscripción</strong> y se cobrará sola cada mes.
             </div>

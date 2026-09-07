@@ -58,10 +58,10 @@ export function CategoryMonthDiff() {
   const totalPct = totalLast > 0 ? (totalDiff / totalLast) * 100 : 0;
 
   return (
-    <div className="rounded-2xl border bg-card p-5 space-y-4">
+    <div className="surface rounded-2xl p-5 space-y-4">
       <div className="flex items-start justify-between gap-2 flex-wrap">
         <div>
-          <div className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+          <div className="text-xs font-medium tracking-[-0.005em] text-muted-foreground">
             Diferencia vs mes pasado
           </div>
           <div className="text-2xl font-bold tabular-nums mt-1">

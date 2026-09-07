@@ -26,18 +26,18 @@ export function KpiCard({
   const deltaColor =
     tone === "up" ? "text-primary" : tone === "down" ? "text-destructive" : "text-muted-foreground";
   return (
-    <div className="bg-card p-5 flex flex-col gap-3">
+    <div className="surface rounded-2xl p-5 flex flex-col gap-3">
       <div className="flex items-center justify-between gap-2">
-        <span className="text-[10px] font-semibold uppercase tracking-[0.14em] text-muted-foreground tabular-nums">
+        <span className="text-[13px] font-medium tracking-[-0.01em] text-muted-foreground">
           {label}
         </span>
         {Icon && <Icon className="size-3.5 text-muted-foreground" />}
       </div>
-      <div className={cn("text-[1.7rem] font-semibold tabular-nums leading-none", valueColor)}>
+      <div className={cn("text-[1.75rem] font-semibold tabular-nums leading-none tracking-[-0.03em]", valueColor)}>
         {value}
       </div>
       {delta && (
-        <div className={cn("text-[11px] flex items-center gap-1 tabular-nums", deltaColor)}>
+        <div className={cn("text-[12px] flex items-center gap-1 tabular-nums font-medium", deltaColor)}>
           {tone === "up" && <ArrowUp className="size-3" />}
           {tone === "down" && <ArrowDown className="size-3" />}
           {delta}

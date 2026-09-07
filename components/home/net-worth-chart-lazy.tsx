@@ -10,7 +10,7 @@ const NetWorthChart = dynamic(
   {
     ssr: false,
     loading: () => (
-      <section className="rounded-2xl border bg-card p-4 space-y-3">
+      <section className="surface rounded-2xl p-4 space-y-3">
         <div className="h-4 w-24 rounded bg-muted animate-pulse" />
         <div className="h-7 w-40 rounded bg-muted animate-pulse" />
         <div className="h-56 w-full rounded bg-muted/60 animate-pulse" />

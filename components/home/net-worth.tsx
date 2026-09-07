@@ -40,7 +40,7 @@ export function NetWorth({ size = "xl" }: { size?: "xl" | "lg" }) {
       </div>
       <div className="mt-3 grid grid-cols-2 gap-3">
         <div>
-          <div className="text-[10px] uppercase tracking-[0.14em] text-muted-foreground">
+          <div className="text-[12px] tracking-[-0.005em] text-muted-foreground">
             Patrimonio líquido
           </div>
           <div className="text-sm font-semibold tabular-nums mt-0.5">
@@ -49,7 +49,7 @@ export function NetWorth({ size = "xl" }: { size?: "xl" | "lg" }) {
           </div>
         </div>
         <div>
-          <div className="text-[10px] uppercase tracking-[0.14em] text-muted-foreground">
+          <div className="text-[12px] tracking-[-0.005em] text-muted-foreground">
             Inversiones bolsa
           </div>
           <div className="text-sm font-semibold tabular-nums mt-0.5">

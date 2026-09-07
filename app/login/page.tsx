@@ -61,12 +61,12 @@ function LoginForm() {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-background p-4">
-      <div className="w-full max-w-sm">
+      <div className="glass w-full max-w-sm rounded-3xl border p-7">
         <div className="text-center mb-8">
           <div className="inline-flex mb-4 rounded-2xl overflow-hidden shadow-sm">
             <img src="/stat_icon.svg" alt="Coffee" className="size-20 object-cover" />
           </div>
-          <h1 className="text-2xl font-semibold tracking-tight">Coffee</h1>
+          <h1 className="text-[28px] font-semibold tracking-[-0.03em]">Coffee</h1>
           <p className="text-muted-foreground text-sm mt-1">
             {isRegister ? "Crea tu cuenta" : "Ingresa a tu cuenta"}
           </p>
@@ -132,7 +132,7 @@ function LoginForm() {
 
           {error && <p className="text-destructive text-sm">{error}</p>}
 
-          <Button type="submit" className="w-full" disabled={loading}>
+          <Button type="submit" size="lg" className="w-full" disabled={loading}>
             {loading
               ? isRegister
                 ? "Creando cuenta..."

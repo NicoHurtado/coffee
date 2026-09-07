@@ -59,7 +59,7 @@ export function CardPresetPicker({
                 borderColor: p.border,
               }}
             >
-              <div className="relative text-[9px] uppercase tracking-wider opacity-80 truncate">
+              <div className="relative text-[9px] tracking-[-0.005em] opacity-80 truncate">
                 {p.issuer}
               </div>
               <div className="relative flex items-end justify-between gap-2 rounded bg-black/70 px-1 text-white">

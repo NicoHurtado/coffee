@@ -145,7 +145,7 @@ export default function AnalisisPage() {
               type="button"
               onClick={() => setMonthsBack(r)}
               className={cn(
-                "px-3 py-1.5 rounded-sm text-[10px] font-semibold uppercase tracking-[0.1em] transition",
+                "px-3 py-1.5 rounded-sm text-[12px] font-medium tracking-[-0.005em] transition",
                 monthsBack === r
                   ? "bg-accent text-foreground"
                   : "text-muted-foreground",
@@ -159,24 +159,24 @@ export default function AnalisisPage() {
 
       {/* KPI strip */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="rounded-lg border bg-card p-5">
-          <div className="text-[10px] font-semibold uppercase tracking-[0.14em] text-muted-foreground tabular-nums">Activos totales</div>
+        <div className="surface rounded-2xl p-5">
+          <div className="text-[12px] font-medium tracking-[-0.005em] text-muted-foreground tabular-nums">Activos totales</div>
           <div className="text-2xl font-bold tabular-nums mt-1">{formatMoney(totalAssets, currency)}</div>
         </div>
-        <div className="rounded-lg border bg-card p-5">
-          <div className="text-[10px] font-semibold uppercase tracking-[0.14em] text-muted-foreground tabular-nums">Ingresos del período</div>
+        <div className="surface rounded-2xl p-5">
+          <div className="text-[12px] font-medium tracking-[-0.005em] text-muted-foreground tabular-nums">Ingresos del período</div>
           <div className="text-2xl font-bold tabular-nums text-primary mt-1">
             +{formatMoney(totalIncome, currency)}
           </div>
         </div>
-        <div className="rounded-lg border bg-card p-5">
-          <div className="text-[10px] font-semibold uppercase tracking-[0.14em] text-muted-foreground tabular-nums">Gastos del período</div>
+        <div className="surface rounded-2xl p-5">
+          <div className="text-[12px] font-medium tracking-[-0.005em] text-muted-foreground tabular-nums">Gastos del período</div>
           <div className="text-2xl font-bold tabular-nums text-destructive mt-1">
             -{formatMoney(totalExpenses, currency)}
           </div>
         </div>
-        <div className="rounded-lg border bg-card p-5">
-          <div className="text-[10px] font-semibold uppercase tracking-[0.14em] text-muted-foreground tabular-nums">Flujo neto</div>
+        <div className="surface rounded-2xl p-5">
+          <div className="text-[12px] font-medium tracking-[-0.005em] text-muted-foreground tabular-nums">Flujo neto</div>
           <div
             className={cn(
               "text-2xl font-bold tabular-nums mt-1",
@@ -191,8 +191,8 @@ export default function AnalisisPage() {
 
       <div className="grid grid-cols-12 gap-6">
         {/* Distribution donut */}
-        <div className="col-span-12 xl:col-span-5 rounded-lg border bg-card p-5">
-          <h2 className="text-[11px] font-semibold uppercase tracking-[0.16em] text-muted-foreground mb-1">Distribución de activos</h2>
+        <div className="col-span-12 xl:col-span-5 surface rounded-2xl p-5">
+          <h2 className="text-[11px] font-semibold tracking-[-0.005em] text-muted-foreground mb-1">Distribución de activos</h2>
           <p className="text-xs text-muted-foreground mb-4">
             Cómo se reparte tu patrimonio entre tipos de cuenta.
           </p>
@@ -254,8 +254,8 @@ export default function AnalisisPage() {
         </div>
 
         {/* Categories bar */}
-        <div className="col-span-12 xl:col-span-7 rounded-lg border bg-card p-5">
-          <h2 className="text-[11px] font-semibold uppercase tracking-[0.16em] text-muted-foreground mb-1">Gastos por categoría</h2>
+        <div className="col-span-12 xl:col-span-7 surface rounded-2xl p-5">
+          <h2 className="text-[11px] font-semibold tracking-[-0.005em] text-muted-foreground mb-1">Gastos por categoría</h2>
           <p className="text-xs text-muted-foreground mb-4">
             Total acumulado en el período seleccionado.
           </p>

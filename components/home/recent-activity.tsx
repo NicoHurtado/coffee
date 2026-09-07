@@ -73,12 +73,12 @@ export function RecentActivity({
   return (
     <section className="space-y-2">
       <div className="flex items-center justify-between border-b pb-2">
-        <h2 className="text-[11px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">
+        <h2 className="text-[11px] font-semibold tracking-[-0.005em] text-muted-foreground">
           Actividad reciente
         </h2>
         <Link
           href={hrefAll}
-          className="text-[10px] font-semibold uppercase tracking-[0.12em] text-muted-foreground hover:text-foreground"
+          className="text-[12px] font-medium tracking-[-0.005em] text-muted-foreground hover:text-foreground"
         >
           Ver todo
         </Link>
@@ -91,13 +91,13 @@ export function RecentActivity({
         <div className="flex flex-col gap-6">
           {groupedArray.map((group) => (
             <div key={group.label} className={card ? "space-y-1.5" : "space-y-2"}>
-              <div className="px-1 text-[10px] font-semibold uppercase tracking-[0.12em] text-muted-foreground tabular-nums">
+              <div className="px-1 text-[12px] font-medium tracking-[-0.005em] text-muted-foreground tabular-nums">
                 {group.label}
               </div>
               <div
                 className={
                   card
-                    ? "divide-y rounded-lg border bg-card overflow-hidden px-2"
+                    ? "divide-y surface rounded-2xl overflow-hidden px-2"
                     : "flex flex-col"
                 }
               >

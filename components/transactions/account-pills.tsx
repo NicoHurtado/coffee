@@ -46,7 +46,7 @@ export function AccountPills({ value, onChange, variant = "bleed" }: Props) {
           if (list.length === 0) return null;
           return (
             <div key={g.type} className="space-y-1.5">
-              <div className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground">
+              <div className="text-[10px] font-medium tracking-[-0.005em] text-muted-foreground">
                 {g.title}
               </div>
               <div className="flex flex-wrap gap-1.5">

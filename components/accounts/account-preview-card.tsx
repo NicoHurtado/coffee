@@ -101,7 +101,7 @@ export function AccountPreviewCard({
       <div className="relative flex items-start justify-between gap-4">
         <div className="min-w-0">
           <div
-            className="text-[10px] uppercase tracking-[0.16em] text-muted-foreground"
+            className="text-[12px] tracking-[-0.005em] text-muted-foreground"
             style={labelStyle}
           >
             NAME
@@ -112,7 +112,7 @@ export function AccountPreviewCard({
         </div>
         <div className="min-w-0 text-right">
           <div
-            className="text-[10px] uppercase tracking-[0.16em] text-muted-foreground"
+            className="text-[12px] tracking-[-0.005em] text-muted-foreground"
             style={labelStyle}
           >
             {secondaryLabel}
@@ -129,7 +129,7 @@ export function AccountPreviewCard({
       <div className="relative flex items-end justify-between gap-4">
         <div className="min-w-0">
           <div
-            className="text-[10px] uppercase tracking-[0.16em] text-muted-foreground"
+            className="text-[12px] tracking-[-0.005em] text-muted-foreground"
             style={labelStyle}
           >
             {balanceLabel}

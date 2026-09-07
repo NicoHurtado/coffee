@@ -29,8 +29,8 @@ function NavLink({
     <Link
       href={href}
       className={cn(
-        "flex flex-col items-center justify-center gap-1 text-[10px] flex-1",
-        active ? "text-foreground" : "text-muted-foreground",
+        "flex flex-col items-center justify-center gap-1 rounded-2xl py-2 text-[10px] font-medium tracking-[-0.01em] flex-1 transition-colors",
+        active ? "text-primary" : "text-muted-foreground",
       )}
     >
       <Icon className="size-5" />
@@ -44,10 +44,10 @@ export function BottomNav() {
   const openQuickAdd = useUIStore((s) => s.openQuickAdd);
   return (
     <nav
-      className="md:hidden fixed bottom-0 inset-x-0 z-40 border-t bg-background"
-      style={{ paddingBottom: "max(env(safe-area-inset-bottom), 8px)" }}
+      className="md:hidden fixed inset-x-3 z-40"
+      style={{ bottom: "max(env(safe-area-inset-bottom), 12px)" }}
     >
-      <div className="relative flex items-center h-14">
+      <div className="glass relative flex h-16 items-center rounded-[26px] border px-1">
         {LEFT.map((it) => (
           <NavLink
             key={it.href}
@@ -62,7 +62,7 @@ export function BottomNav() {
             type="button"
             aria-label="Añadir transacción"
             onClick={() => openQuickAdd()}
-            className="absolute -top-5 left-1/2 -translate-x-1/2 size-12 rounded-full bg-primary text-primary-foreground shadow-lg flex items-center justify-center active:scale-95 transition"
+            className="absolute -top-6 left-1/2 -translate-x-1/2 size-14 rounded-full bg-primary text-primary-foreground shadow-[0_10px_28px_-10px_var(--primary)] ring-4 ring-background/70 flex items-center justify-center active:scale-95 transition"
           >
             <Plus className="size-6" />
           </button>

@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Geist_Mono, Hanken_Grotesk } from "next/font/google"
+import { Geist_Mono, Inter } from "next/font/google"
 
 import "./globals.css"
 import { ThemeProvider } from "@/components/theme-provider"
@@ -29,7 +29,10 @@ export const viewport: Viewport = {
   viewportFit: "cover",
 };
 
-const dmSans = Hanken_Grotesk({ subsets: ["latin"], variable: "--font-sans" });
+// Apple usa SF Pro y no se puede servir fuera de sus plataformas: el stack
+// arranca en la del sistema —SF real en iPhone y Mac— y cae en Inter, que es
+// la más cercana, para Windows, Android y Linux.
+const fontSans = Inter({ subsets: ["latin"], variable: "--font-inter", display: "swap" });
 
 const fontMono = Geist_Mono({
   subsets: ["latin"],
@@ -45,7 +48,7 @@ export default function RootLayout({
     <html
       lang="en"
       suppressHydrationWarning
-      className={cn("antialiased", fontMono.variable, "font-sans", dmSans.variable)}
+      className={cn("antialiased", fontMono.variable, "font-sans", fontSans.variable)}
     >
       <body>
         <ThemeProvider>

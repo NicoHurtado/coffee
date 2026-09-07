@@ -173,7 +173,7 @@ export function NetWorthChart() {
     const d = payload[0]?.payload as (typeof data)[number] | undefined;
     if (!d) return null;
     return (
-      <div className="rounded-lg border bg-background shadow-md text-xs p-3 min-w-[220px] max-w-[280px] space-y-3">
+      <div className="glass rounded-2xl border text-xs p-3.5 min-w-[220px] max-w-[280px] space-y-3">
         <div className="font-medium">
           {format(new Date(d.ts), "d MMM yyyy", { locale: es })}
         </div>
@@ -253,10 +253,10 @@ export function NetWorthChart() {
   }
 
   return (
-    <section className="rounded-2xl border bg-card p-4 space-y-3">
+    <section className="surface rounded-2xl p-4 space-y-3">
       <div className="flex items-start justify-between gap-2">
         <div>
-          <div className="text-xs text-muted-foreground uppercase tracking-wide">
+          <div className="text-xs text-muted-foreground tracking-[-0.005em]">
             Patrimonio
           </div>
           <div className={cn("text-xl font-semibold tabular-nums", last < 0 && "text-destructive")}>
@@ -269,16 +269,16 @@ export function NetWorthChart() {
             {deltaPct.toFixed(1)}%)
           </div>
         </div>
-        <div className="flex gap-1">
+        <div className="flex gap-1 rounded-full bg-muted p-1">
           {RANGES.map((r) => (
             <button
               key={r.key}
               type="button"
               onClick={() => setRange(r.key)}
               className={cn(
-                "px-2.5 py-1 rounded-md text-xs font-medium transition",
+                "px-3 py-1.5 rounded-full text-[13px] font-medium transition",
                 range === r.key
-                  ? "bg-foreground text-background"
+                  ? "bg-card text-foreground shadow-[0_1px_2px_rgba(0,0,0,0.08)]"
                   : "text-muted-foreground hover:bg-accent",
               )}
             >
@@ -308,12 +308,12 @@ export function NetWorthChart() {
         <AreaChart data={data} margin={{ top: 10, right: 6, left: 0, bottom: 0 }}>
           <defs>
             <linearGradient id="netWorthFill" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stopColor="var(--color-value)" stopOpacity={0.32} />
+              <stop offset="0%" stopColor="var(--color-value)" stopOpacity={0.28} />
               <stop offset="65%" stopColor="var(--color-value)" stopOpacity={0.06} />
               <stop offset="100%" stopColor="var(--color-value)" stopOpacity={0} />
             </linearGradient>
           </defs>
-          <CartesianGrid vertical={false} stroke="var(--border)" strokeOpacity={0.5} />
+          <CartesianGrid vertical={false} strokeDasharray="2 8" stroke="var(--border)" />
           <XAxis dataKey="label" hide />
           <YAxis
             domain={["dataMin", "dataMax"]}
@@ -332,10 +332,10 @@ export function NetWorthChart() {
             dataKey="value"
             name="Patrimonio"
             stroke="var(--color-value)"
-            strokeWidth={2.25}
+            strokeWidth={2.75}
             fill="url(#netWorthFill)"
             dot={false}
-            activeDot={{ r: 4, strokeWidth: 2, stroke: "var(--background)" }}
+            activeDot={{ r: 5, strokeWidth: 3, stroke: "var(--card)" }}
           />
         </AreaChart>
       </ChartContainer>
@@ -347,7 +347,7 @@ export function NetWorthChart() {
       {flowData.length > 0 && (
         <ChartContainer config={chartConfig} className="h-28 w-full">
           <BarChart data={flowData} margin={{ top: 4, right: 6, left: 0, bottom: 0 }}>
-            <CartesianGrid vertical={false} stroke="var(--border)" strokeOpacity={0.5} />
+            <CartesianGrid vertical={false} strokeDasharray="2 8" stroke="var(--border)" />
             <XAxis
               dataKey="label"
               tickLine={false}
@@ -365,10 +365,10 @@ export function NetWorthChart() {
             />
             <ReferenceLine y={0} stroke="var(--border)" />
             <ChartTooltip
-              cursor={{ fill: "var(--accent)", opacity: 0.4 }}
+              cursor={{ fill: "var(--muted)", opacity: 0.6, radius: 8 }}
               content={(props) => renderFlowTooltip(props.payload)}
             />
-            <Bar dataKey="netScaled" name="Flujo neto" radius={[3, 3, 3, 3]} maxBarSize={14}>
+            <Bar dataKey="netScaled" name="Flujo neto" radius={[8, 8, 8, 8]} maxBarSize={12}>
               {flowData.map((d) => (
                 <Cell key={d.ts} fill={d.net >= 0 ? "var(--primary)" : "var(--destructive)"} />
               ))}

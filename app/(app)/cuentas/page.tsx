@@ -54,13 +54,13 @@ export default function CuentasPage() {
         {/* Net worth + summary strip */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-px overflow-hidden rounded-lg border bg-border">
           <div className="bg-card p-5 sm:col-span-1">
-            <div className="text-[10px] font-semibold uppercase tracking-[0.16em] text-muted-foreground mb-2">
+            <div className="text-[12px] font-medium tracking-[-0.005em] text-muted-foreground mb-2">
               Patrimonio neto
             </div>
             <NetWorth size="lg" />
           </div>
           <div className="bg-card p-5 flex flex-col justify-center">
-            <div className="text-[10px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">
+            <div className="text-[12px] font-medium tracking-[-0.005em] text-muted-foreground">
               Activos
             </div>
             <div className="text-xl font-semibold tabular-nums text-primary mt-1">
@@ -68,7 +68,7 @@ export default function CuentasPage() {
             </div>
           </div>
           <div className="bg-card p-5 flex flex-col justify-center">
-            <div className="text-[10px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">
+            <div className="text-[12px] font-medium tracking-[-0.005em] text-muted-foreground">
               Deuda
             </div>
             <div className="text-xl font-semibold tabular-nums text-destructive mt-1">
@@ -98,7 +98,7 @@ export default function CuentasPage() {
                 >
                   {g.title} · {list.length}
                 </SectionHeading>
-                <div className="overflow-hidden rounded-lg border bg-card divide-y">
+                <div className="overflow-hidden surface rounded-2xl divide-y">
                   {list.map((a: Account) => {
                     const bal = computeAccountBalance(a, txs);
                     const meta =
@@ -114,7 +114,7 @@ export default function CuentasPage() {
                         <MiniCard account={a} />
                         <div className="min-w-0 flex-1">
                           <div className="text-sm font-semibold truncate">{a.name}</div>
-                          <div className="text-[11px] uppercase tracking-wider text-muted-foreground truncate">
+                          <div className="text-[12px] tracking-[-0.005em] text-muted-foreground truncate">
                             {meta}
                           </div>
                         </div>
@@ -139,7 +139,7 @@ export default function CuentasPage() {
         </div>
 
         {accounts.length === 0 && (
-          <div className="rounded-lg border border-dashed p-6 text-center text-sm text-muted-foreground">
+          <div className="rounded-2xl border border-dashed p-6 text-center text-sm text-muted-foreground">
             Aún no tienes cuentas. Crea la primera con <strong>+ Nueva cuenta</strong>.
           </div>
         )}

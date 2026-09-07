@@ -6,7 +6,9 @@
 
 @theme inline {
     --font-heading: var(--font-sans);
-    --font-sans: var(--font-sans);
+    --font-sans:
+        -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display",
+        var(--font-inter), "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
     --color-sidebar-ring: var(--sidebar-ring);
     --color-sidebar-border: var(--sidebar-border);
     --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -54,18 +56,18 @@
    ============================================================ */
 :root {
     /* LIGHT — refined administrative */
-    --background: #fbfbfa;
-    --foreground: #0d0f12;
+    --background: #f4f6f8;
+    --foreground: #0b0d12;
     --card: #ffffff;
-    --card-foreground: #0d0f12;
+    --card-foreground: #0b0d12;
     --popover: #ffffff;
-    --popover-foreground: #0d0f12;
+    --popover-foreground: #0b0d12;
     --primary: #0b8a5c;
     --primary-foreground: #ffffff;
-    --secondary: #f1f2f1;
+    --secondary: #eef1f4;
     --secondary-foreground: #14171a;
-    --muted: #f2f2f1;
-    --muted-foreground: #5d636d;
+    --muted: #eef1f4;
+    --muted-foreground: #697280;
     --accent: #e7f4ee;
     --accent-foreground: #076c48;
     --destructive: #d92d3a;
@@ -90,23 +92,28 @@
 
 .dark {
     /* DARK — trading desk */
-    --background: #08090b;
-    --foreground: #e9ebee;
-    --card: #101317;
-    --card-foreground: #e9ebee;
-    --popover: #101317;
-    --popover-foreground: #e9ebee;
+    --background: #0a0c10;
+    --foreground: #eceef1;
+    --card: #14171d;
+    --card-foreground: #eceef1;
+    --popover: #171b22;
+    --popover-foreground: #eceef1;
     --primary: #16c784;
     --primary-foreground: #06140a;
-    --secondary: #171b21;
-    --secondary-foreground: #e9ebee;
-    --muted: #13161b;
-    --muted-foreground: #8a909a;
-    --accent: #171b21;
-    --accent-foreground: #e9ebee;
+    --secondary: #1b1f27;
+    --secondary-foreground: #eceef1;
+    --muted: #171b22;
+    --muted-foreground: #949bab;
+    --accent: #1b1f27;
+    --accent-foreground: #eceef1;
     --destructive: #ea3943;
-    --border: #1b1f25;
-    --input: #23282f;
+    --border: #242932;
+    --input: #2a303a;
+    --glass: rgba(20, 23, 29, 0.68);
+    --glass-border: rgba(255, 255, 255, 0.08);
+    --glass-highlight: rgba(255, 255, 255, 0.06);
+    --shadow-soft: 0 1px 2px rgba(0, 0, 0, 0.5), 0 14px 34px -22px rgba(0, 0, 0, 0.9);
+    --shadow-lifted: 0 1px 2px rgba(0, 0, 0, 0.6), 0 28px 64px -34px rgba(0, 0, 0, 1);
     --ring: #16c784;
     --chart-1: #16c784;
     --chart-2: #5fb6e8;
@@ -134,7 +141,13 @@
     @apply font-sans;
     }
   h1, h2, h3 {
-    letter-spacing: -0.02em;
+    letter-spacing: -0.022em;
+    font-weight: 600;
+    }
+  body {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
     }
 }
 
@@ -145,9 +158,57 @@
 }
 
 /* Unlayered: wins over Tailwind utilities.
-   Every numeric value rendered with `tabular-nums` switches to the
-   mono face — the trading-desk ledger feel, applied app-wide. */
+   Las cifras usan la misma tipografía del texto con figuras tabulares —el
+   ajuste de Apple— en vez de una mono de ledger: alinean igual pero se leen
+   como parte del contenido. */
 .tabular-nums {
-  font-family: var(--font-mono), ui-monospace, monospace;
-  letter-spacing: -0.01em;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.02em;
+}
+/* ============================================================
+   Liquid glass
+   Capas translúcidas con desenfoque para barras, hojas y paneles
+   flotantes. El brillo interior superior es lo que da el canto
+   "de vidrio"; sin él la capa se lee como un simple gris.
+   ============================================================ */
+.glass {
+  background-color: var(--glass);
+  border-color: var(--glass-border);
+  box-shadow: inset 0 1px 0 0 var(--glass-highlight), var(--shadow-soft);
+}
+@supports (backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px)) {
+  .glass {
+    -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(180%);
+    backdrop-filter: blur(var(--glass-blur)) saturate(180%);
+  }
+}
+
+/* Superficie sólida con la misma sombra suave, para tarjetas y secciones. */
+.surface {
+  background-color: var(--card);
+  box-shadow: inset 0 0 0 1px var(--glass-border), var(--shadow-soft);
+}
+.surface-lifted {
+  background-color: var(--card);
+  box-shadow: inset 0 0 0 1px var(--glass-border), var(--shadow-lifted);
+}
+
+/* Las gráficas heredan estos trazos: extremos redondeados y rejilla tenue. */
+.recharts-cartesian-grid line {
+  stroke-opacity: 0.35;
+}
+.recharts-curve.recharts-line-curve,
+.recharts-curve.recharts-area-curve {
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.recharts-surface {
+  overflow: visible;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
 }

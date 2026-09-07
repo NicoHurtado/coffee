@@ -54,8 +54,8 @@ export function AccountCategoryPie({ accountId }: { accountId: string }) {
 
   if (data.length === 0) {
     return (
-      <div className="rounded-2xl border bg-card p-4 space-y-2">
-        <div className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+      <div className="surface rounded-2xl p-4 space-y-2">
+        <div className="text-xs font-medium tracking-[-0.005em] text-muted-foreground">
           Gastos por categoría
         </div>
         <div className="text-sm text-muted-foreground py-6 text-center">
@@ -68,8 +68,8 @@ export function AccountCategoryPie({ accountId }: { accountId: string }) {
   const total = data.reduce((s, d) => s + d.value, 0);
 
   return (
-    <div className="rounded-2xl border bg-card p-4 flex flex-col gap-3 h-full">
-      <div className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+    <div className="surface rounded-2xl p-4 flex flex-col gap-3 h-full">
+      <div className="text-xs font-medium tracking-[-0.005em] text-muted-foreground">
         Gastos por categoría
       </div>
       <div className="flex items-center gap-4 flex-1">
@@ -86,9 +86,11 @@ export function AccountCategoryPie({ accountId }: { accountId: string }) {
               data={data}
               dataKey="value"
               nameKey="name"
-              innerRadius={55}
+              innerRadius={62}
               outerRadius={95}
-              strokeWidth={2}
+              paddingAngle={2}
+              cornerRadius={8}
+              strokeWidth={0}
             >
               {data.map((d, i) => (
                 <Cell key={i} fill={d.fill} />
