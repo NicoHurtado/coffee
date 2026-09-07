@@ -31,7 +31,7 @@ export function TopBar() {
   const Icon = section.icon;
 
   return (
-    <div className="glass hidden md:flex sticky top-0 z-30 h-14 items-center justify-between gap-4 border-b px-6">
+    <div className="glass hidden md:flex sticky top-3 z-30 mx-3 mt-3 h-14 items-center justify-between gap-4 rounded-full border px-5">
       <div className="flex items-center gap-2 text-[15px] font-semibold tracking-[-0.01em] text-foreground">
         <Icon className="size-4 text-muted-foreground" />
         {section.label}

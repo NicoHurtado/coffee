@@ -1,7 +1,7 @@
 "use client";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Home, ListOrdered, Wallet, Target, Plus } from "lucide-react";
+import { Home, ListOrdered, Wallet, BarChart3, Plus } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useUIStore } from "@/lib/store/ui";
 
@@ -11,7 +11,7 @@ const LEFT = [
 ];
 const RIGHT = [
   { href: "/cuentas", label: "Cuentas", icon: Wallet },
-  { href: "/metas", label: "Metas", icon: Target },
+  { href: "/analisis", label: "Análisis", icon: BarChart3 },
 ];
 
 function NavLink({

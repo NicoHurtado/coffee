@@ -1,20 +1,21 @@
 "use client";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Home, ListOrdered, Wallet, Target, BarChart3, LogOut, Coffee } from "lucide-react";
+import { Home, ListOrdered, Wallet, BarChart3, LogOut } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useExchangeRateStore } from "@/lib/store/exchange-rate";
+import { useSettingsStore } from "@/lib/store/settings";
 
 const ITEMS = [
   { href: "/", label: "Home", icon: Home },
   { href: "/historial", label: "Historial", icon: ListOrdered },
   { href: "/cuentas", label: "Cuentas", icon: Wallet },
-  { href: "/metas", label: "Metas", icon: Target },
   { href: "/analisis", label: "Análisis", icon: BarChart3 },
 ];
 
 export function Sidebar() {
   const pathname = usePathname();
+  const userName = useSettingsStore((s) => s.userName);
   const usdToCop = useExchangeRateStore((s) => s.usdToCop);
   const trmDate = useExchangeRateStore((s) => s.trmDate);
 
@@ -25,10 +26,16 @@ export function Sidebar() {
   }
 
   return (
-    <aside className="coffee-sidebar glass hidden md:flex md:flex-col w-60 border-r h-screen sticky top-0 p-3 gap-1">
-      <div className="px-2 py-3 flex items-center gap-2.5">
-        <span className="coffee-brand"><Coffee className="size-5" /></span>
-        <span className="font-semibold text-[20px] tracking-[-0.03em]">Coffee</span>
+    <aside className="glass hidden md:flex md:flex-col w-60 shrink-0 rounded-3xl border sticky top-3 my-3 ml-3 h-[calc(100vh-1.5rem)] p-3 gap-1">
+      <div className="px-2 py-3 flex items-center gap-3">
+        {/* eslint-disable-next-line @next/next/no-img-element -- marca local */}
+        <img src="/coffee-cup.svg" alt="" className="size-10 shrink-0 object-contain" />
+        <div className="min-w-0">
+          <div className="truncate font-semibold text-[16px] leading-tight tracking-[-0.025em]">
+            {userName || "Coffee"}
+          </div>
+          <div className="text-[11px] text-muted-foreground">Coffee</div>
+        </div>
       </div>
       <div className="px-3.5 pt-3 pb-1.5 text-[11px] font-medium tracking-[-0.005em] text-muted-foreground">
         General

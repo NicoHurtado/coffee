@@ -51,32 +51,34 @@ export default function CuentasPage() {
           </Link>
         </PageHeader>
 
-        {/* Net worth + summary strip */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-px overflow-hidden rounded-lg border bg-border">
-          <div className="bg-card p-5 sm:col-span-1">
-            <div className="text-[12px] font-medium tracking-[-0.005em] text-muted-foreground mb-2">
+        {/* Patrimonio y su composición: una sola pieza, sin tarjeta sobre tarjeta */}
+        <section className="surface p-5 md:p-6 grid gap-6 md:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)] md:items-center">
+          <div>
+            <div className="text-[12px] font-medium tracking-[-0.005em] text-muted-foreground mb-1">
               Patrimonio neto
             </div>
             <NetWorth size="lg" />
           </div>
-          <div className="bg-card p-5 flex flex-col justify-center">
-            <div className="text-[12px] font-medium tracking-[-0.005em] text-muted-foreground">
-              Activos
+          <div className="grid grid-cols-2 gap-3">
+            <div className="rounded-2xl bg-muted/50 px-4 py-3">
+              <div className="text-[12px] font-medium tracking-[-0.005em] text-muted-foreground">
+                Activos
+              </div>
+              <div className="mt-1 text-lg font-semibold tabular-nums text-positive">
+                {formatMoney(totalAssets, currency)}
+              </div>
             </div>
-            <div className="text-xl font-semibold tabular-nums text-positive mt-1">
-              {formatMoney(totalAssets, currency)}
+            <div className="rounded-2xl bg-muted/50 px-4 py-3">
+              <div className="text-[12px] font-medium tracking-[-0.005em] text-muted-foreground">
+                Deuda
+              </div>
+              <div className="mt-1 text-lg font-semibold tabular-nums text-destructive">
+                {totalDebt > 0 ? "-" : ""}
+                {formatMoney(totalDebt, currency)}
+              </div>
             </div>
           </div>
-          <div className="bg-card p-5 flex flex-col justify-center">
-            <div className="text-[12px] font-medium tracking-[-0.005em] text-muted-foreground">
-              Deuda
-            </div>
-            <div className="text-xl font-semibold tabular-nums text-destructive mt-1">
-              {totalDebt > 0 ? "-" : ""}
-              {formatMoney(totalDebt, currency)}
-            </div>
-          </div>
-        </div>
+        </section>
 
         <div className="space-y-7">
           {GROUPS.map((g) => {

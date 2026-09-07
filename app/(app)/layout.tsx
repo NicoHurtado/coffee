@@ -43,7 +43,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
       {initial && <StoreSeeder data={initial} />}
       <DataHydrator />
       <Sidebar />
-      <main className="flex-1 min-w-0 pt-[env(safe-area-inset-top)] pb-[calc(64px+env(safe-area-inset-bottom)+32px)] md:pt-0 md:pb-0 relative">
+      <main className="flex-1 min-w-0 pt-[env(safe-area-inset-top)] pb-[calc(64px+env(safe-area-inset-bottom)+32px)] md:pt-0 md:pb-6 relative">
         <TopBar />
         {children}
       </main>

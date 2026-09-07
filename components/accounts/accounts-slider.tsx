@@ -1,8 +1,13 @@
 "use client";
-import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { useAccountsStore } from "@/lib/store/accounts";
 import { AccountCard } from "./account-card";
 
+/**
+ * Carrusel de cuentas en celular. El anclaje es obligatorio y por tarjeta:
+ * el dedo puede ir rápido y saltar varias, pero el scroll siempre termina
+ * cuadrado en una — nunca a mitad de camino entre dos. Un empujón corto
+ * avanza de a una, y si se suelta a medias vuelve a la más cercana.
+ */
 export function AccountsSlider() {
   const accounts = useAccountsStore((s) => s.activeAccounts);
 
@@ -15,14 +20,16 @@ export function AccountsSlider() {
   }
   return (
     <div className="relative w-screen left-1/2 -translate-x-1/2">
-      <ScrollArea className="w-full whitespace-nowrap">
-        <div className="flex gap-3 pb-3 pl-4 md:pl-8 pr-8">
-          {accounts.map((a) => (
-            <AccountCard key={a.id} account={a} />
-          ))}
-        </div>
-        <ScrollBar orientation="horizontal" className="mx-4 md:mx-8" />
-      </ScrollArea>
+      <div
+        className="flex snap-x snap-mandatory gap-3 overflow-x-auto overscroll-x-contain scroll-px-4 px-4 pb-3 md:px-8 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+        style={{ scrollBehavior: "smooth" }}
+      >
+        {accounts.map((a) => (
+          <div key={a.id} className="snap-start shrink-0">
+            <AccountCard account={a} />
+          </div>
+        ))}
+      </div>
     </div>
   );
 }
