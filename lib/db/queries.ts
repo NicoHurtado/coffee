@@ -1,3 +1,4 @@
+import "server-only";
 import { getDb } from "./mongodb";
 import type { Account, Currency, Subscription, Transaction } from "@/lib/types";
 import { normalizeTransaction } from "@/lib/finance/transactions";

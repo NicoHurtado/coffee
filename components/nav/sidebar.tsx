@@ -1,65 +1,67 @@
-"use client";
-import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { Home, ListOrdered, Wallet, BarChart3, LogOut } from "lucide-react";
-import { cn } from "@/lib/utils";
-import { useExchangeRateStore } from "@/lib/store/exchange-rate";
-import { useSettingsStore } from "@/lib/store/settings";
+"use client"
+import Link from "next/link"
+import { usePathname } from "next/navigation"
+import { Home, ListOrdered, Wallet, BarChart3, LogOut } from "lucide-react"
+import { cn } from "@/lib/utils"
+import { useExchangeRateStore } from "@/lib/store/exchange-rate"
+import { useSettingsStore } from "@/lib/store/settings"
 
 const ITEMS = [
   { href: "/", label: "Home", icon: Home },
   { href: "/historial", label: "Historial", icon: ListOrdered },
   { href: "/cuentas", label: "Cuentas", icon: Wallet },
   { href: "/analisis", label: "Análisis", icon: BarChart3 },
-];
+]
 
 export function Sidebar() {
-  const pathname = usePathname();
-  const userName = useSettingsStore((s) => s.userName);
-  const usdToCop = useExchangeRateStore((s) => s.usdToCop);
-  const trmDate = useExchangeRateStore((s) => s.trmDate);
+  const pathname = usePathname()
+  const userName = useSettingsStore((s) => s.userName)
+  const usdToCop = useExchangeRateStore((s) => s.usdToCop)
+  const trmDate = useExchangeRateStore((s) => s.trmDate)
 
   async function handleLogout() {
-    await fetch("/api/auth/logout", { method: "POST" });
+    await fetch("/api/auth/logout", { method: "POST" })
     // Full-page load so the next user can't inherit this user's in-memory stores.
-    window.location.assign("/login");
+    // eslint-disable-next-line @next/next/no-location-assign-relative-destination
+    window.location.assign("/login")
   }
 
   return (
-    <aside className="glass hidden md:flex md:flex-col w-60 shrink-0 rounded-3xl border sticky top-3 my-3 ml-3 h-[calc(100vh-1.5rem)] p-3 gap-1">
+    <aside className="glass sticky top-3 my-3 ml-3 hidden h-[calc(100vh-1.5rem)] w-60 shrink-0 gap-1 rounded-3xl border p-3 md:flex md:flex-col">
       <div className="px-2 py-3">
-        <div className="truncate font-semibold text-[18px] leading-tight tracking-[-0.03em]">
+        <div className="truncate text-[18px] leading-tight font-semibold tracking-[-0.03em]">
           {userName}
         </div>
       </div>
       <div className="px-3.5 pt-3 pb-1.5 text-[11px] font-medium tracking-[-0.005em] text-muted-foreground">
         General
       </div>
-      <div className="flex-1 flex flex-col gap-0.5">
+      <div className="flex flex-1 flex-col gap-0.5">
         {ITEMS.map((it) => {
-          const Icon = it.icon;
+          const Icon = it.icon
           const active =
-            it.href === "/" ? pathname === "/" : pathname.startsWith(it.href);
+            it.href === "/" ? pathname === "/" : pathname.startsWith(it.href)
           return (
             <Link
               key={it.href}
               href={it.href}
+              prefetch
               className={cn(
                 "flex items-center gap-3 rounded-2xl px-3.5 py-2.5 text-[14px] font-medium tracking-[-0.01em] transition-colors",
                 active
                   ? "coffee-nav-active"
-                  : "text-muted-foreground hover:bg-accent/60 hover:text-foreground",
+                  : "text-muted-foreground hover:bg-accent/60 hover:text-foreground"
               )}
             >
               <Icon className={cn("size-4", active && "text-primary")} />
               {it.label}
             </Link>
-          );
+          )
         })}
       </div>
       {usdToCop && (
         <div
-          className="mt-1 flex items-center justify-between surface rounded-2xl px-3.5 py-3"
+          className="surface mt-1 flex items-center justify-between rounded-2xl px-3.5 py-3"
           title={trmDate ? `TRM vigente ${trmDate}` : undefined}
         >
           <div className="flex flex-col">
@@ -77,16 +79,16 @@ export function Sidebar() {
           )}
         </div>
       )}
-      <div className="mt-1 pt-1 border-t">
+      <div className="mt-1 border-t pt-1">
         <button
           type="button"
           onClick={handleLogout}
-          className="w-full flex items-center gap-2.5 px-2 py-2 rounded-xl text-xs text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors"
+          className="flex w-full items-center gap-2.5 rounded-xl px-2 py-2 text-xs text-muted-foreground transition-colors hover:bg-accent/50 hover:text-foreground"
         >
           <LogOut className="size-3.5" />
           Salir
         </button>
       </div>
     </aside>
-  );
+  )
 }

@@ -75,9 +75,9 @@ export default function AccountDetailPage({
     if (!inv.syncUrl) return;
     const today = new Date().toISOString().slice(0, 10);
     if (inv.lastSyncDate === today) return; // already synced today
-    syncBalance(true); // silent auto-sync
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [account?.type, (account as import("@/lib/types").InvestmentAccount)?.lastSyncDate]);
+    const timer = window.setTimeout(() => void syncBalance(true), 0);
+    return () => window.clearTimeout(timer);
+  }, [account, syncBalance]);
 
   // Volver con el historial del navegador es instantáneo: restaura la página
   // anterior ya renderizada (router cache) en vez de disparar una navegación

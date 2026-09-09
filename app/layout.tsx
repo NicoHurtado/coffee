@@ -9,7 +9,7 @@ import { Toaster } from "@/components/ui/sonner";
 export const metadata: Metadata = {
   title: "Coffee",
   description: "Gestión de finanzas personales",
-  manifest: "/manifest.json",
+  manifest: "/manifest.webmanifest",
   appleWebApp: {
     capable: true,
     statusBarStyle: "black-translucent",
@@ -45,7 +45,7 @@ export default function RootLayout({
 }>) {
   return (
     <html
-      lang="en"
+      lang="es"
       suppressHydrationWarning
       className={cn("antialiased", fontMono.variable, "font-sans", fontSans.variable)}
     >

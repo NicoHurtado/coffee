@@ -144,7 +144,7 @@ const accounts = [
   },
 ];
 
-const [chase, bancolombia, sapphire, applecard, cajita, cdt, ibkr, binance] = accounts;
+const [chase, bancolombia, sapphire, applecard] = accounts;
 
 // Helper to build transactions
 let txs = [];

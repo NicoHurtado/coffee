@@ -12,6 +12,7 @@ export function LogoutButton({ className }: { className?: string }) {
     try {
       await fetch("/api/auth/logout", { method: "POST" });
       // Full-page load so the next user can't inherit this user's in-memory stores.
+      // eslint-disable-next-line @next/next/no-location-assign-relative-destination
       window.location.assign("/login");
     } catch {
       setLoading(false);

@@ -16,7 +16,6 @@
     "reset-password": "node scripts/reset-password.mjs"
   },
   "dependencies": {
-    "@hookform/resolvers": "^5.4.0",
     "bcryptjs": "^3.0.3",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
@@ -30,7 +29,6 @@
     "react": "19.2.4",
     "react-day-picker": "^10.0.1",
     "react-dom": "19.2.4",
-    "react-hook-form": "^7.76.1",
     "recharts": "^3.8.0",
     "shadcn": "^4.8.2",
     "sonner": "^2.0.7",

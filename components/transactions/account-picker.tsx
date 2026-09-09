@@ -33,7 +33,9 @@ export function AccountPicker({
   useEffect(() => {
     if (!value) return;
     const acc = accounts.find((a) => a.id === value);
-    if (acc && acc.type !== type) setType(acc.type);
+    if (!acc || acc.type === type) return;
+    const timer = window.setTimeout(() => setType(acc.type), 0);
+    return () => window.clearTimeout(timer);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [value]);
 

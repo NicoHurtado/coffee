@@ -1,7 +1,8 @@
 import { NextResponse } from "next/server";
 import { v4 as uuid } from "uuid";
 import { getDb } from "@/lib/db/mongodb";
-import { hashPassword, signSession, COOKIE_NAME } from "@/lib/auth";
+import { hashPassword } from "@/lib/auth";
+import { COOKIE_NAME, signSession } from "@/lib/session-token";
 import { rateLimit, clientIp } from "@/lib/rate-limit";
 
 export const dynamic = "force-dynamic";

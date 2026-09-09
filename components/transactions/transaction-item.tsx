@@ -1,4 +1,5 @@
 "use client";
+import { createElement } from "react";
 import { format } from "date-fns";
 import { getCategoryIcon } from "@/lib/finance/categories";
 import { signedAmount } from "@/lib/finance/format";
@@ -19,7 +20,9 @@ export function TransactionItem({
   /** Tipo de la cuenta cuya actividad se está mostrando (vistas por cuenta). */
   accountType?: AccountType;
 }) {
-  const Icon = getCategoryIcon(tx.category);
+  const icon = createElement(getCategoryIcon(tx.category), {
+    className: "size-4.5 text-muted-foreground",
+  });
   const isExpense = tx.kind === "expense";
   const isIncome = tx.kind === "income";
   const isTransfer = tx.kind === "transfer";
@@ -34,7 +37,7 @@ export function TransactionItem({
       className="w-full flex items-center gap-3 py-3 px-2.5 hover:bg-muted rounded-2xl text-left transition-colors"
     >
       <div className="size-10 rounded-full bg-muted flex items-center justify-center shrink-0">
-        <Icon className="size-4.5 text-muted-foreground" />
+        {icon}
       </div>
       <div className="flex-1 min-w-0">
         <div className="text-sm font-medium truncate">

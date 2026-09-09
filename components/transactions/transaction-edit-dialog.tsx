@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { toast } from "sonner";
 import { Trash2 } from "lucide-react";
 import {
@@ -24,44 +24,47 @@ import { useAccountsStore } from "@/lib/store/accounts";
 import { useCategoriesStore } from "@/lib/store/categories";
 import { type Transaction, type TransactionKind } from "@/lib/types";
 
-export function TransactionEditDialog({
-  tx,
-  open,
-  onOpenChange,
-}: {
+interface Props {
   tx: Transaction | null;
   open: boolean;
   onOpenChange: (o: boolean) => void;
-}) {
+}
+
+function toLocalDateTime(iso: string): string {
+  const date = new Date(iso);
+  const pad = (value: number) => String(value).padStart(2, "0");
+  return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}T${pad(date.getHours())}:${pad(date.getMinutes())}`;
+}
+
+export function TransactionEditDialog(props: Props) {
+  if (!props.tx) return null;
+  return (
+    <TransactionEditForm
+      key={`${props.open}-${props.tx.id}`}
+      tx={props.tx}
+      open={props.open}
+      onOpenChange={props.onOpenChange}
+    />
+  );
+}
+
+function TransactionEditForm({
+  tx,
+  open,
+  onOpenChange,
+}: Omit<Props, "tx"> & { tx: Transaction }) {
   const update = useTransactionsStore((s) => s.update);
   const remove = useTransactionsStore((s) => s.remove);
   const accounts = useAccountsStore((s) => s.activeAccounts);
   const categories = useCategoriesStore((s) => s.categories);
 
-  const [kind, setKind] = useState<TransactionKind>("expense");
-  const [amount, setAmount] = useState("");
-  const [category, setCategory] = useState<string>("Otro");
-  const [accountId, setAccountId] = useState<string>("");
-  const [description, setDescription] = useState("");
-  const [occurredAt, setOccurredAt] = useState("");
+  const [kind, setKind] = useState<TransactionKind>(tx.kind);
+  const [amount, setAmount] = useState(String(tx.amount));
+  const [category, setCategory] = useState<string>(tx.category);
+  const [accountId, setAccountId] = useState<string>(tx.accountId);
+  const [description, setDescription] = useState(tx.description ?? "");
+  const [occurredAt, setOccurredAt] = useState(toLocalDateTime(tx.occurredAt));
   const [confirmDelete, setConfirmDelete] = useState(false);
-
-  useEffect(() => {
-    if (!tx) return;
-    setKind(tx.kind);
-    setAmount(String(tx.amount));
-    setCategory(tx.category);
-    setAccountId(tx.accountId);
-    setDescription(tx.description ?? "");
-    // local datetime input value
-    const d = new Date(tx.occurredAt);
-    const pad = (n: number) => String(n).padStart(2, "0");
-    setOccurredAt(
-      `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`,
-    );
-  }, [tx]);
-
-  if (!tx) return null;
 
   const amountNum = parseFloat(amount || "0");
   const canSave = amountNum > 0 && !!accountId && !!category;

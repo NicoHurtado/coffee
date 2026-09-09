@@ -1,3 +1,4 @@
+import "server-only";
 import { MongoClient, type Db } from "mongodb";
 
 const uri = process.env.MONGODB_URI;
@@ -8,16 +9,16 @@ if (!uri) {
 }
 
 declare global {
-  // eslint-disable-next-line no-var
   var _mongoClientPromise: Promise<MongoClient> | undefined;
-  // eslint-disable-next-line no-var
   var _mongoIndexesReady: Promise<void> | undefined;
 }
 
 function newClientPromise(): Promise<MongoClient> {
   return (global._mongoClientPromise = new MongoClient(uri!, {
     maxPoolSize: 10,
-    minPoolSize: 1,
+    // Let idle serverless instances release every connection. With two users,
+    // keeping a permanent minimum pool provides no meaningful latency benefit.
+    minPoolSize: 0,
     maxIdleTimeMS: 60_000,
     // Cold serverless starts need room for DNS SRV + TLS + SCRAM (and an Atlas
     // tier that may be waking). 5s was too tight and made the first request of
@@ -37,7 +38,7 @@ function newClientPromise(): Promise<MongoClient> {
 // Kick off the connection at module load, but resolve it through the global on
 // each call so that after a cleared (rejected) promise we reconnect cleanly
 // instead of forever awaiting the original failed attempt.
-global._mongoClientPromise ?? newClientPromise();
+if (!global._mongoClientPromise) newClientPromise();
 
 // Build indexes once per process, in the background — never blocks a request.
 // Each index is created independently so a name/spec conflict on one

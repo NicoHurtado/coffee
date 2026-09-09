@@ -1,3 +1,4 @@
+import "server-only";
 import { createCipheriv, createDecipheriv, randomBytes } from "crypto";
 
 const KEY_HEX = process.env.ENCRYPTION_KEY;

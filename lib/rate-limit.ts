@@ -1,3 +1,4 @@
+import "server-only";
 // Minimal in-memory rate limiter. Good enough for a single-instance personal app.
 // Keyed by an arbitrary string (e.g. `${ip}:${route}`). Sliding fixed window.
 

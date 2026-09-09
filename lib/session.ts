@@ -1,5 +1,6 @@
+import "server-only";
 import { cookies } from "next/headers";
-import { COOKIE_NAME, verifySession, type SessionPayload } from "./auth";
+import { COOKIE_NAME, verifySession, type SessionPayload } from "./session-token";
 
 export async function getSession(): Promise<SessionPayload | null> {
   const store = await cookies();

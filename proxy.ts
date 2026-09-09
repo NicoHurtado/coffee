@@ -1,14 +1,16 @@
 import { NextResponse, type NextRequest } from "next/server";
-import { COOKIE_NAME, verifySession } from "@/lib/auth";
+import { COOKIE_NAME, verifySession } from "@/lib/session-token";
 
 const PUBLIC_PATHS = ["/login", "/register"];
 
-export async function middleware(req: NextRequest) {
+export async function proxy(req: NextRequest) {
   const { pathname } = req.nextUrl;
   const token = req.cookies.get(COOKIE_NAME)?.value;
   const session = token ? await verifySession(token) : null;
 
-  const isPublic = PUBLIC_PATHS.some((p) => pathname === p || pathname.startsWith(`${p}/`));
+  const isPublic = PUBLIC_PATHS.some(
+    (path) => pathname === path || pathname.startsWith(`${path}/`),
+  );
 
   if (!session && !isPublic) {
     const url = req.nextUrl.clone();
@@ -29,8 +31,6 @@ export async function middleware(req: NextRequest) {
 
 export const config = {
   matcher: [
-    // Run on all routes except: api, _next/static, _next/image, favicon, manifest,
-    // icons, and any public static file (paths with a dot, e.g. cafe.svg).
     "/((?!api|_next/static|_next/image|favicon.ico|manifest.webmanifest|icon-.*|apple-icon.*|.*\\..*).*)",
   ],
 };

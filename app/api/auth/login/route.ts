@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { getDb } from "@/lib/db/mongodb";
-import { COOKIE_NAME, signSession, verifyPassword } from "@/lib/auth";
+import { verifyPassword } from "@/lib/auth";
+import { COOKIE_NAME, signSession } from "@/lib/session-token";
 import { rateLimit, clientIp } from "@/lib/rate-limit";
 
 export const dynamic = "force-dynamic";

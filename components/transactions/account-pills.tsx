@@ -18,17 +18,24 @@ const GROUPS: { type: AccountType; title: string }[] = [
   { type: "investment", title: "Inversiones" },
 ];
 
-export function AccountPills({ value, onChange, variant = "bleed" }: Props) {
-  const accounts = useAccountsStore((s) => s.activeAccounts);
-
-  const Pill = ({ id, label }: { id: string | "all"; label: string }) => (
+function AccountPill({
+  id,
+  label,
+  selected,
+  onChange,
+}: {
+  id: string | "all";
+  label: string;
+  selected: boolean;
+  onChange: (id: string | "all") => void;
+}) {
+  return (
     <button
-      key={id}
       type="button"
       onClick={() => onChange(id)}
       className={cn(
         "px-3 py-1.5 rounded-full text-xs border whitespace-nowrap transition",
-        value === id
+        selected
           ? "bg-foreground text-background border-foreground"
           : "bg-background hover:bg-accent",
       )}
@@ -36,11 +43,15 @@ export function AccountPills({ value, onChange, variant = "bleed" }: Props) {
       {label}
     </button>
   );
+}
+
+export function AccountPills({ value, onChange, variant = "bleed" }: Props) {
+  const accounts = useAccountsStore((s) => s.activeAccounts);
 
   if (variant === "wrap") {
     return (
       <div className="space-y-3">
-        <Pill id="all" label="Todas" />
+        <AccountPill id="all" label="Todas" selected={value === "all"} onChange={onChange} />
         {GROUPS.map((g) => {
           const list = accounts.filter((a: Account) => a.type === g.type);
           if (list.length === 0) return null;
@@ -51,7 +62,7 @@ export function AccountPills({ value, onChange, variant = "bleed" }: Props) {
               </div>
               <div className="flex flex-wrap gap-1.5">
                 {list.map((a) => (
-                  <Pill key={a.id} id={a.id} label={a.name} />
+                  <AccountPill key={a.id} id={a.id} label={a.name} selected={value === a.id} onChange={onChange} />
                 ))}
               </div>
             </div>
@@ -70,7 +81,7 @@ export function AccountPills({ value, onChange, variant = "bleed" }: Props) {
     <ScrollArea className="w-screen relative left-1/2 -translate-x-1/2 whitespace-nowrap">
       <div className="flex gap-2 pb-2 pl-4 pr-8">
         {flat.map((it) => (
-          <Pill key={it.id} id={it.id} label={it.label} />
+          <AccountPill key={it.id} id={it.id} label={it.label} selected={value === it.id} onChange={onChange} />
         ))}
       </div>
       <ScrollBar orientation="horizontal" />

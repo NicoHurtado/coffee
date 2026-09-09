@@ -1,3 +1,4 @@
+import "server-only";
 import { MongoServerSelectionError, MongoNetworkError } from "mongodb";
 
 // Only retry failures that happen while *establishing* a connection — server

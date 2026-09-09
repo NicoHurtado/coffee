@@ -4,7 +4,6 @@ import { requireUid } from "@/lib/api-auth";
 export const dynamic = "force-dynamic";
 
 declare global {
-  // eslint-disable-next-line no-var
   var _trmCache: { rate: number; date: string; fetchedAt: number } | null;
 }
 global._trmCache ??= null;

@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { toast } from "sonner";
 import { Trash2 } from "lucide-react";
 import {
@@ -31,7 +31,16 @@ interface Props {
   onOpenChange: (o: boolean) => void;
 }
 
-export function SubscriptionDialog({ subscription, open, onOpenChange }: Props) {
+export function SubscriptionDialog(props: Props) {
+  return (
+    <SubscriptionDialogForm
+      key={`${props.open}-${props.subscription?.id ?? "new"}`}
+      {...props}
+    />
+  );
+}
+
+function SubscriptionDialogForm({ subscription, open, onOpenChange }: Props) {
   const accounts = useAccountsStore((s) => s.activeAccounts);
   const categories = useCategoriesStore((s) => s.categories);
   const add = useSubscriptionsStore((s) => s.add);
@@ -40,37 +49,17 @@ export function SubscriptionDialog({ subscription, open, onOpenChange }: Props) 
 
   const isEdit = !!subscription;
 
-  const [name, setName] = useState("");
-  const [amount, setAmount] = useState("");
-  const [currency, setCurrency] = useState<Currency>("COP");
-  const [category, setCategory] = useState("Otro");
-  const [accountId, setAccountId] = useState("");
-  const [billingDay, setBillingDay] = useState("1");
-  const [active, setActive] = useState(true);
+  const [name, setName] = useState(subscription?.name ?? "");
+  const [amount, setAmount] = useState(subscription ? String(subscription.amount) : "");
+  const [currency, setCurrency] = useState<Currency>(subscription?.currency ?? "COP");
+  const [category, setCategory] = useState(subscription?.category ?? "Otro");
+  const [accountId, setAccountId] = useState(subscription?.accountId ?? accounts[0]?.id ?? "");
+  const [billingDay, setBillingDay] = useState(
+    subscription ? String(subscription.billingDay) : "1",
+  );
+  const [active, setActive] = useState(subscription?.active ?? true);
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [saving, setSaving] = useState(false);
-
-  useEffect(() => {
-    if (!open) return;
-    if (subscription) {
-      setName(subscription.name);
-      setAmount(String(subscription.amount));
-      setCurrency(subscription.currency);
-      setCategory(subscription.category);
-      setAccountId(subscription.accountId);
-      setBillingDay(String(subscription.billingDay));
-      setActive(subscription.active);
-    } else {
-      setName("");
-      setAmount("");
-      setCurrency("COP");
-      setCategory("Otro");
-      setAccountId(accounts[0]?.id ?? "");
-      setBillingDay("1");
-      setActive(true);
-    }
-    setConfirmDelete(false);
-  }, [subscription, open, accounts]);
 
   const amountNum = parseFloat(amount || "0");
   const dayNum = parseInt(billingDay || "0", 10);

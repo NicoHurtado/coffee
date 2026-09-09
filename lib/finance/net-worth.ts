@@ -1,33 +1,104 @@
-import type { Account, Transaction } from "@/lib/types";
-import { accountBalance } from "./credit";
-import { fixedIncomeBalance } from "./fixed-income";
+import type { Account, Transaction } from "@/lib/types"
+import { accountBalance } from "./credit"
+import { fixedIncomeBalance } from "./fixed-income"
 
 export function computeAccountBalance(
   account: Account,
   txs: Transaction[],
-  now: Date = new Date(),
+  now: Date = new Date()
 ): number {
-  if (account.type === "fixed_income") return fixedIncomeBalance(account, txs, now);
-  return accountBalance(account, txs, now);
+  if (account.type === "fixed_income")
+    return fixedIncomeBalance(account, txs, now)
+  return accountBalance(account, txs, now)
+}
+
+export function groupTransactionsByAccount(
+  txs: Transaction[]
+): Map<string, Transaction[]> {
+  const grouped = new Map<string, Transaction[]>()
+  for (const tx of txs) {
+    const current = grouped.get(tx.accountId)
+    if (current) current.push(tx)
+    else grouped.set(tx.accountId, [tx])
+  }
+  return grouped
+}
+
+/** Calculate every balance with a single pass to partition transactions. */
+export function computeAccountBalances(
+  accounts: Account[],
+  txs: Transaction[],
+  now: Date = new Date()
+): Map<string, number> {
+  const grouped = groupTransactionsByAccount(txs)
+  return new Map(
+    accounts.map((account) => [
+      account.id,
+      computeAccountBalance(account, grouped.get(account.id) ?? [], now),
+    ])
+  )
 }
 
 /** Convert a balance to COP. USD accounts use TRM if available, otherwise kept as-is. */
-export function toBaseCurrency(balance: number, currency: string, usdToCop?: number | null): number {
-  if (currency === "USD" && usdToCop) return balance * usdToCop;
-  return balance;
+export function toBaseCurrency(
+  balance: number,
+  currency: string,
+  usdToCop?: number | null
+): number {
+  if (currency === "USD" && usdToCop) return balance * usdToCop
+  return balance
 }
 
 export function netWorth(
   accounts: Account[],
   txs: Transaction[],
   now: Date = new Date(),
-  usdToCop?: number | null,
+  usdToCop?: number | null
 ): number {
-  return accounts.reduce((acc, a) => {
-    const bal = computeAccountBalance(a, txs, now);
-    const balCOP = toBaseCurrency(bal, a.currency, usdToCop);
-    return a.type === "credit" ? acc - balCOP : acc + balCOP;
-  }, 0);
+  return portfolioTotals(accounts, txs, now, usdToCop).netWorth
+}
+
+export interface PortfolioTotals {
+  netWorth: number
+  liquidNetWorth: number
+  investments: { cop: number; usd: number }
+}
+
+/** All headline totals from one grouped balance calculation. */
+export function portfolioTotals(
+  accounts: Account[],
+  txs: Transaction[],
+  now: Date = new Date(),
+  usdToCop?: number | null
+): PortfolioTotals {
+  const balances = computeAccountBalances(accounts, txs, now)
+  let net = 0
+  let liquid = 0
+  let investmentCop = 0
+  let investmentUsd = 0
+
+  for (const account of accounts) {
+    const balance = balances.get(account.id) ?? 0
+    const balanceCop = toBaseCurrency(balance, account.currency, usdToCop)
+    if (account.type === "credit") {
+      net -= balanceCop
+      liquid -= balanceCop
+    } else {
+      net += balanceCop
+      if (account.type === "investment") {
+        investmentCop += balanceCop
+        if (account.currency === "USD") investmentUsd += balance
+      } else {
+        liquid += balanceCop
+      }
+    }
+  }
+
+  return {
+    netWorth: net,
+    liquidNetWorth: liquid,
+    investments: { cop: investmentCop, usd: investmentUsd },
+  }
 }
 
 /** Patrimonio sin las inversiones de bolsa (plata que sí se puede tocar). */
@@ -35,14 +106,9 @@ export function liquidNetWorth(
   accounts: Account[],
   txs: Transaction[],
   now: Date = new Date(),
-  usdToCop?: number | null,
+  usdToCop?: number | null
 ): number {
-  return netWorth(
-    accounts.filter((a) => a.type !== "investment"),
-    txs,
-    now,
-    usdToCop,
-  );
+  return portfolioTotals(accounts, txs, now, usdToCop).liquidNetWorth
 }
 
 /** Total en cuentas de inversión: en COP (vía TRM) y el subtotal en USD. */
@@ -50,17 +116,9 @@ export function investmentsTotal(
   accounts: Account[],
   txs: Transaction[],
   now: Date = new Date(),
-  usdToCop?: number | null,
+  usdToCop?: number | null
 ): { cop: number; usd: number } {
-  let cop = 0;
-  let usd = 0;
-  for (const a of accounts) {
-    if (a.type !== "investment") continue;
-    const bal = computeAccountBalance(a, txs, now);
-    cop += toBaseCurrency(bal, a.currency, usdToCop);
-    if (a.currency === "USD") usd += bal;
-  }
-  return { cop, usd };
+  return portfolioTotals(accounts, txs, now, usdToCop).investments
 }
 
 /** % cambio vs hace 30 días aprox. */
@@ -68,12 +126,12 @@ export function monthlyChangePct(
   accounts: Account[],
   txs: Transaction[],
   now: Date = new Date(),
-  usdToCop?: number | null,
+  usdToCop?: number | null
 ): number {
-  const past = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
-  const txsPast = txs.filter((t) => new Date(t.occurredAt) <= past);
-  const current = netWorth(accounts, txs, now, usdToCop);
-  const previous = netWorth(accounts, txsPast, past, usdToCop);
-  if (previous === 0) return 0;
-  return ((current - previous) / Math.abs(previous)) * 100;
+  const past = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000)
+  const txsPast = txs.filter((t) => new Date(t.occurredAt) <= past)
+  const current = portfolioTotals(accounts, txs, now, usdToCop).netWorth
+  const previous = portfolioTotals(accounts, txsPast, past, usdToCop).netWorth
+  if (previous === 0) return 0
+  return ((current - previous) / Math.abs(previous)) * 100
 }
