@@ -16,6 +16,7 @@ import { useTransactionsStore } from "@/lib/store/transactions";
 import { useSettingsStore } from "@/lib/store/settings";
 import { formatMoney } from "@/lib/finance/format";
 import type { CreditAccount } from "@/lib/types";
+import { transferDirectionFor } from "@/lib/finance/transactions";
 
 interface Props {
   open: boolean;
@@ -26,11 +27,13 @@ interface Props {
 
 export function PayCreditCardDialog({ open, onOpenChange, creditAccount, currentDebt }: Props) {
   const activeAccounts = useAccountsStore((s) => s.activeAccounts);
-  const addTx = useTransactionsStore((s) => s.add);
+  const addManyTxs = useTransactionsStore((s) => s.addMany);
   const currency = useSettingsStore((s) => s.defaultCurrency);
 
   const sources = activeAccounts.filter(
-    (a) => a.type === "debit" || a.type === "fixed_income",
+    (a) =>
+      (a.type === "debit" || a.type === "fixed_income") &&
+      a.currency === creditAccount.currency,
   );
 
   const [sourceId, setSourceId] = useState<string>(sources[0]?.id ?? "");
@@ -53,30 +56,29 @@ export function PayCreditCardDialog({ open, onOpenChange, creditAccount, current
     if (!canConfirm) return;
     setLoading(true);
     try {
+      if (!sourceAccount) return;
       const now = new Date().toISOString();
       const pairId = `pair-${Date.now()}`;
-      // 1. Reduce debt on credit card (transfer "out" baja deuda)
-      await addTx({
+      const saved = await addManyTxs([{
         accountId: creditAccount.id,
         kind: "transfer",
-        direction: "out",
+        direction: transferDirectionFor(creditAccount.type, "destination"),
         amount: payAmount,
         category: "Traslado",
         description: `Pago tarjeta`,
         occurredAt: now,
         transferPairId: pairId,
-      });
-      // 2. Debit from source account (transfer "out" resta del origen)
-      await addTx({
+      }, {
         accountId: sourceId,
         kind: "transfer",
-        direction: "out",
+        direction: transferDirectionFor(sourceAccount.type, "source"),
         amount: payAmount,
         category: "Traslado",
         description: `Pago ${creditAccount.name}`,
         occurredAt: now,
         transferPairId: pairId,
-      });
+      }]);
+      if (saved.length !== 2) return;
       toast.success(`Pago de ${formatMoney(payAmount, currency)} registrado`);
       onOpenChange(false);
       // Reset

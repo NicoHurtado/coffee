@@ -44,7 +44,7 @@ export function AdjustBalanceDialog({ open, onOpenChange, account, currentBalanc
       const now = new Date().toISOString();
       if (account.type === "investment") {
         // Inversión: el balance es el último "adjustment" absoluto.
-        await addTx({
+        const saved = await addTx({
           accountId: account.id,
           kind: "adjustment",
           amount: target,
@@ -52,9 +52,10 @@ export function AdjustBalanceDialog({ open, onOpenChange, account, currentBalanc
           description: "Ajuste manual de balance",
           occurredAt: now,
         });
+        if (!saved) return;
       } else if (account.type === "credit") {
         // Crédito: el balance es deuda. Más deuda = gasto, menos deuda = ingreso.
-        await addTx({
+        const saved = await addTx({
           accountId: account.id,
           kind: delta > 0 ? "expense" : "income",
           amount: Math.abs(delta),
@@ -62,9 +63,10 @@ export function AdjustBalanceDialog({ open, onOpenChange, account, currentBalanc
           description: "Ajuste manual de balance",
           occurredAt: now,
         });
+        if (!saved) return;
       } else {
         // Débito y renta fija: la diferencia entra o sale como flujo.
-        await addTx({
+        const saved = await addTx({
           accountId: account.id,
           kind: delta > 0 ? "income" : "expense",
           amount: Math.abs(delta),
@@ -72,6 +74,7 @@ export function AdjustBalanceDialog({ open, onOpenChange, account, currentBalanc
           description: "Ajuste manual de balance",
           occurredAt: now,
         });
+        if (!saved) return;
       }
       toast.success("Balance ajustado");
       onOpenChange(false);

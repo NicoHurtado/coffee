@@ -32,10 +32,11 @@ function contributions(
   for (const t of txs) {
     if (t.accountId !== account.id) continue;
     const date = new Date(t.occurredAt);
-    if (t.kind === "income") list.push({ date, amount: t.amount });
+    const amount = Math.abs(t.amount);
+    if (t.kind === "income") list.push({ date, amount });
     else if (t.kind === "transfer")
-      list.push({ date, amount: t.direction === "in" ? t.amount : -t.amount });
-    else if (t.kind === "expense") list.push({ date, amount: -t.amount });
+      list.push({ date, amount: t.direction === "in" ? amount : -amount });
+    else if (t.kind === "expense") list.push({ date, amount: -amount });
     // Los "adjustment" antiguos (snapshots absolutos) se ignoran: quedaron
     // reemplazados por flujos con signo.
   }
@@ -53,6 +54,7 @@ export function fixedIncomeBalance(
 ): number {
   const r = account.annualRate / 100;
   return contributions(account, txs).reduce((sum, c) => {
+    if (c.date > now) return sum;
     const days = daysBetween(c.date, now);
     return sum + c.amount * Math.pow(1 + r, days / 365);
   }, 0);

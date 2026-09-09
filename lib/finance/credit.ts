@@ -1,4 +1,5 @@
 import type { Account, CreditAccount, Transaction } from "@/lib/types";
+import { transactionChangesBalance } from "./transactions";
 
 /**
  * Balance para cuentas no-fixed-income.
@@ -6,41 +7,25 @@ import type { Account, CreditAccount, Transaction } from "@/lib/types";
  * Crédito: initial + gastos - pagos (ingresos reducen deuda). El balance es la deuda actual.
  * Inversión: usa último ajuste si existe, sino initial + ingresos - gastos.
  */
-export function accountBalance(account: Account, txs: Transaction[]): number {
-  const own = txs.filter((t) => t.accountId === account.id);
+export function accountBalance(
+  account: Account,
+  txs: Transaction[],
+  now: Date = new Date(),
+): number {
+  const nowTime = now.getTime();
+  if (new Date(account.createdAt).getTime() > nowTime) return 0;
 
-  if (account.type === "investment") {
-    const lastAdj = [...own]
-      .filter((t) => t.kind === "adjustment")
-      .sort((a, b) => +new Date(b.occurredAt) - +new Date(a.occurredAt))[0];
-    if (lastAdj) return lastAdj.amount;
-    return own.reduce(
-      (acc, t) => acc + (t.kind === "income" ? t.amount : -t.amount),
-      account.initialBalance,
-    );
-  }
+  // Adjustments are absolute snapshots. Apply movements chronologically so an
+  // adjustment discards only the history before it, never movements after it.
+  const own = txs
+    .filter((t) => t.accountId === account.id)
+    .map((t) => ({ tx: t, time: new Date(t.occurredAt).getTime() }))
+    .filter(({ time }) => Number.isFinite(time) && time <= nowTime)
+    .sort((a, b) => a.time - b.time);
 
-  if (account.type === "credit") {
-    return own.reduce((acc, t) => {
-      if (t.kind === "expense") return acc + t.amount;
-      if (t.kind === "income") return acc - t.amount;
-      // transfer: "in" sube deuda (raro, p.ej. cargo), "out" la baja (pago).
-      // Registros viejos sin direction → "out" (pago), comportamiento previo.
-      if (t.kind === "transfer")
-        return t.direction === "in" ? acc + t.amount : acc - t.amount;
-      return acc;
-    }, account.initialBalance);
-  }
-
-  // debit
-  return own.reduce((acc, t) => {
-    if (t.kind === "income") return acc + t.amount;
-    if (t.kind === "expense") return acc - t.amount;
-    // transfer: "in" suma, "out" resta. Viejos sin direction → "out".
-    if (t.kind === "transfer")
-      return t.direction === "in" ? acc + t.amount : acc - t.amount;
-    if (t.kind === "adjustment") return t.amount;
-    return acc;
+  return own.reduce((balance, { tx }) => {
+    if (tx.kind === "adjustment") return tx.amount;
+    return balance + transactionChangesBalance(account.type, tx);
   }, account.initialBalance);
 }
 

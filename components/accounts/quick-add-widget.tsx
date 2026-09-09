@@ -14,9 +14,11 @@ import { useAccountsStore } from "@/lib/store/accounts";
 import { useSettingsStore } from "@/lib/store/settings";
 import { computeAccountBalance } from "@/lib/finance/net-worth";
 import type { Account, CreditAccount, TransactionKind } from "@/lib/types";
+import { transferDirectionFor } from "@/lib/finance/transactions";
 
 export function QuickAddWidget({ account }: { account: Account }) {
   const addTx = useTransactionsStore((s) => s.add);
+  const addManyTxs = useTransactionsStore((s) => s.addMany);
   const txs = useTransactionsStore((s) => s.forAccount(account.id));
   const accounts = useAccountsStore((s) => s.activeAccounts);
   const setLastUsed = useSettingsStore((s) => s.setLastUsedAccount);
@@ -33,8 +35,11 @@ export function QuickAddWidget({ account }: { account: Account }) {
 
   const isTransfer = kind === "transfer";
   const amountNum = parseFloat(amount || "0");
+  const destination = accounts.find((a) => a.id === destinationId);
+  const transferCurrencyMismatch =
+    isTransfer && !!destination && destination.currency !== account.currency;
   const canSubmit = isTransfer
-    ? amountNum > 0 && !!destinationId && destinationId !== account.id
+    ? amountNum > 0 && !!destinationId && destinationId !== account.id && !transferCurrencyMismatch
     : amountNum > 0 && !!category;
 
   const submit = async () => {
@@ -43,16 +48,17 @@ export function QuickAddWidget({ account }: { account: Account }) {
 
     if (isTransfer) {
       if (!destinationId || destinationId === account.id) return;
-      const dst = accounts.find((a) => a.id === destinationId);
+      const dst = destination;
+      if (!dst || dst.currency !== account.currency) return;
       const pairId = `pair-${Date.now()}`;
       // La dirección de cada pata depende del tipo de cuenta, no del flujo físico:
       // en una tarjeta de crédito "out" = pago (baja deuda) e "in" = cargo (sube
       // deuda). Por eso un traslado HACIA un crédito (pagarlo) es "out" en esa
       // pata, y un traslado DESDE un crédito (avance) es "in" (sube deuda). En
       // cuentas normales se mantiene el flujo físico: sale "out", entra "in".
-      const sourceDirection = account.type === "credit" ? "in" : "out";
-      const destDirection = dst?.type === "credit" ? "out" : "in";
-      await addTx({
+      const sourceDirection = transferDirectionFor(account.type, "source");
+      const destDirection = transferDirectionFor(dst.type, "destination");
+      const saved = await addManyTxs([{
         accountId: account.id,
         kind: "transfer",
         direction: sourceDirection,
@@ -61,8 +67,7 @@ export function QuickAddWidget({ account }: { account: Account }) {
         description: description || (dst ? `Traslado a ${dst.name}` : undefined),
         occurredAt: now,
         transferPairId: pairId,
-      });
-      await addTx({
+      }, {
         accountId: destinationId,
         kind: "transfer",
         direction: destDirection,
@@ -71,7 +76,8 @@ export function QuickAddWidget({ account }: { account: Account }) {
         description: description || `Traslado desde ${account.name}`,
         occurredAt: now,
         transferPairId: pairId,
-      });
+      }]);
+      if (saved.length !== 2) return;
       await setLastUsed(account.id);
       toast.success("Traslado registrado");
       setAmount("");
@@ -81,7 +87,7 @@ export function QuickAddWidget({ account }: { account: Account }) {
     }
 
     if (!category) return;
-    await addTx({
+    const saved = await addTx({
       accountId: account.id,
       kind,
       amount: amountNum,
@@ -89,6 +95,7 @@ export function QuickAddWidget({ account }: { account: Account }) {
       description: description || undefined,
       occurredAt: now,
     });
+    if (!saved) return;
     await setLastUsed(account.id);
     toast.success(kind === "income" ? "Ingreso registrado" : "Gasto registrado");
     setAmount("");
@@ -158,6 +165,9 @@ export function QuickAddWidget({ account }: { account: Account }) {
               <AccountPicker value={destinationId} onChange={setDestinationId} />
               {destinationId === account.id && (
                 <p className="text-xs text-destructive">Elige una cuenta distinta a la actual.</p>
+              )}
+              {transferCurrencyMismatch && (
+                <p className="text-xs text-destructive">El traslado requiere cuentas en la misma moneda.</p>
               )}
             </div>
           ) : (

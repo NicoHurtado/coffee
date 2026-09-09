@@ -16,6 +16,7 @@ import { useTransactionsStore } from "@/lib/store/transactions";
 import { computeAccountBalance } from "@/lib/finance/net-worth";
 import { formatMoney } from "@/lib/finance/format";
 import type { DebitAccount } from "@/lib/types";
+import { transferDirectionFor } from "@/lib/finance/transactions";
 
 interface Props {
   open: boolean;
@@ -27,9 +28,11 @@ interface Props {
 export function TransferToFixedIncomeDialog({ open, onOpenChange, sourceAccount, sourceBalance }: Props) {
   const activeAccounts = useAccountsStore((s) => s.activeAccounts);
   const forAccount = useTransactionsStore((s) => s.forAccount);
-  const addTx = useTransactionsStore((s) => s.add);
+  const addManyTxs = useTransactionsStore((s) => s.addMany);
 
-  const fixedIncomeAccounts = activeAccounts.filter((a) => a.type === "fixed_income");
+  const fixedIncomeAccounts = activeAccounts.filter(
+    (a) => a.type === "fixed_income" && a.currency === sourceAccount.currency,
+  );
 
   const [targetId, setTargetId] = useState<string>(fixedIncomeAccounts[0]?.id ?? "");
   const [amount, setAmount] = useState("");
@@ -46,30 +49,26 @@ export function TransferToFixedIncomeDialog({ open, onOpenChange, sourceAccount,
     try {
       const now = new Date().toISOString();
       const pairId = `pair-${Date.now()}`;
-      // Debit from source (transfer out)
-      await addTx({
+      const saved = await addManyTxs([{
         accountId: sourceAccount.id,
         kind: "transfer",
-        direction: "out",
+        direction: transferDirectionFor(sourceAccount.type, "source"),
         amount: parsed,
         category: "Traslado",
         description: `Traslado a ${targetAccount.name}`,
         occurredAt: now,
         transferPairId: pairId,
-      });
-      // Credit to fixed income as a dated capital inflow (grows from today;
-      // previously accrued yield is preserved). It's a transfer "in", so it
-      // does NOT count as income in monthly stats.
-      await addTx({
+      }, {
         accountId: targetId,
         kind: "transfer",
-        direction: "in",
+        direction: transferDirectionFor(targetAccount.type, "destination"),
         amount: parsed,
         category: "Traslado",
         description: `Traslado desde ${sourceAccount.name}`,
         occurredAt: now,
         transferPairId: pairId,
-      });
+      }]);
+      if (saved.length !== 2) return;
       toast.success(`${formatMoney(parsed, sourceAccount.currency)} trasladado a ${targetAccount.name}`);
       onOpenChange(false);
       setAmount("");

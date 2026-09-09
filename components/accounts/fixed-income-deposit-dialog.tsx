@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { toast } from "sonner";
 import {
   Dialog,
@@ -29,9 +29,6 @@ export function FixedIncomeDepositDialog({ open, onOpenChange, account, currentB
   const usdToCop = useExchangeRateStore((s) => s.usdToCop);
   const [mode, setMode] = useState<"ingreso" | "retiro">(initialMode);
 
-  useEffect(() => {
-    if (open) { setMode(initialMode); setAmount(""); setDescription(""); }
-  }, [open, initialMode]);
   const [amount, setAmount] = useState("");
   const [description, setDescription] = useState("");
   const [loading, setLoading] = useState(false);
@@ -52,7 +49,7 @@ export function FixedIncomeDepositDialog({ open, onOpenChange, account, currentB
       if (account.type === "fixed_income") {
         // Renta fija: registrar el movimiento como flujo de capital con su fecha.
         // El depósito crece desde hoy y el rendimiento ya ganado se conserva.
-        await addTx({
+        const saved = await addTx({
           accountId: account.id,
           kind: mode === "ingreso" ? "income" : "expense",
           amount: parsed,
@@ -60,9 +57,10 @@ export function FixedIncomeDepositDialog({ open, onOpenChange, account, currentB
           description: description.trim() || defaultDesc,
           occurredAt: new Date().toISOString(),
         });
+        if (!saved) return;
       } else {
         // Inversión: el balance es un snapshot absoluto (no se simula crecimiento).
-        await addTx({
+        const saved = await addTx({
           accountId: account.id,
           kind: "adjustment",
           amount: newBalance,
@@ -70,6 +68,7 @@ export function FixedIncomeDepositDialog({ open, onOpenChange, account, currentB
           description: description.trim() || defaultDesc,
           occurredAt: new Date().toISOString(),
         });
+        if (!saved) return;
       }
       toast.success(
         mode === "ingreso"

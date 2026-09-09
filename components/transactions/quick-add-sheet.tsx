@@ -7,13 +7,6 @@ import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { useUIStore } from "@/lib/store/ui";
 import { useAccountsStore } from "@/lib/store/accounts";
 import { useTransactionsStore } from "@/lib/store/transactions";
@@ -28,6 +21,7 @@ import { type TransactionKind } from "@/lib/types";
 import { useCategoriesStore } from "@/lib/store/categories";
 import { getCategoryIcon } from "@/lib/finance/categories";
 import { cn } from "@/lib/utils";
+import { transferDirectionFor } from "@/lib/finance/transactions";
 
 function applyKey(current: string, key: string): string {
   if (key === "back") return current.length <= 1 ? "" : current.slice(0, -1);
@@ -54,6 +48,7 @@ function QuickAddBody({
   const { prefill } = useUIStore();
   const accounts = useAccountsStore((s) => s.activeAccounts);
   const addTx = useTransactionsStore((s) => s.add);
+  const addManyTxs = useTransactionsStore((s) => s.addMany);
   const { lastUsedAccountId, setLastUsedAccount, defaultCurrency } = useSettingsStore();
 
   const [kind, setKind] = useState<TransactionKind>(prefill.kind === "income" ? "income" : "expense");
@@ -77,49 +72,52 @@ function QuickAddBody({
 
   const isTransfer = kind === "transfer";
   const amountNum = parseFloat(amount || "0");
+  const sourceAccount = accounts.find((a) => a.id === accountId);
+  const destinationAccount = accounts.find((a) => a.id === destinationId);
+  const transferCurrencyMismatch =
+    isTransfer && !!sourceAccount && !!destinationAccount && sourceAccount.currency !== destinationAccount.currency;
   const canConfirm = isTransfer
-    ? amountNum > 0 && !!accountId && !!destinationId && accountId !== destinationId
+    ? amountNum > 0 && !!accountId && !!destinationId && accountId !== destinationId && !transferCurrencyMismatch
     : amountNum > 0 && !!accountId && !!category;
 
-  const submit = () => {
+  const submit = async () => {
     if (!canConfirm || !accountId) return;
     const now = new Date().toISOString();
 
     if (isTransfer) {
       if (!destinationId || accountId === destinationId) return;
-      const src = accounts.find((a) => a.id === accountId);
-      const dst = accounts.find((a) => a.id === destinationId);
+      const src = sourceAccount;
+      const dst = destinationAccount;
+      if (!src || !dst || src.currency !== dst.currency) return;
       const pairId = `pair-${Date.now()}`;
-      // Salida del origen
-      addTx({
+      const saved = await addManyTxs([{
         accountId,
         kind: "transfer",
-        direction: "out",
+        direction: transferDirectionFor(src.type, "source"),
         amount: amountNum,
         category: "Traslado",
         description: description || (dst ? `Traslado a ${dst.name}` : undefined),
         occurredAt: now,
         transferPairId: pairId,
-      });
-      // Entrada al destino (no cuenta como ingreso)
-      addTx({
+      }, {
         accountId: destinationId,
         kind: "transfer",
-        direction: "in",
+        direction: transferDirectionFor(dst.type, "destination"),
         amount: amountNum,
         category: "Traslado",
         description: description || (src ? `Traslado desde ${src.name}` : undefined),
         occurredAt: now,
         transferPairId: pairId,
-      });
-      setLastUsedAccount(accountId);
+      }]);
+      if (saved.length !== 2) return;
+      await setLastUsedAccount(accountId);
       toast.success("Traslado registrado");
       onClose();
       return;
     }
 
     if (!category) return;
-    addTx({
+    const saved = await addTx({
       accountId,
       kind,
       amount: amountNum,
@@ -127,7 +125,8 @@ function QuickAddBody({
       description: description || undefined,
       occurredAt: now,
     });
-    setLastUsedAccount(accountId);
+    if (!saved) return;
+    await setLastUsedAccount(accountId);
     toast.success(kind === "income" ? "Ingreso registrado" : "Gasto registrado");
     onClose();
   };
@@ -176,6 +175,9 @@ function QuickAddBody({
               <AccountPicker value={destinationId} onChange={setDestinationId} />
               {accountId && destinationId && accountId === destinationId && (
                 <p className="text-xs text-destructive">El origen y el destino deben ser distintos.</p>
+              )}
+              {transferCurrencyMismatch && (
+                <p className="text-xs text-destructive">El traslado requiere cuentas en la misma moneda.</p>
               )}
             </div>
           </>
@@ -278,6 +280,9 @@ function QuickAddBody({
             <AccountPicker value={destinationId} onChange={setDestinationId} />
             {accountId && destinationId && accountId === destinationId && (
               <p className="text-xs text-destructive">El origen y el destino deben ser distintos.</p>
+            )}
+            {transferCurrencyMismatch && (
+              <p className="text-xs text-destructive">El traslado requiere cuentas en la misma moneda.</p>
             )}
           </div>
         </>

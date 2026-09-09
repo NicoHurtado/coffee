@@ -357,6 +357,7 @@ export default function AccountDetailPage({
 
       {(account.type === "fixed_income" || account.type === "investment") && (
         <FixedIncomeDepositDialog
+          key={`${depositOpen ? "open" : "closed"}-${depositMode}`}
           open={depositOpen}
           onOpenChange={setDepositOpen}
           account={account}

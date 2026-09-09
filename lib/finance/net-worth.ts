@@ -8,7 +8,7 @@ export function computeAccountBalance(
   now: Date = new Date(),
 ): number {
   if (account.type === "fixed_income") return fixedIncomeBalance(account, txs, now);
-  return accountBalance(account, txs);
+  return accountBalance(account, txs, now);
 }
 
 /** Convert a balance to COP. USD accounts use TRM if available, otherwise kept as-is. */

@@ -3,6 +3,7 @@ import { create } from "zustand";
 import { v4 as uuid } from "uuid";
 import { toast } from "sonner";
 import type { Transaction } from "@/lib/types";
+import { normalizeTransaction } from "@/lib/finance/transactions";
 
 const EMPTY_TXS: Transaction[] = [];
 
@@ -27,7 +28,8 @@ interface State {
   seed: (transactions: Transaction[]) => void;
   hydrate: () => Promise<void>;
   refresh: () => Promise<void>;
-  add: (data: Omit<Transaction, "id">) => Promise<Transaction>;
+  add: (data: Omit<Transaction, "id">) => Promise<Transaction | null>;
+  addMany: (data: Omit<Transaction, "id">[]) => Promise<Transaction[]>;
   update: (id: string, patch: Partial<Transaction>) => Promise<void>;
   remove: (id: string) => Promise<void>;
   forAccount: (accountId: string) => Transaction[];
@@ -41,7 +43,8 @@ export const useTransactionsStore = create<State>()((set, get) => ({
   seed: (transactions) => {
     // Server-prefetched data: skip if the client already loaded fresher state.
     if (get().loaded) return;
-    set({ transactions, txsByAccountId: buildIndex(transactions), loaded: true });
+    const normalized = transactions.map(normalizeTransaction);
+    set({ transactions: normalized, txsByAccountId: buildIndex(normalized), loaded: true });
   },
   hydrate: async () => {
     const { loaded, isHydrating } = get();
@@ -50,7 +53,7 @@ export const useTransactionsStore = create<State>()((set, get) => ({
     try {
       const res = await fetch("/api/transactions", { cache: "no-store" });
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      const transactions: Transaction[] = await res.json();
+      const transactions = ((await res.json()) as Transaction[]).map(normalizeTransaction);
       set({ transactions, txsByAccountId: buildIndex(transactions), loaded: true, isHydrating: false });
     } catch {
       // DB unreachable: don't crash the app — leave state empty and allow a retry.
@@ -80,8 +83,28 @@ export const useTransactionsStore = create<State>()((set, get) => ({
       // recargar (p. ej. al día siguiente) porque nunca llegó a la base de datos.
       set({ transactions: prev, txsByAccountId: buildIndex(prev) });
       toast.error("No se pudo guardar el movimiento. Revisa tu conexión e inténtalo de nuevo.");
+      return null;
     }
     return tx;
+  },
+  addMany: async (data) => {
+    const prev = get().transactions;
+    const added = data.map((item) => ({ ...item, id: uuid() }) as Transaction);
+    const transactions = [...added, ...prev];
+    set({ transactions, txsByAccountId: buildIndex(transactions) });
+    try {
+      const res = await fetch("/api/transactions", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify(added),
+      });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      return added;
+    } catch {
+      set({ transactions: prev, txsByAccountId: buildIndex(prev) });
+      toast.error("No se pudo guardar el traslado. Ninguna cuenta fue modificada.");
+      return [];
+    }
   },
   update: async (id, patch) => {
     const current = get().transactions;
@@ -119,9 +142,8 @@ export const useTransactionsStore = create<State>()((set, get) => ({
       });
 
     try {
-      const reqs = [patchReq(id, patch)];
-      if (applySibling) reqs.push(patchReq(sibling!.id, siblingPatch));
-      await Promise.all(reqs);
+      // The API updates amount/date on both transfer legs in one request.
+      await patchReq(id, patch);
     } catch {
       // Alguna escritura falló: revertir al estado previo para no mostrar un
       // cambio que no se persistió y que desaparecería al recargar.
