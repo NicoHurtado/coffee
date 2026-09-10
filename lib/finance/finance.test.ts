@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest"
 import type { Account, FixedIncomeAccount, Transaction } from "../types"
 import { accountBalance } from "./credit"
 import { fixedIncomeBalance } from "./fixed-income"
+import { formatAccountBalance, formatSignedMoney } from "./format"
 import { netWorth, toBaseCurrency } from "./net-worth"
 import { isValidTransferPair, transferDirectionFor } from "./transactions"
 
@@ -45,6 +46,18 @@ describe("account balances", () => {
     expect(
       accountBalance(account(), [tx({ kind: "expense", amount: -100 })])
     ).toBe(900)
+  })
+
+  it("subtracts an expense when a debit account is already overdrawn", () => {
+    const overdrawn = account({ initialBalance: -480_000 })
+    const balance = accountBalance(overdrawn, [
+      tx({ kind: "expense", amount: 50_000 }),
+    ])
+
+    expect(balance).toBe(-530_000)
+    expect(formatAccountBalance(overdrawn.type, balance, overdrawn.currency)).toBe(
+      "-$530,000"
+    )
   })
 
   it("treats credit-card expenses as debt and payments as debt reduction", () => {
@@ -109,6 +122,14 @@ describe("account balances", () => {
         new Date("2026-02-01T00:00:00.000Z")
       )
     ).toBe(1_000)
+  })
+})
+
+describe("money presentation", () => {
+  it("preserves negative signs for asset accounts and presents credit debt as negative", () => {
+    expect(formatSignedMoney(-480_000, "COP")).toBe("-$480,000")
+    expect(formatAccountBalance("debit", -480_000, "COP")).toBe("-$480,000")
+    expect(formatAccountBalance("credit", 530_000, "COP")).toBe("-$530,000")
   })
 })
 

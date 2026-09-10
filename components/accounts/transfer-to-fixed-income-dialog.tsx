@@ -14,7 +14,7 @@ import { cn } from "@/lib/utils";
 import { useAccountsStore } from "@/lib/store/accounts";
 import { useTransactionsStore } from "@/lib/store/transactions";
 import { computeAccountBalance } from "@/lib/finance/net-worth";
-import { formatMoney } from "@/lib/finance/format";
+import { formatMoney, formatSignedMoney } from "@/lib/finance/format";
 import type { DebitAccount } from "@/lib/types";
 import { transferDirectionFor } from "@/lib/finance/transactions";
 
@@ -86,7 +86,7 @@ export function TransferToFixedIncomeDialog({ open, onOpenChange, sourceAccount,
           <div className="rounded-xl bg-muted px-4 py-3 flex items-center justify-between">
             <span className="text-sm text-muted-foreground">Disponible en {sourceAccount.name}</span>
             <span className="text-lg font-bold tabular-nums">
-              {formatMoney(sourceBalance, sourceAccount.currency)}
+              {formatSignedMoney(sourceBalance, sourceAccount.currency)}
             </span>
           </div>
 
@@ -113,7 +113,7 @@ export function TransferToFixedIncomeDialog({ open, onOpenChange, sourceAccount,
                       )}
                     >
                       <span className="font-medium">{a.name}</span>
-                      <span className="text-xs opacity-70">{formatMoney(bal, a.currency)}</span>
+                      <span className="text-xs opacity-70">{formatSignedMoney(bal, a.currency)}</span>
                     </button>
                   );
                 })}

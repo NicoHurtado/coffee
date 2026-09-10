@@ -9,7 +9,7 @@ import {
   type ChartConfig,
 } from "@/components/ui/chart";
 import { useTransactionsStore } from "@/lib/store/transactions";
-import { formatMoney } from "@/lib/finance/format";
+import { formatMoney, formatSignedMoney } from "@/lib/finance/format";
 import type { InvestmentAccount } from "@/lib/types";
 import { cn } from "@/lib/utils";
 
@@ -76,7 +76,7 @@ export function InvestmentBalanceChart({
             Movimiento del balance
           </div>
           <div className="text-xl font-semibold tabular-nums">
-            {formatMoney(last, account.currency)}
+            {formatSignedMoney(last, account.currency)}
           </div>
           <div className={cn("text-xs", up ? "text-positive" : "text-destructive")}>
             {up ? "+" : "-"}
@@ -117,7 +117,7 @@ export function InvestmentBalanceChart({
                   <div className="flex items-center justify-between gap-3">
                     <span className="text-muted-foreground">Balance</span>
                     <span className="font-semibold tabular-nums">
-                      {formatMoney(d.value, account.currency)}
+                      {formatSignedMoney(d.value, account.currency)}
                     </span>
                   </div>
                 </div>

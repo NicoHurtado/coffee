@@ -5,7 +5,7 @@ import { Progress } from "@/components/ui/progress";
 import { useAccountsStore } from "@/lib/store/accounts";
 import { useTransactionsStore } from "@/lib/store/transactions";
 import { computeAccountBalance } from "@/lib/finance/net-worth";
-import { formatMoney } from "@/lib/finance/format";
+import { formatMoney, formatSignedMoney } from "@/lib/finance/format";
 import { colorStyle, type AccountColor } from "@/lib/finance/colors";
 import { daysToMaturity } from "@/lib/finance/fixed-income";
 
@@ -68,7 +68,7 @@ export default function MetasPage() {
 
                 <div className="flex items-center justify-between text-sm tabular-nums">
                   <span>
-                    <strong style={{ color: s.muted }}>{formatMoney(balance, a.currency)}</strong>
+                    <strong style={{ color: s.muted }}>{formatSignedMoney(balance, a.currency)}</strong>
                     <span className="text-muted-foreground"> / {formatMoney(a.goalTarget, a.currency)}</span>
                   </span>
                   <span className="text-muted-foreground">

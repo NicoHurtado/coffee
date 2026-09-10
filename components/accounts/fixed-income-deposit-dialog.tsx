@@ -13,7 +13,7 @@ import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
 import { useTransactionsStore } from "@/lib/store/transactions";
 import { useExchangeRateStore } from "@/lib/store/exchange-rate";
-import { formatMoney } from "@/lib/finance/format";
+import { formatMoney, formatSignedMoney } from "@/lib/finance/format";
 import type { FixedIncomeAccount, InvestmentAccount } from "@/lib/types";
 
 interface Props {
@@ -91,7 +91,7 @@ export function FixedIncomeDepositDialog({ open, onOpenChange, account, currentB
           <div className="rounded-xl bg-muted px-4 py-3 flex items-center justify-between">
             <span className="text-sm text-muted-foreground">Balance actual</span>
             <span className="text-lg font-bold tabular-nums">
-              {formatMoney(currentBalance, account.currency)}
+              {formatSignedMoney(currentBalance, account.currency)}
             </span>
           </div>
 
@@ -151,7 +151,7 @@ export function FixedIncomeDepositDialog({ open, onOpenChange, account, currentB
               <span className="text-sm text-muted-foreground">Nuevo balance</span>
               <div className="text-right">
                 <div className={cn("text-base font-bold tabular-nums", newBalance < 0 && "text-destructive")}>
-                  {formatMoney(Math.max(0, newBalance), account.currency)}
+                  {formatSignedMoney(newBalance, account.currency)}
                 </div>
                 {showCop && (
                   <div className="text-xs text-muted-foreground tabular-nums">

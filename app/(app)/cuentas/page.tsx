@@ -7,7 +7,10 @@ import { useAccountsStore } from "@/lib/store/accounts"
 import { useTransactionsStore } from "@/lib/store/transactions"
 import { useSettingsStore } from "@/lib/store/settings"
 import { computeAccountBalances, toBaseCurrency } from "@/lib/finance/net-worth"
-import { formatMoney } from "@/lib/finance/format"
+import {
+  formatAccountBalance,
+  formatSignedMoney,
+} from "@/lib/finance/format"
 import { NetWorth } from "@/components/home/net-worth"
 import { MiniCard } from "@/components/accounts/mini-card"
 import { useExchangeRateStore } from "@/lib/store/exchange-rate"
@@ -73,14 +76,14 @@ export default function CuentasPage() {
             {[
               {
                 label: "Activos",
-                value: formatMoney(totalAssets, currency),
+                value: formatSignedMoney(totalAssets, currency),
                 share: assetShare,
                 tone: "text-positive",
                 bar: "bg-positive",
               },
               {
                 label: "Deuda",
-                value: `${totalDebt > 0 ? "-" : ""}${formatMoney(totalDebt, currency)}`,
+                value: formatSignedMoney(-totalDebt, currency),
                 share: 100 - assetShare,
                 tone: "text-destructive",
                 bar: "bg-destructive",
@@ -130,8 +133,7 @@ export default function CuentasPage() {
                     <span
                       className={`text-sm font-semibold tabular-nums ${isCredit ? "text-destructive" : ""}`}
                     >
-                      {isCredit && subtotal > 0 ? "-" : ""}
-                      {formatMoney(subtotal, currency)}
+                      {formatSignedMoney(isCredit ? -subtotal : subtotal, currency)}
                     </span>
                   }
                 >
@@ -163,8 +165,8 @@ export default function CuentasPage() {
                           className={`shrink-0 text-right ${isCredit ? "text-destructive" : ""}`}
                         >
                           <div className="text-sm font-semibold tabular-nums">
-                            {isCredit && bal > 0 ? "-" : ""}
-                            {formatMoney(
+                            {formatAccountBalance(
+                              a.type,
                               toBaseCurrency(bal, a.currency, usdToCop),
                               a.currency === "USD" && usdToCop
                                 ? "COP"
@@ -173,7 +175,7 @@ export default function CuentasPage() {
                           </div>
                           {a.currency === "USD" && usdToCop && (
                             <div className="text-[11px] text-muted-foreground tabular-nums">
-                              {formatMoney(bal, "USD")}
+                              {formatAccountBalance(a.type, bal, "USD")}
                             </div>
                           )}
                         </div>

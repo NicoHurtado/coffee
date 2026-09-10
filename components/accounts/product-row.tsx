@@ -4,7 +4,7 @@ import { useAccountsStore } from "@/lib/store/accounts";
 import { useTransactionsStore } from "@/lib/store/transactions";
 import { computeAccountBalance } from "@/lib/finance/net-worth";
 import { daysToMaturity } from "@/lib/finance/fixed-income";
-import { formatMoney } from "@/lib/finance/format";
+import { formatSignedMoney } from "@/lib/finance/format";
 import { getColorDef, type AccountColor } from "@/lib/finance/colors";
 import { savingsIcon, savingsSubtitle } from "./savings-face";
 import { cn } from "@/lib/utils";
@@ -56,7 +56,7 @@ export function ProductRow({ account, className }: { account: Account; className
       </div>
       <div className="shrink-0 text-right">
         <div className="text-base font-semibold tabular-nums">
-          {formatMoney(balance, account.currency)}
+          {formatSignedMoney(balance, account.currency)}
         </div>
         <div className="text-[11px] text-muted-foreground">{footnote}</div>
       </div>

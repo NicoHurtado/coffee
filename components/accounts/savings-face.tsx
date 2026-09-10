@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { formatMoney } from "@/lib/finance/format";
+import { formatSignedMoney } from "@/lib/finance/format";
 import type { Currency } from "@/lib/types";
 import { cn } from "@/lib/utils";
 
@@ -94,7 +94,7 @@ export function SavingsFace({
           {subtitle} · {type === "investment" ? "Valor actual" : "Saldo"}
         </div>
         <div className="break-words text-xl font-semibold tabular-nums">
-          {formatMoney(balance, currency)}
+          {formatSignedMoney(balance, currency)}
         </div>
       </div>
 

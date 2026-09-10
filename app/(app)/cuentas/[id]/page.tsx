@@ -12,7 +12,7 @@ import { useAccountsStore } from "@/lib/store/accounts";
 import { useTransactionsStore } from "@/lib/store/transactions";
 import { useUIStore } from "@/lib/store/ui";
 import { computeAccountBalance } from "@/lib/finance/net-worth";
-import { formatMoney } from "@/lib/finance/format";
+import { formatAccountBalance, formatMoney } from "@/lib/finance/format";
 import {
   utilizationPct,
   availableCredit,
@@ -181,14 +181,14 @@ export default function AccountDetailPage({
           ? [
               { label: "Rendimiento", value: formatMoney(accruedYield(account, txs), account.currency), tone: "up" },
               { label: "Tasa anual", value: `${account.annualRate}%` },
-              { label: "Balance inicial", value: formatMoney(account.initialBalance, account.currency) },
+              { label: "Balance inicial", value: formatAccountBalance(account.type, account.initialBalance, account.currency) },
               account.maturityDate
                 ? { label: "Días restantes", value: String(daysToMaturity(account)) }
                 : { label: "Vencimiento", value: "Sin fecha" },
             ]
           : [
               { label: "Valor en COP", value: copValue ?? "—" },
-              { label: "Balance inicial", value: formatMoney(account.initialBalance, account.currency) },
+              { label: "Balance inicial", value: formatAccountBalance(account.type, account.initialBalance, account.currency) },
               { label: "Moneda", value: account.currency },
               { label: "Entidad", value: account.institution },
             ];
@@ -275,11 +275,12 @@ export default function AccountDetailPage({
             <div
               className={cn(
                 "mt-1 text-[2rem] md:text-[2.5rem] font-semibold leading-none tabular-nums",
-                account.type === "credit" && balance > 0 && "text-destructive",
+                ((account.type === "credit" && balance > 0) ||
+                  (account.type !== "credit" && balance < 0)) &&
+                  "text-destructive",
               )}
             >
-              {account.type === "credit" && balance > 0 ? "-" : ""}
-              {formatMoney(balance, account.currency)}
+              {formatAccountBalance(account.type, balance, account.currency)}
             </div>
             {isInvestmentUsd && copValue && (
               <div className="mt-1.5 text-xs text-muted-foreground tabular-nums">{copValue} COP</div>

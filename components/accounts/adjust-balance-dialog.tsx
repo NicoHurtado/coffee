@@ -13,7 +13,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
 import { useTransactionsStore } from "@/lib/store/transactions";
-import { formatMoney } from "@/lib/finance/format";
+import { formatAccountBalance, formatMoney } from "@/lib/finance/format";
 import type { Account } from "@/lib/types";
 
 interface Props {
@@ -99,7 +99,7 @@ export function AdjustBalanceDialog({ open, onOpenChange, account, currentBalanc
               {account.type === "credit" ? "Deuda actual" : "Balance actual"}
             </span>
             <span className="text-base font-bold tabular-nums">
-              {formatMoney(currentBalance, account.currency)}
+              {formatAccountBalance(account.type, currentBalance, account.currency)}
             </span>
           </div>
 

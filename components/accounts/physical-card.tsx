@@ -1,5 +1,5 @@
 "use client";
-import { formatMoney } from "@/lib/finance/format";
+import { formatAccountBalance } from "@/lib/finance/format";
 import { artTextColors, resolveCardArt } from "@/lib/finance/card-art";
 import { getColorDef, type AccountColor } from "@/lib/finance/colors";
 import type { Account, CardNetwork, Currency } from "@/lib/types";
@@ -44,7 +44,7 @@ export function PhysicalCard({ account, balance, className }: PhysicalCardProps)
   }
 
   const balanceLabel = isCredit ? "DEUDA" : "BALANCE";
-  const showNegative = isCredit && balance > 0;
+  const showNegative = isCredit ? balance > 0 : balance < 0;
 
   const labelStyle = tone ? { color: tone.label } : undefined;
   const valueStyle = tone ? { color: tone.value } : undefined;
@@ -129,8 +129,7 @@ export function PhysicalCard({ account, balance, className }: PhysicalCardProps)
             }`}
             style={tone ? { color: showNegative ? tone.negative : tone.value } : undefined}
           >
-            {showNegative ? "-" : ""}
-            {formatMoney(balance, account.currency as Currency)}
+            {formatAccountBalance(account.type, balance, account.currency as Currency)}
           </div>
         </div>
         {isCard && (

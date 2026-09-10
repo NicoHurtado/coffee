@@ -1,5 +1,5 @@
 "use client";
-import { formatMoney } from "@/lib/finance/format";
+import { formatAccountBalance } from "@/lib/finance/format";
 import { artTextColors, resolveCardArtFrom } from "@/lib/finance/card-art";
 import { getColorDef, type AccountColor } from "@/lib/finance/colors";
 import type { AccountType, CardNetwork, Currency } from "@/lib/types";
@@ -138,7 +138,7 @@ export function AccountPreviewCard({
             className="text-2xl font-semibold tabular-nums truncate mt-1"
             style={valueStyle}
           >
-            {formatMoney(initialBalance ?? 0, currency ?? "COP")}
+            {formatAccountBalance(type, initialBalance ?? 0, currency ?? "COP")}
           </div>
         </div>
         {isCard && (
