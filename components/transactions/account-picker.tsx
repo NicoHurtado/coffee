@@ -49,6 +49,15 @@ export function AccountPicker({
     [accounts, type],
   );
 
+  const selectType = (nextType: AccountType) => {
+    setType(nextType);
+    // Changing the visible group must also change the actual selected account.
+    // Previously the UI could show "Débito" while `value` still pointed to a
+    // hidden fixed-income account (for example a cajita).
+    const firstAccount = accounts.find((account) => account.type === nextType);
+    if (firstAccount && firstAccount.id !== value) onChange(firstAccount.id);
+  };
+
   if (accounts.length === 0) {
     return (
       <div className="text-xs text-muted-foreground py-2">Sin cuentas registradas.</div>
@@ -62,7 +71,7 @@ export function AccountPicker({
           <button
             key={t}
             type="button"
-            onClick={() => setType(t)}
+            onClick={() => selectType(t)}
             className={cn(
               "px-3 py-1 rounded-full text-xs font-medium border transition",
               type === t

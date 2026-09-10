@@ -89,10 +89,10 @@ function QuickAddBody({
       !!destinationId &&
       accountId !== destinationId &&
       !transferCurrencyMismatch
-    : amountNum > 0 && !!accountId && !!category
+    : amountNum > 0 && !!sourceAccount && !!category
 
   const submit = async () => {
-    if (!canConfirm || !accountId) return
+    if (!canConfirm || !accountId || !sourceAccount) return
     const now = new Date().toISOString()
 
     if (isTransfer) {
@@ -127,7 +127,7 @@ function QuickAddBody({
       ])
       if (saved.length !== 2) return
       await setLastUsedAccount(accountId)
-      toast.success("Traslado registrado")
+      toast.success(`Traslado registrado desde ${sourceAccount.name}`)
       onClose()
       return
     }
@@ -143,7 +143,9 @@ function QuickAddBody({
     })
     if (!saved) return
     await setLastUsedAccount(accountId)
-    toast.success(kind === "income" ? "Ingreso registrado" : "Gasto registrado")
+    toast.success(
+      `${kind === "income" ? "Ingreso" : "Gasto"} registrado en ${sourceAccount.name}`
+    )
     onClose()
   }
 
