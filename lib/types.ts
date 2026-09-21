@@ -22,6 +22,8 @@ export interface BaseAccount {
   /** Short label (~5 chars) shown inside the mini-card tile. */
   miniLabel?: string;
   active?: boolean;
+  /** Defaults to visible. Only affects the account's presentation on Home. */
+  showOnHome?: boolean;
 }
 
 export interface DebitAccount extends BaseAccount {

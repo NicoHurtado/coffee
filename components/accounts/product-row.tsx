@@ -65,10 +65,18 @@ export function ProductRow({ account, className }: { account: Account; className
 }
 
 /** Las filas de todos los productos que no son tarjeta, agrupadas. */
-export function ProductList({ className }: { className?: string }) {
+export function ProductList({
+  className,
+  homeOnly = false,
+}: {
+  className?: string;
+  homeOnly?: boolean;
+}) {
   const accounts = useAccountsStore((s) => s.activeAccounts);
   const products = accounts.filter(
-    (a) => a.type === "fixed_income" || a.type === "investment",
+    (a) =>
+      (!homeOnly || a.showOnHome !== false) &&
+      (a.type === "fixed_income" || a.type === "investment"),
   );
   if (products.length === 0) return null;
   return (

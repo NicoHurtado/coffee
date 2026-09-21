@@ -31,6 +31,7 @@ interface State {
   refresh: () => Promise<void>
   add: (data: Omit<Account, "id" | "createdAt">) => Promise<Account>
   update: (id: string, patch: Partial<Account>) => Promise<void>
+  setHomeVisibility: (id: string, visible: boolean) => Promise<void>
   remove: (id: string) => Promise<void>
   getById: (id: string) => Account | undefined
 }
@@ -131,6 +132,24 @@ export const useAccountsStore = create<State>()((set, get) => ({
           "No se pudo actualizar la cuenta. Revisa tu conexión e inténtalo de nuevo."
         )
       })
+  },
+  setHomeVisibility: async (id, visible) => {
+    const res = await fetch(`/api/accounts/${id}`, {
+      method: "PATCH",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ showOnHome: visible }),
+    })
+    if (!res.ok) throw new Error(`HTTP ${res.status}`)
+    const saved: Account | null = await res.json()
+    if (!saved || saved.id !== id || saved.showOnHome !== visible) {
+      throw new Error("No se pudo guardar la selección")
+    }
+    set((state) => {
+      const accounts = state.accounts.map((account) =>
+        account.id === id ? { ...account, showOnHome: visible } : account
+      )
+      return { accounts, activeAccounts: deriveActive(accounts) }
+    })
   },
   remove: async (id) => {
     const removed = get().accounts.find((account) => account.id === id)

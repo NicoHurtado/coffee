@@ -10,6 +10,7 @@ import { AddTransactionButton } from "@/components/nav/add-transaction-button";
 import { HomeKpis } from "@/components/home/home-kpis";
 import { ThemeToggle } from "@/components/nav/theme-toggle";
 import { LogoutButton } from "@/components/nav/logout-button";
+import { HomeAccountsPicker } from "@/components/accounts/home-accounts-picker";
 
 export default function HomePage() {
   return (
@@ -24,8 +25,12 @@ export default function HomePage() {
           </div>
         </div>
         <NetWorth />
+        <div className="flex items-center justify-between gap-2">
+          <h2 className="text-[17px] font-semibold">Mis cuentas</h2>
+          <HomeAccountsPicker />
+        </div>
         <AccountsSlider />
-        <ProductList />
+        <ProductList homeOnly />
         <NetWorthChartLazy />
         <ExpensesBreakdown />
         <RecentActivity card />
@@ -57,8 +62,9 @@ export default function HomePage() {
             <h2 className="text-[17px] font-semibold tracking-[-0.02em] text-foreground">
               Mis cuentas
             </h2>
+            <HomeAccountsPicker />
           </div>
-          <AccountsGrid />
+          <AccountsGrid homeOnly />
         </section>
       </div>
     </>

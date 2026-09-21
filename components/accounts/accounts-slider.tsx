@@ -10,16 +10,19 @@ import { AccountCard } from "./account-card";
  */
 export function AccountsSlider() {
   const all = useAccountsStore((s) => s.activeAccounts);
-  const accounts = all.filter((a) => a.type === "debit" || a.type === "credit");
+  const visible = all.filter((a) => a.showOnHome !== false);
+  const accounts = visible.filter((a) => a.type === "debit" || a.type === "credit");
 
   // Sin tarjetas pero con productos, el carrusel simplemente no aparece: la
   // lista de productos que va debajo ya muestra lo que hay.
-  if (accounts.length === 0 && all.length > 0) return null;
+  if (accounts.length === 0 && visible.length > 0) return null;
 
   if (accounts.length === 0) {
     return (
       <div className="rounded-2xl border border-dashed p-6 text-center text-sm text-muted-foreground">
-        Crea tu primera cuenta para empezar.
+        {all.length > 0
+          ? "No hay tarjetas visibles. Usa Elegir tarjetas para mostrarlas aquí."
+          : "Crea tu primera cuenta para empezar."}
       </div>
     );
   }

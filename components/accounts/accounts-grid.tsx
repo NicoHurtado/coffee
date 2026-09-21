@@ -11,13 +11,16 @@ const GROUPS: { type: AccountType; label: string }[] = [
   { type: "investment", label: "Inversiones" },
 ];
 
-export function AccountsGrid() {
-  const accounts = useAccountsStore((s) => s.activeAccounts);
+export function AccountsGrid({ homeOnly = false }: { homeOnly?: boolean }) {
+  const all = useAccountsStore((s) => s.activeAccounts);
+  const accounts = homeOnly ? all.filter((a) => a.showOnHome !== false) : all;
 
   if (accounts.length === 0) {
     return (
       <div className="rounded-2xl border border-dashed p-8 text-center text-sm text-muted-foreground">
-        Aún no tienes cuentas.
+        {all.length > 0
+          ? "No hay tarjetas visibles. Usa Elegir tarjetas para mostrarlas aquí."
+          : "Aún no tienes cuentas."}
       </div>
     );
   }
