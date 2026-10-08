@@ -2,6 +2,7 @@
 import Link from "next/link";
 import { useAccountsStore } from "@/lib/store/accounts";
 import { useTransactionsStore } from "@/lib/store/transactions";
+import { useExchangeRateStore } from "@/lib/store/exchange-rate";
 import { computeAccountBalance } from "@/lib/finance/net-worth";
 import { daysToMaturity } from "@/lib/finance/fixed-income";
 import { formatSignedMoney } from "@/lib/finance/format";
@@ -19,6 +20,10 @@ import type { Account } from "@/lib/types";
 export function ProductRow({ account, className }: { account: Account; className?: string }) {
   const txs = useTransactionsStore((s) => s.forAccount(account.id));
   const balance = computeAccountBalance(account, txs);
+  const usdToCop = useExchangeRateStore((s) => s.usdToCop);
+  // Los productos en dólares (p. ej. IBKR) se leen en pesos con la TRM del
+  // día; el valor original en USD queda debajo, pequeño, como referencia.
+  const showInCop = account.currency === "USD" && usdToCop != null;
   const accent = getColorDef(account.color as AccountColor | undefined).base;
   const type = account.type as "fixed_income" | "investment";
 
@@ -56,9 +61,13 @@ export function ProductRow({ account, className }: { account: Account; className
       </div>
       <div className="shrink-0 text-right">
         <div className="text-base font-semibold tabular-nums">
-          {formatSignedMoney(balance, account.currency)}
+          {showInCop
+            ? formatSignedMoney(balance * usdToCop, "COP")
+            : formatSignedMoney(balance, account.currency)}
         </div>
-        <div className="text-[11px] text-muted-foreground">{footnote}</div>
+        <div className="text-[11px] text-muted-foreground tabular-nums">
+          {showInCop ? `${formatSignedMoney(balance, "USD")} USD` : footnote}
+        </div>
       </div>
     </Link>
   );
